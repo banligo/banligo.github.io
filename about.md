@@ -27,9 +27,23 @@ key: page-about
 mermaid: true
 ---
 
-你好！！！！
 
-[📓](diary/index)
+<div class="item">
+  <div class="item__image">
+    <img class="image image--sm" src="/assets/images/avatar.png"/>
+  </div>
+  <div class="item__content">
+    <div class="item__header">
+      <h4>板栗</h4>
+    </div>
+    <div class="item__description">
+      <p>你好！我是板栗，因为爱吃板栗。目前在日本留学读研（读博bushi）～嘿嘿。目前是一脸懵逼的状态……</p>
+    </div>
+  </div>
+</div>
+
+
+
 
 ## 学习
 
@@ -37,7 +51,7 @@ mermaid: true
   - 语文（94）/ 数学（121）/ 英语（12）
   - 选课：物理（91）/ 生物（94）/ 技术（91）
   
-<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 大学 （浙江工业大学，2020-2024）<br>
+<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 大学 （浙江工业大学，2020 - 2024）<br>
   - 大一
     - 高等数学、线性代数
     - 普通物理（上）
@@ -50,7 +64,7 @@ mermaid: true
     - 物理光学、光学设计、光学通信
     - 广义相对论 (intro)、宇宙学 (intro)
   
-<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究所 KEK，2024-）<br>
+<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 -）<br>
   - 研一
     - 不知道要干嘛。。。
 

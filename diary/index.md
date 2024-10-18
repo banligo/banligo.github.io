@@ -1,26 +1,26 @@
 ---
-title: "板栗日记（正在读博）"
+title: "板栗日记（读博ing）"
 layout: article
 ---
 
 
 ## 2024 年
 
-[10月](y24-10-imposter)，读博啦，适应新环境。
+<a class="button button--primary button--rounded button--sm" href="y24-10-imposter">10月</a> 读博啦，适应新环境。
 
-[9月](y24-9-anxious)，准备入学事项。
+<a class="button button--primary button--rounded button--sm" href="y24-9-anxious">09月</a>  准备入学事项。
 
-[8月](y24-8-relaxed)，终于闲了一点点。
+<a class="button button--primary button--rounded button--sm" href="y24-8-relaxed">08月</a> 终于闲了一点点。
 
-[7月](y24-7-stillbusy)，为啥还是这么忙啊啊啊啊啊啊。
+<a class="button button--primary button--rounded button--sm" href="y24-7-stillbusy">07月</a> 为啥还是这么忙啊啊啊啊啊啊。
 
-[6月](y24-6-lost)，等待，迷茫，毕业季。
+<a class="button button--primary button--rounded button--sm" href="y24-6-lost">06月</a> 等待，迷茫，毕业季。
 
-[5月](y24-5-verybusy)，论文答辩，留学考核。
+<a class="button button--primary button--rounded button--sm" href="y24-5-verybusy">05月</a> 论文答辩，留学考核。
 
-[4月](y24-4-busyyyyy)，开始忙碌，收到内诺。
+<a class="button button--primary button--rounded button--sm" href="y24-4-busyyyyy">04月</a> 开始忙碌，收到内诺。
 
-[3月](y24-3-saddddd)，悲伤，烦躁，迷茫。
+<a class="button button--primary button--rounded button--sm" href="y24-3-saddddd">03月</a> 悲伤，烦躁，迷茫。
 
 ## 其他
 
