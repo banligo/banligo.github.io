@@ -37,7 +37,7 @@ mermaid: true
       <h4>板栗</h4>
     </div>
     <div class="item__description">
-      <p>你好！我是板栗，因为爱吃板栗。目前在日本留学读研（读博bushi）～嘿嘿。目前是一脸懵逼的状态……</p>
+      <p>你好！我是板栗，因为爱吃板栗。目前在日本留学读研（读博bushi）～嘿嘿。目前对于研究一脸懵逼的状态……咋办呀～～</p>
     </div>
   </div>
 </div>
@@ -47,9 +47,9 @@ mermaid: true
 
 ## 学习
 
-<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 高中（台州市路桥中学，2017 - 2020）<br> 
-  - 语文（94）/ 数学（121）/ 英语（12）
-  - 选课：物理（91）/ 生物（94）/ 技术（91）
+<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 -）<br>
+  - 研一
+    - 不知道要干嘛。。。
   
 <img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 大学 （浙江工业大学，2020 - 2024）<br>
   - 大一
@@ -63,10 +63,12 @@ mermaid: true
   - 大三/大四
     - 物理光学、光学设计、光学通信
     - 广义相对论 (intro)、宇宙学 (intro)
+
+<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 高中（台州市路桥中学，2017 - 2020）<br> 
+  - 语文（94）/ 数学（121）/ 英语（12）
+  - 选课：物理（91）/ 生物（94）/ 技术（91）
   
-<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 -）<br>
-  - 研一
-    - 不知道要干嘛。。。
+
 
 
 ---
@@ -77,25 +79,25 @@ mermaid: true
   高中校运会在同学的“怂恿”下参加过（🥇），然后还参加过大学校运会（🎱），另外其实有一个隐藏原因……
 
 <img src="https://cdn.hugeicons.com/icons/badminton-shuttle-stroke-rounded.svg" alt="badminton-shuttle" width="20" height="20" /> 羽毛球
-  <br>小时候和父母经常公园打球，但是球技一般，还没有球友💔
+  <br>小时候和父母经常公园打球，但是球技一般，还没有固定球友 💔。
 
 <img src="https://cdn.hugeicons.com/icons/camera-01-stroke-rounded.svg" alt="camera-01" width="20" height="20" /> 照相
-  <br>有个 Canon EOS 200DⅡ，但是毫无技巧，连曝光都调不来。
+  <br>有个 Canon EOS 200DⅡ，但是毫无技巧，连曝光都调不来。PS：现在给我弟了。
 
 <img src="https://cdn.hugeicons.com/icons/browser-stroke-rounded.svg" alt="browser" width="20" height="20" /> 网站制作
-  <br>感觉挺有意思的，其实大二的时候就想做一个了，但是当时摆弄不来（现在也是
+  <br>感觉挺有意思的，其实大二的时候就想做一个了，但是当时摆弄不来（现在也是）。
 
 <img src="https://cdn.hugeicons.com/icons/music-note-01-stroke-rounded.svg" alt="music-note-01" width="20" height="20" /> 吉他
-  <br>正在学电吉他中……会弹一些简单的solo了，比如光辉岁月和鸟之诗
+  <br>正在学电吉他中……会弹一些简单的solo了，比如光辉岁月和鸟之诗。
 
 <img src="https://cdn.hugeicons.com/icons/paint-board-stroke-rounded.svg" alt="paint-board" width="20" height="20" /> 绘画
-  <br>学过素描（照猫画虎罢了），但是学不会啊，小垃圾一个
+  <br>学过素描（照猫画虎罢了），但是学不会啊，小垃圾一个。
 
 <img src="https://cdn.hugeicons.com/icons/alphabet-japanese-stroke-rounded.svg" alt="alphabet-japanese" width="20" height="20" /> 语言
-  <br>日语是因为动漫、日漫契机下开始学的，有 N1。想学德语是因为一直听说是语法很难，想见识见识，可以的话想去欧洲那边留学
+  <br>日语是因为动漫、日漫契机下开始学的，有 N1。想学德语是因为一直听说是语法很难，想见识见识，可以的话想去欧洲那边留学。
   
 <img src="https://cdn.hugeicons.com/icons/airplane-take-off-01-stroke-rounded.svg" alt="airplane-take-off-01" width="20" height="20" /> 旅行
-  <br>去过上海、江苏、北京、广东、香港、东京、北海道……想去中国的中部和西部。
+  <br>去过上海、江苏、北京、广东、香港、西安、东京、北海道……想去中国的中部和西部。
 
 <img src="https://cdn.hugeicons.com/icons/clothes-stroke-rounded.svg" alt="clothes" width="20" height="20" /> 合气道
   <br>UEC交换的时候参加的一个社团，5级证书（最低），师从铃木俊雄，[演示视频](https://space.bilibili.com/3494357548140879)。

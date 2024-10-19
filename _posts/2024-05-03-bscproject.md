@@ -1,17 +1,17 @@
 ---
 date: 2024-05-03
-author: ["Y. He"]
-title: 重子声波振荡的理论研究 [置顶]
+author: ["Yingqiu He"]
+title: 重子声波振荡的理论研究
 tags: ["物理","宇宙学"]
-categories: ["学习报告"]
-weight: -1
-math: true
+mathjax: true
+mathjax_autoNumber: true
+layout: article
+sidebar:
+  nav: layouts
 ---
 
-{{< katex display=true >}}
-{{< /katex >}}
 
-小小学习报告 👉[毕业论文终稿PDF](/documents/BScThesis-heyingqiu.pdf)👈 欢迎借阅参考。
+小小学习报告 👉[毕业论文终稿PDF](/assets/documents/BScThesis-heyingqiu.pdf)👈 欢迎借阅参考。
 
 <!--more-->
 
@@ -31,6 +31,7 @@ math: true
 - 6月17日，提交所有资料。
 
 <br>
+
 
 ## 摘要
 
@@ -114,14 +115,9 @@ math: true
 征，研究宇宙网络的复杂结构及其演化过程。这些理论的进展也可以与 BAO 的研究相结
 合，为解释观测数据提供更全面的理论支持。
 
-<br>
-
 ---
 
-<br>
 
 其实最后没有仔细再看一遍，公式也没有再推算一遍，太懒了…… 
  
-<br>
-
-{{< button href="/documents/BScThesis-heyingqiu.pdf" >}}论文终稿 PDF{{< /button >}}
+ <a class="button button--primary button--rounded" href="/assets/documents/BScThesis-heyingqiu.pdf">论文终稿 PDF 🖱️</a>
