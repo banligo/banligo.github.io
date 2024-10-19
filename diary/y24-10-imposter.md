@@ -60,4 +60,5 @@ Some AI chat website:
 
 之后可以写写当天学习了什么吧，杂碎的事情说了也不好应该。hhh不懂。
 
-
+I got up at around 12:30 today since I slept at 4:30. OMG. crazy. I re-built my website, I would like to make it better. Now, it is 13:50. I am going to have a food. May be in Sukiya. I like fast food. I don't like cook by myself. I am not a good cooker. When I was at hometown, I have two times experience that cooking for my family. Terrible experience to be honest.
+But to save money. I cannot regually eat outside. One time eat at home. I can save at least 300yen. I could use this money to buy some disert, like ice-cream. lol. nothing would like to say. I want to breaze for a little while. So tomorrow I decide to go outside -- a very far park -- with a also new student in this semester. buy, I'll find my food later. 
