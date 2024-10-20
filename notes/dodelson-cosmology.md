@@ -1,5 +1,5 @@
 ---
-title: Dodelson 宇宙学笔记
+title: Dodelson 宇宙学 摘要
 date: 2024-03-12
 layout: article
 sidebar:
@@ -8,6 +8,15 @@ aside:
   toc: true
 mathjax: true
 ---
+
+
+*Modern Cosmology* by Scott Dodelson [书PDF](https://icourse.club/uploads/files/c6cd83fdddc0c0e5e6058b2c1a2f8781399c616e.pdf)
+
+[https://icourse.club/uploads/files/c6cd83fdddc0c0e5e6058b2c1a2f8781399c616e.pdf](https://icourse.club/uploads/files/c6cd83fdddc0c0e5e6058b2c1a2f8781399c616e.pdf) 
+
+
+<!--more-->
+
 
 ## 1 引言：宇宙学模型
 

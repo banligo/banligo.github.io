@@ -62,3 +62,11 @@ Some AI chat website:
 
 I got up at around 12:30 today since I slept at 4:30. OMG. crazy. I re-built my website, I would like to make it better. Now, it is 13:50. I am going to have a food. May be in Sukiya. I like fast food. I don't like cook by myself. I am not a good cooker. When I was at hometown, I have two times experience that cooking for my family. Terrible experience to be honest.
 But to save money. I cannot regually eat outside. One time eat at home. I can save at least 300yen. I could use this money to buy some disert, like ice-cream. lol. nothing would like to say. I want to breaze for a little while. So tomorrow I decide to go outside -- a very far park -- with a also new student in this semester. buy, I'll find my food later. 
+
+### 2024-10-21
+
+超级累累的一天（指20号）。去了海滨公园～（其实没有怎么看海）。和曾一起去的，更像是一个公园，有观赏植物的地方，也有游乐设施。去的话真的超级久！！今天大约花了8000+日元hhhh。下次再出去玩就是11月23日和元旦了（这样打算滴芜湖）。
+
+感觉嘴巴好干···今天骑了25km差不多哦。
+
+曾推了一个LUCY的韩国乐团给我，不太感冒哦，主要是对韩国男团这类没啥兴趣吧，日本乐团听挺多了，阈值提高了？（bushi，有点自吹自擂了）。但也了解到了很多，挺好🙂。
