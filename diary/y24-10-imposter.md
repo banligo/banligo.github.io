@@ -1,5 +1,5 @@
 ---
-title: "二四年10月读博日记"
+title: "二四年10月日记"
 layout: article
 ---
 
@@ -70,3 +70,18 @@ But to save money. I cannot regually eat outside. One time eat at home. I can sa
 感觉嘴巴好干···今天骑了25km差不多哦。
 
 曾推了一个LUCY的韩国乐团给我，不太感冒哦，主要是对韩国男团这类没啥兴趣吧，日本乐团听挺多了，阈值提高了？（bushi，有点自吹自擂了）。但也了解到了很多，挺好🙂。
+
+
+### 2024-10-22
+
+Tea time~ It is a little emberassed every time I met M-sensei. 
+
+### 2024-10-23
+
+今天效率好滴。Lyth的Chap5看完了，明早上再看看Tsuji写的note。然后今天就没干什么了。那个Accelerator Seminar好无聊～输入仅5%不到，可以用来练如何做笔记吧。
+
+哎。怎么办。不知道干什么。今天seminar回到工位后，久久不知道要干什么。看书？看什么。看GR吗，从头开始看？感觉从中间跳着看又不好。QFT也想学，但是还是想把高量先学好。哎。怎么办啊啊啊啊。没有人教。
+
+等StudentDay过去了就问导师要研究课题，然后在此之前把GR补充补充。
+
+好多materials啊，都不知道要学什么了555...想哭。

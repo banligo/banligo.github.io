@@ -1,10 +1,18 @@
 ---
-title: "板栗日记（读博ing）"
+title: "板栗日记"
 layout: article
 ---
 
 
-## 2024 年
+## 读博の学习/研究memo
+
+<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">博1上</a> 重新学习基础知识，努力寻找研究课题。
+
+*那啥，我是直博。
+
+---
+
+## 2024年流水账
 
 <a class="button button--primary button--rounded button--sm" href="y24-10-imposter">10月</a> 读博啦，适应新环境。
 

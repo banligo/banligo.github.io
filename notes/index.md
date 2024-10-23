@@ -35,11 +35,14 @@ layout: article
 
 <a class="button button--primary button--rounded button--sm" href="dodelson-cosmology">brief</a> ^BOOK^《Modern Cosmology》Scott Dodelson 
 
+<a class="button button--primary button--rounded button--sm" href="lyth-perturbation">brief</a> ^BOOK^《The Primordial Density Perturbation》David Lyth & Andew Liddle 
+
 
 ### Quntumn Field Theory
 
 量子场论 / B站中山大余老师教学[视频](https://space.bilibili.com/6888822/channel/seriesdetail?sid=4025692) 
 
+http://home.ustc.edu.cn/~gengb/200923/Peskin,%20An%20Introduction%20to%20Quantum%20Field%20Theory.pdf
 
 ### Methematicas
 
