@@ -3,10 +3,13 @@ title: "博一上の学习memo"
 layout: article
 ---
 
+
+
 #### 学习规划
 - 结束 Advanced QM bilibili 和 Intro QFT bilibili 视频观看
 - 浏览一遍 Carroll GR book
 - 课堂要求 Lyth Perturbation book Part 2
+- 阅读小组 Toolkit Chap4
 - 观看 Liang GR bilibil 至 P50
 
 #### 研究规划
@@ -18,34 +21,38 @@ layout: article
 
 ---
 
-## 10月
+## 2024年10月
 
 #### 目标 🎯
 > 1. Lyth Perturbation book，阅读至Chap6，并做note用于class
-> 2. Advanced QM bilibili，观看至P15，做简述
+> 2. Advanced QM bilibili，观看至P15
 > 3. Carroll GR book，阅读至Chap1，简单过程笔记即可
 > 4. Intro QFT bilibili，观看至第2章
+> 5. Toolkit，阅读至Chap1
+
+
 
 #### memo
-20241023: Lyth Chap 5  /n
-<br>20241024: AQM P12；/n
-<br>20241025；     /n
-<br>20241026；     /n
-<br>20241027；     /n
-<br>20241029；     /n
-<br>20241030；     /n
-<br>20241031；     /n
+10/23 · Lyth Chap 5 &#10003;
+<br>10/24 · AQM P12; QFT 1.5~1.7 &#10003;
+<br>10/25 · AQM P13; Lyth Chap 6; Toolkit ~1.4 
+<br>10/26 · Lyth Chap 6 note for class   
+<br>10/27 · AQM P14; 
+<br>10/29 · AQM P15 
+<br>10/30 ·   
+<br>10/31 ·    
 
 ## 11月
 
 #### 目标 🎯
 
 > 1. Lyth Perturbation book，阅读至Chap9，并做note用于class 
-> 2. Advanced QM bilibili，看完，做简述
+> 2. Advanced QM bilibili，观看至P23，做简述
 > 3. Carroll GR book，阅读至Chap5，简单过程笔记即可
 > 4. Intro QFT bilibili，观看至第7章
-> 5. Liang GR bilibili，观看至P16
-> 6. 精读1篇文献
+> 5. Toolkit，阅读至Chap3
+> 6. Liang GR bilibili，观看至P16
+> 7. 精读1篇文献
 
 #### memo
 
