@@ -23,24 +23,23 @@ layout: article
 
 ## 2024年10月
 
-#### 目标 🎯
-> 1. Lyth Perturbation book，阅读至Chap6，并做note用于class
-> 2. Advanced QM bilibili，观看至P15
-> 3. Carroll GR book，阅读至Chap1，简单过程笔记即可
+#### 目标->实际
+> 1. Lyth Perturbation book，阅读至Chap6.3，并做note用于class
+> 2. Advanced QM bilibili，观看至P14
+> 3. Carroll GR book，阅读至Chap1.3
 > 4. Intro QFT bilibili，观看至第2章
-> 5. Toolkit，阅读至Chap1
-
-
+> 5. Toolkit，看情况阅读
 
 #### memo
 10/23 · Lyth Chap 5 &#10003;
-<br>10/24 · AQM P12; QFT 1.5~1.7 &#10003;
-<br>10/25 · AQM P13; Lyth Chap 6; Toolkit ~1.4 
-<br>10/26 · Lyth Chap 6 note for class   
-<br>10/27 · AQM P14; 
-<br>10/29 · AQM P15 
-<br>10/30 ·   
-<br>10/31 ·    
+<br>10/24 · AQM P11; QFT 1.5~1.6 &#10003;
+<br>10/25 · Lyth Chap 6.1~6.2 &#10003;
+<br>10/26 · &#10005;
+<br>10/27 · &#10005; 
+<br>10/28 · Lyth Chap 6.3 &#10003;
+<br>10/29 · AQM P12; QFT 1.7 &#10003;
+<br>10/30 · &#10005;
+<br>10/31 · AQM P13-14; Carroll 1.1~1.3;  &#10003;
 
 ## 11月
 
