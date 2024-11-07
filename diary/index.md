@@ -6,9 +6,7 @@ layout: article
 
 ## 读博の学习/研究memo
 
-<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">博1上</a> 重新学习基础知识，努力寻找研究课题。
-
-*那啥，我是直博。
+<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">研1上</a> 重新学习基础知识，努力寻找研究课题。
 
 ---
 

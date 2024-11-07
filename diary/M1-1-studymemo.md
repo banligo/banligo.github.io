@@ -23,7 +23,7 @@ layout: article
 
 ## 2024年10月
 
-#### 目标->实际
+#### completed
 > 1. Lyth Perturbation book，阅读至Chap6.3
 > 2. Advanced QM bilibili，观看至P13
 > 3. Carroll GR book，阅读至Chap1.3
@@ -45,32 +45,72 @@ layout: article
 
 #### 目标 🎯
 
-> 1. Lyth Perturbation book，阅读至Chap9
+> 1. Lyth Perturbation book，阅读至Chap8
 > 2. Advanced QM bilibili，观看至P23
-> 3. Carroll GR book，阅读至Chap5
-> 4. Intro QFT bilibili，观看至第7章
+> 3. Carroll GR book，阅读至Chap5 (2.7~2.10, skipped)
+> 4. Intro QFT bilibili，观看至第6章
 > 5. Toolkit，看情况阅读
-> 6. Liang GR bilibili，观看至P16
-> 7. 精读1篇文献
+> 6. Liang GR bilibili，观看至P26
+> 7. 精读1篇文献，做ppt
 
 #### memo
 
-11/01 · Carroll 1.4~1.10; 
-<br>11/02 · 
-<br>11/03 · 
-<br>11/04 · 
-<br>11/05 · 
-<br>11/06 · 
-<br>11/07 · 
-<br>11/08 · 
+11/01 · Carroll 1.4~1.10 &#10003;
+<br>11/02 · AQM P14 &#10003;
+<br>11/03 · AQM P15 &#10003;
+<br>11/04 · Liang P1-3 &#10003;
+<br>11/05 · Liang P4;  Carroll Chap2.1~2.6 &#10003;
+<br>11/06 · AQM P16; Liang P5-6 &#10003;
+<br>11/07 · QFT 2.1~2.2  &#10003;
+<br>11/08 · &#10003;
 <br>11/09 · 
+<br>11/10 · 
+<br>11/11 · 
+<br>11/12 · 
+<br>11/13 · 
+<br>11/14 · 
+<br>11/15 · 
+<br>11/16 · 
+<br>11/17 · 
+<br>11/18 ·
+<br>11/19 · 
+<br>11/20 · 
+<br>11/21 ·
+<br>11/22 · 
+<br>11/23 ·
+<br>11/24 · 
+<br>11/25 · 
+<br>11/26 · 
+<br>11/27 ·
+<br>11/28 · 
+<br>11/29 ·  
+<br>11/30 ·  
 
 ## 12月
 #### 目标 🎯
+
+> 1. Lyth Perturbation book，阅读至Chap10
+> 2. Advanced QM bilibili，看完
+> 3. Carroll GR book，阅读至Chap7
+> 4. Intro QFT bilibili，观看至第8章
+> 5. Toolkit，看情况阅读
+> 6. Liang GR bilibili，观看至P58
+> 7. 精读1篇文献，做ppt
+
+
+
 #### memo
 
 ## 01月
 #### 目标 🎯
+> 1. Lyth Perturbation book，阅读至Chap12
+> 3. Carroll GR book，阅读至Chap9
+> 4. Intro QFT bilibili 看完
+> 5. Toolkit，看情况阅读
+> 6. Liang GR bilibili，看完
+> 7. 精读1篇文献，做ppt
+
+
 #### memo
 
 ## 02月
