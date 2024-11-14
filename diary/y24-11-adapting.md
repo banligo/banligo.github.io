@@ -28,5 +28,59 @@ layout: article
 
 今天是KEKCosmo的第一天，结束了。好久没见到boss了……搞得有点生疏。emmm不知道怎么办噢。
 
+### 2024-11-08
 
+还是没问皮老师要签名或者打个招呼啥的。唉。太怂了我这个人，买的kek周边没用上这次。
 
+最近肚子好肥～ 剩下的今年这两个月不买薯片等其他膨化食品了，奖励……啥好呢。哦哦，还有冰淇淋！这两样东西不准吃！葡萄干也不买了。就奖励漫画吧。漫画起码买了1万日元了……可能不止说实话。那就这样了。如果锻炼出来了马甲线就买那个效果器。emmm要买效果器的话还要加上学习。把三个视频GR，AQM，QFT都看完再买。
+
+### 2024-11-09
+
+买了个3500日元的监听耳机……绝对不买薯片和冰淇淋！今年。买效果器大概要5万日元吧……555必须省钱了。
+
+### 2024-11-10
+
+不想学习。。。
+
+### 2024-11-11
+
+研究室好暖和。
+
+Student Day Presentation：
+
+Good afternoon, everyone. I am glad to have this opportunity to introduce myself here. My name is Yingqiu He. In Japanese, you can call me インチュウ for my first name and ホー for my family name. In Chinese characters, or kanji, Ying means welcome  Qiu means autumn. and He means congratulations. So, my  full name can be interpreted as "congratulations on the coming of autumn". The reason behind this name is quite simple, I was born in August, a time that transitions from summer to autumn. 
+
+I'm currently in the 5 year doctoral program at KEK, specifically in the IPNS Theory center, focusing on Cosmology. Over the last one month, I have gradually adapted to the life here with the help of many friendly people. 
+
+I come from mainland China, where I had lived in Zhejiang Province for almost 22 years. Zhejiang's capital is Hangzhou, a city some of you might know for various reasons. However, my hometown is actually Taizhou, a small fishing city that is not as internationally known as Hangzhou. Zhejiang is in the southern part of China, near the sea, and it is a wonderful place for outdoor activities especially in autumn when the weather is mild, not too hot or too cold, I often went hiking, biking and enjoyed nature. 
+
+As for hobbies, I enjoy stargazing. Coincidentally, 4 years ago, when I had just started university, I watched the Gemini meteor shower in Hangzhou with members of the astronomy club. Just last month, after joining SOKENDAI, I saw a comet in Tsukuba. I take this as a good sign, or indication that I will have a great experience during these 5 years. I also enjoy sports like running or badminton, though I've been a little bit lazy recently. If anyone would like me to join their badminton team, please feel free to call me!
+
+Here on this map is my hometown, Taizhou, with Hangzhou a bit further to the west. I'd also like to introduce another area, Beijing and Tainjin region in northern China. I'd like to share my favorite food, sugar stir-fried chestnut. This snack is very popular throuout China in late autumn and winter. I know there are different ways of preparing chestnut around the world, but this method which dates back to Yuan Dynasty, in the 1300s, began popular in the Beijing and Tianjin area. As you can see in the picture, the chestnut are roasted with hot sand and sweet syrup, making them warm, fragrant. They taste best right after roasting. If you have the chance to enjoy them on site in the cold winter, I am sure you will love them too.
+
+Finally, my name is Yingqiu. I am grateful for everything I have learned today, and I look forward to my growth here at KEK. Thank you.
+
+(revised by ChatGPT)
+
+### 2024-11-13
+
+不知道为什么回到家了就不想学习了。但是还是要学啊，二次量子化好难。
+
+理想的学习状态：
+
+6:00-7:00 洗漱+运动 <br>
+7:00-8:30 学习语言<br>
+9:00-18:00 在校<br>
+18:00-21:00 休息（吃饭、运动、弹吉他）<br>
+21:00-24:00 学习 <br>
+24:00-6:00 入睡
+
+实际：
+
+8:20-9:00 起床到校<br>
+9:30-11:30 小学一会<br>
+13:30-15:30 小学一会<br>
+15:30-17:00 心不在焉，回家<br>
+17:00-23:00 休息（就是玩）<br>
+23:00-24:30 想起来学习再学习一会<br>
+24:30-26:00 躺床上玩手机
