@@ -24,10 +24,10 @@ layout: article
 ## 2024年10月
 
 #### completed
-> 1. Lyth Perturbation book，阅读至Chap6.3
-> 2. Advanced QM bilibili，观看至P13
-> 3. Carroll GR book，阅读至Chap1.3
-> 4. Intro QFT bilibili，观看至第1章
+> 1. ~~Lyth Perturbation book，阅读至Chap6.3~~
+> 2. ~~Advanced QM bilibili，观看至P13~~
+> 3. ~~Carroll GR book，阅读至Chap1.3~~
+> 4. ~~Intro QFT bilibili，观看至第1章~~
 > 5. Toolkit，看情况阅读
 
 #### memo
@@ -46,12 +46,12 @@ layout: article
 #### 目标 🎯
 
 > 1. Lyth Perturbation book，阅读至Chap7
-> 2. Advanced QM bilibili，观看至P23
-> 3. Carroll GR book，阅读至Chap5 (2.7~2.10, 3.4 skipped)
+> 2. ~~Advanced QM bilibili，观看至P24~~ （20,21 skipped）
+> 3. Carroll GR book，阅读至Chap5 (2.7~2.10, 3.4, 3.9-10 skipped)
 > 4. Intro QFT bilibili，观看至第6章
 > 5. Toolkit，看情况阅读
 > 6. Liang GR bilibili，观看至P26
-> 7. 精读1篇文献「Robust Morphological Measures for Large-Scale Structure in the Universe」
+> 7. ~~精读1篇文献「Robust Morphological Measures for Large-Scale Structure in the Universe」~~
 
 #### memo
 
@@ -68,17 +68,17 @@ layout: article
 <br>11/11 · one paper reading &#10003;
 <br>11/12 · Carroll 3.1~3.2; AQM P17 1/2 &#10003;
 <br>11/13 · Carroll 3.3, 3.5; AQM P17  &#10003;
-<br>11/14 · Carroll 3.6~3.7; 
-<br>11/15 · 
-<br>11/16 · 
-<br>11/17 · 
-<br>11/18 ·
-<br>11/19 · 
-<br>11/20 · 
-<br>11/21 ·
-<br>11/22 · 
-<br>11/23 ·
-<br>11/24 · 
+<br>11/14 · Carroll 3.6~3.7 &#10003;
+<br>11/15 · &#10005; 
+<br>11/16 · &#10005; 
+<br>11/17 · &#10005; 
+<br>11/18 · &#10005; 
+<br>11/19 · AQM P18-19,22 &#10003;
+<br>11/20 · AQM P23; Carroll 3.8 &#10003;
+<br>11/21 · Carroll 4.1 &#10003;
+<br>11/22 · AQM P24; Lyth 7.1~ ; QFT 3.
+<br>11/23 · &#10005; 
+<br>11/24 · QFT 3. ; Liang P7~
 <br>11/25 · 
 <br>11/26 · 
 <br>11/27 ·
@@ -95,7 +95,7 @@ layout: article
 > 4. Intro QFT bilibili，观看至第8章
 > 5. Toolkit，看情况阅读
 > 6. Liang GR bilibili，观看至P58
-> 7. 精读1篇文献，做ppt
+> 7. 精读1篇文献，做笔记
 
 
 
