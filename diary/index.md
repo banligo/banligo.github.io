@@ -1,10 +1,10 @@
 ---
-title: "板栗日记"
+title: "CHESTNUT DIARY"
 layout: article
 ---
 
 
-## 读博の学习/研究memo
+## A PhD Candidate の study/research memo
 
 <a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">研1上</a> 重新学习基础知识，努力寻找研究课题。
 
@@ -33,3 +33,5 @@ layout: article
 ## 其他
 
 [腿部复健日记](leg-rehabitation)，2021年4月运动受伤之后……
+
+[梦](2024-3-08-dreams)，梦。
