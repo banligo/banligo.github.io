@@ -12,7 +12,9 @@ layout: article
 
 ## 2024年流水账
 
-<a class="button button--primary button--rounded button--sm" href="y24-10-imposter">11月</a> 搬入新家咯，要慢慢调整作息。
+<a class="button button--primary button--rounded button--sm" href="y24-12-homeless">12月</a> 不知所措，毫无目标。
+
+<a class="button button--primary button--rounded button--sm" href="y24-11-adapting">11月</a> 搬入新家咯，要慢慢调整作息。
 
 <a class="button button--primary button--rounded button--sm" href="y24-10-imposter">10月</a> 读博啦，适应新环境。
 

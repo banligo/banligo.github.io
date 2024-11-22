@@ -2,7 +2,7 @@
 layout: article
 titles:
   # @start locale config
-  en      : &EN       About
+  en      : &EN       About Me
   en-GB   : *EN
   en-US   : *EN
   en-CA   : *EN
@@ -37,17 +37,22 @@ mermaid: true
       <h4>板栗</h4>
     </div>
     <div class="item__description">
-      <p>你好！我是板栗，因为爱吃板栗。目前在日本某研究所读研。</p>
+      <p>你好！我是板栗，因为爱吃板栗。目前在日本某研究所读研。也不知道怎么做自我介绍……</p>
     </div>
   </div>
 </div>
 
 
+### basic 属性
 
+- 姓名：贺迎秋
+- 性别：理科短发女
+- 出生：2002年 狮子座 ♌️
+- MBTI：INFJ-T（绿老头）
 
-## 学习
+### about 学习
 
-<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 -）<br>
+<img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 - present）<br>
   - 研一
     - 高等量子力学
     - 微分几何和广义相对论
@@ -66,15 +71,16 @@ mermaid: true
     - 广义相对论 (intro)、宇宙学 (intro)
 
 <img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 高中（台州市路桥中学，2017 - 2020）<br> 
-  - 语文（94）/ 数学（121）/ 英语（12）
+  - 语文（94）/ 数学（121）/ 英语（124）
   - 选课：物理（91）/ 生物（94）/ 技术（91）
   
 
 
 
----
+### about 兴趣/爱好
 
-## 兴趣/爱好
+<img src="https://cdn.hugeicons.com/icons/music-note-01-stroke-rounded.svg" alt="music-note-01" width="20" height="20" /> 吉他
+  <br>正在自学电吉他中。会弹一些简单的solo和节奏，欢迎移步我的BiliBili频道关注我。
 
 <img src="https://cdn.hugeicons.com/icons/workout-run-stroke-rounded.svg" alt="workout-run" width="20" height="20" /> 长跑 <br>
   高中校运会在同学的“怂恿”下参加过（🥇），然后还参加过大学校运会（🎱），另外其实有一个隐藏原因……
@@ -88,9 +94,6 @@ mermaid: true
 <img src="https://cdn.hugeicons.com/icons/browser-stroke-rounded.svg" alt="browser" width="20" height="20" /> 网站制作
   <br>感觉挺有意思的，其实大二的时候就想做一个了，但是当时摆弄不来（现在也是）。
 
-<img src="https://cdn.hugeicons.com/icons/music-note-01-stroke-rounded.svg" alt="music-note-01" width="20" height="20" /> 吉他
-  <br>正在学电吉他中……会弹一些简单的solo了，比如光辉岁月和鸟之诗。
-
 <img src="https://cdn.hugeicons.com/icons/paint-board-stroke-rounded.svg" alt="paint-board" width="20" height="20" /> 绘画
   <br>学过素描（照猫画虎罢了），但是学不会啊，小垃圾一个。
 
@@ -103,4 +106,7 @@ mermaid: true
 <img src="https://cdn.hugeicons.com/icons/clothes-stroke-rounded.svg" alt="clothes" width="20" height="20" /> 合气道
   <br>UEC交换的时候参加的一个社团，5级证书（最低），师从铃木俊雄，[演示视频](https://space.bilibili.com/3494357548140879)。
 
-<br>
+
+### about 经历
+
+平平无奇的一个普通又平凡的掉在地上也没有人关心的板栗罢了。出生在浙江一个小农村家，父母尚在，有一小弟，家庭较为和睦。正常长大，虽过程也有曲折，但总是挺过来了。
