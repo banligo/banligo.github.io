@@ -37,7 +37,7 @@ mermaid: true
       <h4>板栗</h4>
     </div>
     <div class="item__description">
-      <p>你好！我是板栗，因为爱吃板栗。目前在日本留学读研（读博bushi）～嘿嘿。目前对于研究一脸懵逼的状态……咋办呀～～</p>
+      <p>你好！我是板栗，因为爱吃板栗。目前在日本某研究所读研。</p>
     </div>
   </div>
 </div>
@@ -49,7 +49,8 @@ mermaid: true
 
 <img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 研究生 （日本高能加速器研究机构 KEK，2024 -）<br>
   - 研一
-    - 不知道要干嘛。。。
+    - 高等量子力学
+    - 微分几何和广义相对论
   
 <img src="https://cdn.hugeicons.com/icons/school-stroke-rounded.svg" alt="school" width="24" height="24" /> 大学 （浙江工业大学，2020 - 2024）<br>
   - 大一
@@ -103,21 +104,3 @@ mermaid: true
   <br>UEC交换的时候参加的一个社团，5级证书（最低），师从铃木俊雄，[演示视频](https://space.bilibili.com/3494357548140879)。
 
 <br>
-
----
-
-## 我的人生重大事件
-
-{{< mermaid >}}
-
-%%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
-    timeline
-          2002 - 2020 : 《出生》 (2002.08.07)
-                    : 《中考》 （2017.06）
-                    : 第一次参加校运会 （2017.11）
-                    : 《高考》 被迫经历历史未有过之 高考延期  (2020.07)
-          2020 - 2024 : 第一次手术 半月板切除 (2022.04)
-                    : 第一次出国 交换留学  （2022.10-2023.08）
-                    : 留学深造考核通过 （2024.06）
-                    : 腿部复健（2024.08-2024.10）
-{{< /mermaid >}}
