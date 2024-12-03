@@ -45,12 +45,12 @@ layout: article
 
 #### 目标 🎯
 
-> 1. Lyth Perturbation book，阅读至Chap7
+> 1. Lyth Perturbation book，阅读至Chap7 (没做笔记)
 > 2. ~~Advanced QM bilibili，观看至P24~~ （20,21 skipped）
-> 3. Carroll GR book，阅读至Chap5 (2.7~2.10, 3.4, 3.9-10 skipped)
-> 4. Intro QFT bilibili，观看至第6章
+> 3. ~~Carroll GR book，阅读Chap4.2~~
+> 4. Intro QFT bilibili，观看至第3章 (3.3 skipped)
 > 5. Toolkit，看情况阅读
-> 6. Liang GR bilibili，观看至P26
+> 6. ~~Liang GR bilibili，观看至P8~~
 > 7. ~~精读1篇文献「Robust Morphological Measures for Large-Scale Structure in the Universe」~~
 
 #### memo
@@ -58,9 +58,9 @@ layout: article
 11/01 · Carroll 1.4~1.10 &#10003;
 <br>11/02 · AQM P14 &#10003;
 <br>11/03 · AQM P15 &#10003;
-<br>11/04 · Liang P1-3 &#10003;
-<br>11/05 · Liang P4;  Carroll Chap2.1~2.6 &#10003;
-<br>11/06 · AQM P16; Liang P5-6 &#10003;
+<br>11/04 · LiangGR P1-3 &#10003;
+<br>11/05 · LiangGR P4;  Carroll Chap2.1~2.6 &#10003;
+<br>11/06 · AQM P16; LiangGR P5-6 &#10003;
 <br>11/07 · QFT 2.1~2.2  &#10003;
 <br>11/08 · QFT 2.3.1~2.3.2 &#10003;
 <br>11/09 · QFT chap2 over &#10003;
@@ -76,27 +76,59 @@ layout: article
 <br>11/19 · AQM P18-19,22 &#10003;
 <br>11/20 · AQM P23; Carroll 3.8 &#10003;
 <br>11/21 · Carroll 4.1 &#10003;
-<br>11/22 · AQM P24; Lyth 7.1~ ; QFT 3.
+<br>11/22 · AQM P24 &#10003;
 <br>11/23 · &#10005; 
-<br>11/24 · QFT 3. ; Liang P7~
-<br>11/25 · 
-<br>11/26 · 
-<br>11/27 ·
-<br>11/28 · 
-<br>11/29 ·  
-<br>11/30 ·  
+<br>11/24 · &#10005; 
+<br>11/25 · QFT 3.1; Lyth Chap 7 reading &#10003;
+<br>11/26 · Carroll 4.2, 5.1　&#10003;
+<br>11/27 · QFT 3.2; LiangGR P7~8 &#10003;
+<br>11/28 · QFT 4.1-4.2 &#10003;
+<br>11/29 · Carroll 2.7-2.10,3.4,3.10   &#10003; 
+<br>11/30 · &#10005;   
 
 ## 12月
 #### 目标 🎯
 
-> 1. Lyth Perturbation book，阅读至Chap10
+> 1. Lyth Perturbation book，阅读至Chap8
 > 2. Advanced QM bilibili，看完
 > 3. Carroll GR book，阅读至Chap7
-> 4. Intro QFT bilibili，观看至第8章
+> 4. Intro QFT bilibili，观看至第8章 
 > 5. Toolkit，看情况阅读
 > 6. Liang GR bilibili，观看至P58
+> 7. Liang Lie Algebra bilibili，观看至P20
 > 7. 精读1篇文献，做笔记
 
+12/01 · &#10005;
+<br>12/02 ·
+<br>12/03 ·
+<br>12/04 ·
+<br>12/05 ·
+<br>12/06 ·
+<br>12/07 ·
+<br>12/08 ·
+<br>12/09 ·
+<br>12/10 ·
+<br>12/11 ·
+<br>12/12 ·
+<br>11/13 ·
+<br>12/14 ·
+<br>12/15 ·
+<br>12/16 ·
+<br>12/17 ·
+<br>12/18 ·
+<br>12/19 ·
+<br>12/20 ·
+<br>12/21 ·
+<br>12/22 ·
+<br>12/23 ·
+<br>12/24 ·
+<br>12/25 ·
+<br>12/26 ·
+<br>12/27 ·
+<br>12/28 ·
+<br>12/29 ·
+<br>12/30 ·
+<br>12/31 ·
 
 
 #### memo
@@ -112,6 +144,38 @@ layout: article
 
 
 #### memo
+
+01/01 · 
+<br>01/02 ·
+<br>01/03 ·
+<br>01/04 ·
+<br>01/05 ·
+<br>01/06 ·
+<br>01/07 ·
+<br>01/08 ·
+<br>01/09 ·
+<br>01/10 ·
+<br>01/11 ·
+<br>01/12 ·
+<br>01/13 ·
+<br>01/14 ·
+<br>01/15 ·
+<br>01/16 ·
+<br>01/17 ·
+<br>01/18 ·
+<br>01/19 ·
+<br>01/20 ·
+<br>01/21 ·
+<br>01/22 ·
+<br>01/23 ·
+<br>01/24 ·
+<br>01/25 ·
+<br>01/26 ·
+<br>01/27 ·
+<br>01/28 ·
+<br>01/29 ·
+<br>01/30 ·
+<br>01/31 ·
 
 ## 02月
 #### 目标 🎯
