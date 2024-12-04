@@ -16,7 +16,7 @@ layout: article
 
 ## My private notes
 
-[General Relativity and Cosmology](/documents/GRcosmo.pdf)  (doing recently, fighting!!)
+[General Relativity and Cosmology](/assets/documents/GRcosmo.pdf)  (doing recently, fighting!!)
 
 ## Books | Lectures
 
