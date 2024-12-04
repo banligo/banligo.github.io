@@ -3,21 +3,16 @@ title: "博一上の学习memo"
 layout: article
 ---
 
-
+2024年10月 ～ 2025年3月
 
 #### 学习规划
-- 结束 Advanced QM bilibili 和 Intro QFT bilibili 视频观看
+- 结束 Advanced QM bilibili，Liang GR bilibili 和 Intro QFT bilibili 视频观看
 - 浏览一遍 Carroll GR book
 - 课堂要求 Lyth Perturbation book Part 2
 - 阅读小组 Toolkit Chap4
-- 观看 Liang GR bilibil 至 P50
 
 #### 研究规划
-- 精读5篇文献，并报告到B站账号
-
-暂无
-
-*最近更新日期：2024年10月24日
+- 暂无
 
 ---
 
@@ -31,15 +26,15 @@ layout: article
 > 5. Toolkit，看情况阅读
 
 #### memo
-10/23 · Lyth Chap 5 &#10003;
-<br>10/24 · AQM P11; QFT 1.5~1.6 &#10003;
-<br>10/25 · Lyth Chap 6.1~6.2 &#10003;
+10/23 · Lyth Chap 5  
+<br>10/24 · AQM P11; QFT 1.5~1.6  
+<br>10/25 · Lyth Chap 6.1~6.2  
 <br>10/26 · &#10005;
 <br>10/27 · &#10005; 
-<br>10/28 · Lyth Chap 6.3 &#10003;
-<br>10/29 · AQM P12; QFT 1.7 &#10003;
+<br>10/28 · Lyth Chap 6.3  
+<br>10/29 · AQM P12; QFT 1.7  
 <br>10/30 · &#10005;
-<br>10/31 · AQM P13; Carroll 1.1~1.3;  &#10003;
+<br>10/31 · AQM P13; Carroll 1.1~1.3;   
 
 ## 11月
 
@@ -55,35 +50,35 @@ layout: article
 
 #### memo
 
-11/01 · Carroll 1.4~1.10 &#10003;
-<br>11/02 · AQM P14 &#10003;
-<br>11/03 · AQM P15 &#10003;
-<br>11/04 · LiangGR P1-3 &#10003;
-<br>11/05 · LiangGR P4;  Carroll Chap2.1~2.6 &#10003;
-<br>11/06 · AQM P16; LiangGR P5-6 &#10003;
-<br>11/07 · QFT 2.1~2.2  &#10003;
-<br>11/08 · QFT 2.3.1~2.3.2 &#10003;
-<br>11/09 · QFT chap2 over &#10003;
+11/01 · Carroll 1.4~1.10  
+<br>11/02 · AQM P14  
+<br>11/03 · AQM P15  
+<br>11/04 · LiangGR P1-3  
+<br>11/05 · LiangGR P4;  Carroll Chap2.1~2.6  
+<br>11/06 · AQM P16; LiangGR P5-6  
+<br>11/07 · QFT 2.1~2.2   
+<br>11/08 · QFT 2.3.1~2.3.2  
+<br>11/09 · QFT chap2 over  
 <br>11/10 · &#10005; 
-<br>11/11 · one paper reading &#10003;
-<br>11/12 · Carroll 3.1~3.2; AQM P17 1/2 &#10003;
-<br>11/13 · Carroll 3.3, 3.5; AQM P17  &#10003;
-<br>11/14 · Carroll 3.6~3.7 &#10003;
+<br>11/11 · one paper reading  
+<br>11/12 · Carroll 3.1~3.2; AQM P17 1/2  
+<br>11/13 · Carroll 3.3, 3.5; AQM P17   
+<br>11/14 · Carroll 3.6~3.7  
 <br>11/15 · &#10005; 
 <br>11/16 · &#10005; 
 <br>11/17 · &#10005; 
 <br>11/18 · &#10005; 
-<br>11/19 · AQM P18-19,22 &#10003;
-<br>11/20 · AQM P23; Carroll 3.8 &#10003;
-<br>11/21 · Carroll 4.1 &#10003;
-<br>11/22 · AQM P24 &#10003;
+<br>11/19 · AQM P18-19,22  
+<br>11/20 · AQM P23; Carroll 3.8  
+<br>11/21 · Carroll 4.1  
+<br>11/22 · AQM P24  
 <br>11/23 · &#10005; 
 <br>11/24 · &#10005; 
-<br>11/25 · QFT 3.1; Lyth Chap 7 reading &#10003;
-<br>11/26 · Carroll 4.2, 5.1　&#10003;
-<br>11/27 · QFT 3.2; LiangGR P7~8 &#10003;
-<br>11/28 · QFT 4.1-4.2 &#10003;
-<br>11/29 · Carroll 2.7-2.10,3.4,3.10   &#10003; 
+<br>11/25 · QFT 3.1; Lyth Chap 7 reading  
+<br>11/26 · Carroll 4.2, 5.1　 
+<br>11/27 · QFT 3.2; LiangGR P7~8  
+<br>11/28 · QFT 4.1-4.2  
+<br>11/29 · Carroll 2.7-2.10,3.4,3.10     
 <br>11/30 · &#10005;   
 
 ## 12月
@@ -91,15 +86,17 @@ layout: article
 
 > 1. Lyth Perturbation book，阅读至Chap8
 > 2. Advanced QM bilibili，看完
-> 3. Carroll GR book，阅读至Chap7
+> 3. Carroll GR book，Chap7-8 (chap5-6 skipped)
 > 4. Intro QFT bilibili，观看至第8章 
 > 5. Toolkit，看情况阅读
 > 6. Liang GR bilibili，观看至P58
 > 7. Liang Lie Algebra bilibili，观看至P20
-> 7. 精读1篇文献，做笔记
+> 7. 精读1篇文献，做笔记「Correlation Function in Deep Redshift Space as a Cosmological Probe」
+
+#### memo
 
 12/01 · &#10005;
-<br>12/02 ·
+<br>12/02 · Carroll 4.3,
 <br>12/03 ·
 <br>12/04 ·
 <br>12/05 ·

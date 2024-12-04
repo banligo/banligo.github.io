@@ -14,6 +14,10 @@ layout: article
 
 ---
 
+## My private notes
+
+[General Relativity and Cosmology](/documents/GRcosmo.pdf)  (doing recently, fighting!!)
+
 ## Books | Lectures
 
 ### Fundamental Theoretical Physics
@@ -27,7 +31,6 @@ layout: article
 
 <a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> [LECTURE](https://www.bilibili.com/video/BV1Uh4y1K7Ey/) 量子力学 / B站北大郭宏老师教学录制视频
 
-<a class="button button--primary button--rounded button--sm" href="guohong-quatum">brief</a> [LECTURE](https://www.bilibili.com/video/BV1QN411i7Wo) 高等量子力学 / B站北大郭宏老师教学录制视频
 
 
 
@@ -39,6 +42,9 @@ layout: article
 
 
 ### Quntumn Field Theory
+
+<a class="button button--primary button--rounded button--sm" href="guohong-quatum">brief</a> [LECTURE](https://www.bilibili.com/video/BV1QN411i7Wo) 高等量子力学 / B站北大郭宏老师教学录制视频
+
 
 量子场论 / B站中山大余老师教学[视频](https://space.bilibili.com/6888822/channel/seriesdetail?sid=4025692) 
 

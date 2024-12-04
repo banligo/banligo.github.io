@@ -13,4 +13,12 @@ layout: article
 
 下午有一个课，必须去学校了。
 
-###
+### 2024-12-04
+
+太好了……把Latex的两个软件配置好了……太难了我。
+
+https://qnscholar.github.io/2020-03/sublime-latex-setup/
+
+https://www.latexstudio.net/archives/51449.html
+
+这两篇挺有用的。累累累回家！！六点半了都。这个星期没怎么学，搞latex去了哈哈。
