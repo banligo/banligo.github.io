@@ -86,7 +86,7 @@ layout: article
 
 > 1. Lyth Perturbation book，阅读至Chap8
 > 2. Advanced QM bilibili，看完
-> 3. Carroll GR book，Chap7-8 (chap5-6 skipped)
+> 3. Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)
 > 4. Intro QFT bilibili，观看至第8章 
 > 5. Toolkit，看情况阅读
 > 6. Liang GR bilibili，观看至P58
@@ -96,17 +96,17 @@ layout: article
 #### memo
 
 12/01 · &#10005;
-<br>12/02 · Carroll 4.3,
-<br>12/03 ·
-<br>12/04 ·
-<br>12/05 ·
-<br>12/06 ·
-<br>12/07 ·
-<br>12/08 ·
-<br>12/09 ·
-<br>12/10 ·
-<br>12/11 ·
-<br>12/12 ·
+<br>12/02 · Carroll 4.3
+<br>12/03 · &#10005;
+<br>12/04 · 整理 GRCosmo LaTeX 笔记
+<br>12/05 · Carroll 7.1-7.2
+<br>12/06 · &#10005;
+<br>12/07 · &#10005;
+<br>12/08 · Liang GR P9-10
+<br>12/09 · Carroll 7.3-7.5, 7.7 
+<br>12/10 · Carroll 3.9, 8.1-8.3
+<br>12/11 · Carroll 7.6, 8.4-8.7
+<br>12/12 · 
 <br>11/13 ·
 <br>12/14 ·
 <br>12/15 ·

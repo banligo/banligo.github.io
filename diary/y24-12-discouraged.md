@@ -22,3 +22,7 @@ https://qnscholar.github.io/2020-03/sublime-latex-setup/
 https://www.latexstudio.net/archives/51449.html
 
 这两篇挺有用的。累累累回家！！六点半了都。这个星期没怎么学，搞latex去了哈哈。
+
+### 2024-12-07 
+
+待在公寓～ 感觉自己胖了好多……怎么办。减肥 啊。
