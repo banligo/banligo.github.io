@@ -84,13 +84,12 @@ layout: article
 ## 12月
 #### 目标 🎯
 
-> 1. Lyth Perturbation book，阅读至Chap8
+> 1. ~~Lyth Perturbation book，Chap7~~
 > 2. Advanced QM bilibili，看完
-> 3. Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)
+> 3. ~~Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)~~
 > 4. Intro QFT bilibili，观看至第8章 
-> 5. Toolkit，看情况阅读
+> 5. Toolkit，chap1-2.2
 > 6. Liang GR bilibili，观看至P58
-> 7. Liang Lie Algebra bilibili，观看至P20
 > 7. 精读1篇文献，做笔记「Correlation Function in Deep Redshift Space as a Cosmological Probe」
 
 #### memo
@@ -105,37 +104,37 @@ layout: article
 <br>12/08 · Liang GR P9-10
 <br>12/09 · Carroll 7.3-7.5, 7.7 
 <br>12/10 · Carroll 3.9, 8.1-8.3
-<br>12/11 · Carroll 7.6, 8.4-8.7
-<br>12/12 · 
-<br>11/13 ·
-<br>12/14 ·
-<br>12/15 ·
-<br>12/16 ·
-<br>12/17 ·
-<br>12/18 ·
-<br>12/19 ·
-<br>12/20 ·
-<br>12/21 ·
-<br>12/22 ·
-<br>12/23 ·
-<br>12/24 ·
-<br>12/25 ·
-<br>12/26 ·
-<br>12/27 ·
-<br>12/28 ·
-<br>12/29 ·
-<br>12/30 ·
-<br>12/31 ·
+<br>12/11 · Liang GR P11-12; Carroll chap4
+<br>12/12 · Liang GR P13-14; Carroll 8.4-8.5
+<br>11/13 · Liang GR P15-16
+<br>12/14 · Liang GR P17
+<br>12/15 · Liang GR P18
+<br>12/16 · Liang GR P19-20; Carroll chap8 over; Lyth 7.1-7.3 note
+<br>12/17 · Liang GR P21-22; Lyth 7.4 note; Toolkit chap1 over
+<br>12/18 · 
+<br>12/19 · 
+<br>12/20 · 
+<br>12/21 · 
+<br>12/22 · 
+<br>12/23 · 
+<br>12/24 · 
+<br>12/25 · 
+<br>12/26 · 
+<br>12/27 · 
+<br>12/28 · 
+<br>12/29 · &#10005;
+<br>12/30 · &#10005;
+<br>12/31 · &#10005;
 
 
 #### memo
 
 ## 01月
 #### 目标 🎯
-> 1. Lyth Perturbation book，阅读至Chap12
-> 3. Carroll GR book，阅读至Chap9
+> 1. Lyth Perturbation book Chap8
+> 3. Carroll GR book，阅读 Chap4-6,9，查漏补缺
 > 4. Intro QFT bilibili 看完
-> 5. Toolkit，看情况阅读
+> 5. Toolkit chap 3
 > 6. Liang GR bilibili，看完
 > 7. 精读1篇文献，做ppt　
 

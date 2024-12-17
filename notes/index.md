@@ -4,44 +4,40 @@ layout: article
 ---
 
 
-- note 表示LaTeX PDF版本笔记
-- brief 表示网站文字显示读后感（？）
-- LECTURE 表示为有教师授课视频
-- BOOK 表示书本阅读
-- NONE 表示没有特别指定视频或者授课
+- note：LaTeX PDF版本个人学习笔记
+- brief：网站文字显示读后感（？）
+- LECTURE：有教师授课视频链接
+- BOOK：书本阅读
+- （完结）：笔记不会再有大改动
 
-[GitHub NOTES](https://github.com/heyingqiu/NOTEs) 《== 所有 note 可以在这儿找到。
+[GitHub NOTES](https://github.com/heyingqiu/NOTEs) 全部note会不定时更新至此。
 
 ---
 
-## My private notes
+## 个人笔记合集
 
-[General Relativity and Cosmology](/assets/documents/GRcosmo.pdf)  (doing recently, fighting!!)
+<a class="button button--primary button--rounded button--sm" href="guohon">note</a> [LECTURE](https://www.bilibili.com/video/BV1hY411g7HG) 分析力学 / B站川大宁波老师教学录制视频
 
-## Books | Lectures
+<a class="button button--primary button--rounded button--sm" href="/assets/documents/EMfield_Yingqiu.pdf">note</a> 电磁场理论基础（完结） `包括矢量分析、静点磁场、电磁波传播和辐射等`
 
-### Fundamental Theoretical Physics
-
-
-<a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> [LECTURE](https://www.bilibili.com/video/BV1hY411g7HG) 分析力学 / B站川大宁波老师教学录制视频
-
-<a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> ^NONE^ 电动力学 / 
-
-<a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> ^NONE^ 统计力学 / 
+<a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> 统计力学
 
 <a class="button button--primary button--rounded button--sm" href="guohong-quatum">note</a> [LECTURE](https://www.bilibili.com/video/BV1Uh4y1K7Ey/) 量子力学 / B站北大郭宏老师教学录制视频
 
 
+<a class="button button--primary button--rounded button--sm" href="/assets/documents/GRcosmo.pdf">note</a> 广义相对论和宇宙学 `正在学习和制作，尽量涵盖多的成熟topics`
+
+等广相note差不多后计划学习和制作《群论和量子场论》笔记。
 
 
-### General Relativity & Cosmology
+## 资源推荐
+
+> note里面
 
 <a class="button button--primary button--rounded button--sm" href="dodelson-cosmology">brief</a> ^BOOK^《Modern Cosmology》Scott Dodelson 
 
 <a class="button button--primary button--rounded button--sm" href="lyth-perturbation">brief</a> ^BOOK^《The Primordial Density Perturbation》David Lyth & Andew Liddle 
 
-
-### Quntumn Field Theory
 
 <a class="button button--primary button--rounded button--sm" href="guohong-quatum">brief</a> [LECTURE](https://www.bilibili.com/video/BV1QN411i7Wo) 高等量子力学 / B站北大郭宏老师教学录制视频
 
@@ -70,6 +66,7 @@ https://zh.z-lib.gs/book/28479895/cb7173/数学物理方法-第5版课后习题�
 ---
 
 ## Articles
+
 
 ---
 
