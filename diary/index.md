@@ -10,7 +10,12 @@ layout: article
 
 ---
 
-## 2024年流水账
+## year 2025 Daily Diary
+
+01-02月
+
+
+## year 2024 Daily Diary
 
 <a class="button button--primary button--rounded button--sm" href="y24-12-discouraged">12月</a> 不知所措，毫无目标，自我认同感归零。
 
