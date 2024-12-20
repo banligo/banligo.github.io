@@ -6,16 +6,16 @@ layout: article
 
 ## A PhD Candidate の study/research memo
 
-<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">研1上</a> 重新学习基础知识，努力寻找研究课题。
+<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">M1-1</a> 重新学习基础知识，努力寻找研究课题。
 
 ---
 
-## year 2025 Daily Diary
+## year 2025 diary
 
-01-02月
+01-02
 
 
-## year 2024 Daily Diary
+## year 2024 diary
 
 <a class="button button--primary button--rounded button--sm" href="y24-12-discouraged">12月</a> 不知所措，毫无目标，自我认同感归零。
 
