@@ -34,7 +34,7 @@ layout: article
 <br>10/28 · Lyth Chap 6.3  
 <br>10/29 · AQM P12; QFT 1.7  
 <br>10/30 · &#10005;
-<br>10/31 · AQM P13; Carroll 1.1~1.3;   
+<br>10/31 · AQM P13; Carroll 1.1~1.3
 
 ## 11月
 
@@ -110,10 +110,10 @@ layout: article
 <br>12/14 · Liang GR P17
 <br>12/15 · Liang GR P18
 <br>12/16 · Liang GR P19-20; Carroll chap8 over; Lyth 7.1-7.3 note
-<br>12/17 · Liang GR P21-22; Lyth 7.4 note; Toolkit chap1 over
-<br>12/18 · 
-<br>12/19 · 
-<br>12/20 · 
+<br>12/17 · Lyth 7.4 note; Toolkit chap7 over
+<br>12/18 · Liang GR P21-25
+<br>12/19 · &#10005;
+<br>12/20 · Liang GR P26-
 <br>12/21 · 
 <br>12/22 · 
 <br>12/23 · 
