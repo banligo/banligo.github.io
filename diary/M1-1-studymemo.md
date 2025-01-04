@@ -3,13 +3,14 @@ title: "Study Memo for Master-1st-fall"
 layout: article
 ---
 
-from 2024.11 to 2025.03 
+from 2024.10 to 2025.03 
 
 #### Study plan
-- 结束 Advanced QM bilibili，Liang GR bilibili 和 Intro QFT bilibili 视频观看
-- 浏览一遍 Carroll GR book
-- 课堂要求 Lyth Perturbation book Part 2
-- 阅读小组 Toolkit Chap4
+- finish Advanced QM bilibili，Liang GR bilibili and Intro QFT bilibili lecture video watching
+- go through Carroll GR book
+- seminar: Lyth Perturbation book Part 2
+- reading club: Toolkit Chap1-4
+- meeting: Dodelson Cosmology book
 
 #### Reasearch plan
 - none
@@ -26,15 +27,15 @@ from 2024.11 to 2025.03
 5. Toolkit，看情况阅读
 
 #### memo
-> 10/23 · Lyth Chap 5
-> <br>10/24 · AQM P11; QFT 1.5~1.6
-> <br>10/25 · Lyth Chap 6.1~6.2
-> <br>10/26 · &#10005;
-> <br>10/27 · &#10005;
-> <br>10/28 · Lyth Chap 6.3
-> <br>10/29 · AQM P12; QFT 1.7 
-> <br>10/30 · &#10005;
-> <br>10/31 · AQM P13; Carroll 1.1~1.3
+1. 10/23 · Lyth Chap 5
+1. 10/24 · AQM P11; QFT 1.5~1.6
+1. 10/25 · Lyth Chap 6.1~6.2
+1. 10/26 · &#10005;
+1. 10/27 · &#10005;
+1. 10/28 · Lyth Chap 6.3
+1. 10/29 · AQM P12; QFT 1.7 
+1. 10/30 · &#10005;
+1. 10/31 · AQM P13; Carroll 1.1~1.3
 
 ## 2024.11
 
@@ -83,15 +84,15 @@ from 2024.11 to 2025.03
 
 ## 2024.12
 
-#### 目标 🎯
+#### completed
 
-> 1. ~~Lyth Perturbation book，Chap7~~
-> 2. Advanced QM bilibili，看完
-> 3. ~~Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)~~
-> 4. Intro QFT bilibili，观看至第8章 
-> 5. Toolkit，chap1-2.2
-> 6. Liang GR bilibili，观看至P58
-> 7. 精读1篇文献，做笔记「Correlation Function in Deep Redshift Space as a Cosmological Probe」
+1. ~~Lyth Perturbation book，Chap7~~
+2. Advanced QM bilibili，看完
+3. ~~Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)~~
+4. Intro QFT bilibili，观看至第8章 
+5. ~~Toolkit，chap1-3.1~~
+6. Liang GR bilibili，观看至P58
+7. 精读1篇文献，做笔记「Correlation Function in Deep Redshift Space as a Cosmological Probe」
 
 #### memo
 
@@ -113,22 +114,24 @@ from 2024.11 to 2025.03
 > <br>12/16 · Liang GR P19-20; Carroll chap8 over; Lyth 7.1-7.3 note
 > <br>12/17 · Lyth 7.4 note; Toolkit chap1 over
 > <br>12/18 · Liang GR P21-25
-> <br>12/19 · Lyth 7.1-7.3 present
-> <br>12/20 · Liang GR P26-
-> <br>12/21 · 
-> <br>12/22 · 
-> <br>12/23 · 
-> <br>12/24 · 
-> <br>12/25 · 
-> <br>12/26 · 
-> <br>12/27 · 
-> <br>12/28 · 
+> <br>12/19 · Lyth 7.1-7.3 presented
+> <br>12/20 · Liang GR P26; Toolkit 2.1-2.3
+> <br>12/21 · &#10005;
+> <br>12/22 · &#10005;
+> <br>12/23 · &#10005;
+> <br>12/24 · Toolkit 2.4-3.1
+> <br>12/25 · Liang GR P27-28; Lyth 8.1
+> <br>12/26 · &#10005;
+> <br>12/27 · &#10005;
+> <br>12/28 · &#10005;
 > <br>12/29 · &#10005;
 > <br>12/30 · &#10005;
 > <br>12/31 · &#10005;
 
 
 #### summary
+
+
 
 ## 2025.01
 #### 目标 🎯
@@ -142,16 +145,16 @@ from 2024.11 to 2025.03
 
 #### memo
 
-> 01/01 · 
-> <br> 01/02 ·
-> <br> 01/03 ·
+> 01/01 · &#10005;
+> <br> 01/02 · &#10005;
+> <br> 01/03 · &#10005;
 > <br> 01/04 ·
 > <br> 01/05 ·
 > <br> 01/06 ·
 > <br> 01/07 ·
 > <br> 01/08 ·
 > <br> 01/09 ·
-> <br> 01/10 ·
+> <br> 01/10 · 
 > <br> 01/11 ·
 > <br> 01/12 ·
 > <br> 01/13 ·
