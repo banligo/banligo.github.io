@@ -12,7 +12,7 @@ layout: article
 
 ## year 2025 diary
 
-<a class="button button--primary button--rounded button--sm" href="y25-0102-thinking">01-02</a> 
+<a class="button button--primary button--rounded button--sm" href="y25-0102-thinking">01-03</a> 享受，不完美，展现自我。
 
 
 

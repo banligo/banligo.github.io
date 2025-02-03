@@ -9,13 +9,13 @@ from 2024.10 to 2025.03
 - finish Advanced QM bilibili，Liang GR bilibili and Intro QFT bilibili lecture video watching
 - go through Carroll GR book
 - seminar: Lyth Perturbation book Part 2
-- reading club: Toolkit Chap1-4
+- reading club: Toolkit Chap1-5
 - meeting: Dodelson Cosmology book
 
 #### Reasearch plan
 - none
 
----
+--- 
 
 ## 2024.10
 
@@ -86,13 +86,10 @@ from 2024.10 to 2025.03
 
 #### completed
 
-1. ~~Lyth Perturbation book，Chap7~~
-2. Advanced QM bilibili，看完
-3. ~~Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)~~
-4. Intro QFT bilibili，观看至第8章 
-5. ~~Toolkit，chap1-3.1~~
-6. Liang GR bilibili，观看至P58
-7. 精读1篇文献，做笔记「Correlation Function in Deep Redshift Space as a Cosmological Probe」
+1. Lyth Perturbation book，Chap7
+3. Carroll GR book，Chap7-8 (chap5-6, chap 7.6 skipped)
+5. Toolkit，chap1-3.1
+6. Liang GR bilibili，观看至P9-28
 
 #### memo
 
@@ -131,61 +128,158 @@ from 2024.10 to 2025.03
 
 #### summary
 
+懈怠，非常之懈怠。这个月竟然没有学一点高量或者是QFT，无法饶恕。
+
 
 
 ## 2025.01
-#### 目标 🎯
-1. Lyth Perturbation book Chap8
-3. Carroll GR book，阅读 Chap4-6,9，查漏补缺
-4. Intro QFT bilibili 看完
-5. Toolkit chap 3
-6. Liang GR bilibili，看完
-7. 精读1篇文献，做ppt　
 
+#### completed
+
+1. ~~Lyth Perturbation book Chap8~~
+5. ~~Toolkit 1-4, 13, 14~~
+6. Liang GR bilibili P29-73, 101-118
+7. Morden Cosmology Dodelson Chap5-10
+8. ~~Wangyi / QFT srednicki 1-6~~
 
 #### memo
 
 > 01/01 · &#10005;
 > <br> 01/02 · &#10005;
 > <br> 01/03 · &#10005;
-> <br> 01/04 ·
-> <br> 01/05 ·
-> <br> 01/06 ·
-> <br> 01/07 ·
-> <br> 01/08 ·
-> <br> 01/09 ·
-> <br> 01/10 · 
-> <br> 01/11 ·
-> <br> 01/12 ·
-> <br> 01/13 ·
-> <br> 01/14 ·
-> <br> 01/15 ·
-> <br> 01/16 ·
-> <br> 01/17 ·
-> <br> 01/18 ·
-> <br> 01/19 ·
-> <br> 01/20 ·
-> <br> 01/21 ·
-> <br> 01/22 ·
-> <br> 01/23 ·
-> <br> 01/24 ·
-> <br> 01/25 ·
-> <br> 01/26 ·
-> <br> 01/27 ·
-> <br> 01/28 ·
-> <br> 01/29 ·
-> <br> 01/30 ·
-> <br> 01/31 ·
+> <br> 01/04 · &#10005;
+> <br> 01/05 · Liang GR P29-31
+> <br> 01/06 · Liang GR P32; Dodelson 5.1-5.4, 6.1-6.2, 9.1
+> <br> 01/07 · Dodelson 5,6 over
+> <br> 01/08 · Dodelson 7.1-7.3, 8.1-8.3 
+> <br> 01/09 · Liang GR P33-35
+> <br> 01/10 · &#10005;
+> <br> 01/11 · &#10005;
+> <br> 01/12 · &#10005;
+> <br> 01/13 · Liang GR P36-40
+> <br> 01/14 · Liang GR P41-42; Dodelson 7,8 over, 9.1-9.2
+> <br> 01/15 · Liang GR P43-48; Dodelson 9.3-9.4
+> <br> 01/16 · Liang GR P49-51; 
+> <br> 01/17 · Dodelson 9.5, 10.1-10.2
+> <br> 01/18 · &#10005;
+> <br> 01/19 · Liang GR P52-58
+> <br> 01/20 · Liang GR P59-64; AQM P24
+> <br> 01/21 · Liang GR P65-70; Srednicki 1-2
+> <br> 01/22 · Liang GR P71-73, 100;
+> <br> 01/23 · Liang GR P101-102; Lyth 8.4 ; Toolkit lec 13; 
+> <br> 01/24 · Srednicki 3-6
+> <br> 01/25 · &#10005;
+> <br> 01/26 · Liang GR P103-105
+> <br> 01/27 · Liang GR P106-108; Toolkit lec 01
+> <br> 01/28 · Liang GR P109-111; Toolkit lec 02
+> <br> 01/29 · Toolkit lec 03,04
+> <br> 01/30 · Toolkit lec 14
+> <br> 01/31 · Schwartz 3,5
+
+#### summary
+
+虽然还是没有完成目标内容，但是算是比上个月好了一些。希望下面两个月能完成目标。
 
 ## 2025.02
+
 #### 目标 🎯
+
+1. Lyth Perturbation book Chap9
+4. Wangyi / QFT srednicki 7-26, bilibili 看完
+5. Toolkit bilibili chap1-4
+6. Liang book 上册（抄书1-5章）
+7. Morden Cosmology Dodelson Chap 11-12
+6. QFT Schwartz 6-14
+
 #### memo
+
+> 02/01 · &#10005;
+> <br> 02/02 · Liang GR P112-113
+> <br> 02/03 · Liang GR P114-116; Toolkit lec 08
+> <br> 02/04 · Liang GR P117-118; Toolkit lec 09
+> <br> 02/05 · 
+> <br> 02/06 · 
+> <br> 02/07 · 
+> <br> 02/08 · 
+> <br> 02/09 · 
+> <br> 02/10 · 
+> <br> 02/11 · 
+> <br> 02/12 · 
+> <br> 02/13 · 
+> <br> 02/14 · 
+> <br> 02/15 · 
+> <br> 02/16 · 
+> <br> 02/17 · 
+> <br> 02/18 · 
+> <br> 02/19 · 
+> <br> 02/20 · 
+> <br> 02/21 · &#10005;
+> <br> 02/22 · &#10005;
+> <br> 02/23 · &#10005;
+> <br> 02/24 · &#10005;
+> <br> 02/25 · &#10005;
+> <br> 02/26 · &#10005;
+> <br> 02/27 · 
+> <br> 02/28 · 
+
+
+
+#### summary
+
 
 ## 2025.03
 #### 目标 🎯
+
+5. Toolkit bilibili chap 5
+7. Morden Cosmology Dodelson Chap13-14 看完
+4. Wangyi QFT srednicki 27-40 
+6. QFT Schwartz 15-24
+
+
 #### memo
 
+> 03/01 · 
+> <br> 03/02 · 
+> <br> 03/03 · 
+> <br> 03/04 · 
+> <br> 03/05 · 
+> <br> 03/06 · 
+> <br> 03/07 · 
+> <br> 03/08 · 
+> <br> 03/09 · 
+> <br> 03/10 · &#10005;
+> <br> 03/11 · &#10005;
+> <br> 03/12 · &#10005;
+> <br> 03/13 · 
+> <br> 03/14 · 
+> <br> 03/15 · 
+> <br> 03/16 · 
+> <br> 03/17 · 
+> <br> 03/18 · 
+> <br> 03/19 · 
+> <br> 03/20 · 
+> <br> 03/21 · 
+> <br> 03/22 · 
+> <br> 03/23 · 
+> <br> 03/24 ·
+> <br> 03/25 · 
+> <br> 03/26 · 
+> <br> 03/27 · 
+> <br> 03/28 · 
+> <br> 03/29 · 
+> <br> 03/30 · 
+> <br> 03/31 · 
+
+
+#### summary
 
 
 ## Conclusion
 
+下学期B站计划学习：
+
+【1】Geometric Anatomy of Theoretical Physics by Fredric Schuller
+
+【2】HongLiu [MIT 8.323 Relativistic Quantum Field Theory I, Spring 2023]
+
+【3】【Hannover】Introduction to conformal field theory
