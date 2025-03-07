@@ -182,68 +182,71 @@ from 2024.10 to 2025.03
 
 ## 2025.02
 
-#### 目标 🎯
+#### completed
 
-1. Lyth Perturbation book Chap9
-4. Wangyi / QFT srednicki 7-26, bilibili 看完
-5. Toolkit bilibili chap1-4
-6. Liang book 上册（抄书1-5章）
-7. Morden Cosmology Dodelson Chap 11-12
-6. QFT Schwartz 6-14
+~~1. Lyth Perturbation book Chap 9~~
+~~4. Wangyi / QFT srednicki 2-3, bilibili~~
+5. Toolkit bilibili chap1-4.1
+7. ~~Morden Cosmology Dodelson Chap 10~~
+6. ~~QFT Schwartz 6-8.3~~
 
 #### memo
 
 > 02/01 · &#10005;
 > <br> 02/02 · Liang GR P112-113
-> <br> 02/03 · Liang GR P114-116; Toolkit lec 08
-> <br> 02/04 · Liang GR P117-118; Toolkit lec 09
-> <br> 02/05 · 
-> <br> 02/06 · 
-> <br> 02/07 · 
-> <br> 02/08 · 
-> <br> 02/09 · 
-> <br> 02/10 · 
-> <br> 02/11 · 
-> <br> 02/12 · 
-> <br> 02/13 · 
-> <br> 02/14 · 
-> <br> 02/15 · 
-> <br> 02/16 · 
-> <br> 02/17 · 
-> <br> 02/18 · 
-> <br> 02/19 · 
-> <br> 02/20 · 
+> <br> 02/03 · Liang GR 完结; Schwartz 6,7.1
+> <br> 02/04 · Schwartz 7.2; Toolkit lec 05
+> <br> 02/05 · Schwartz 7; Toolkit lec 06; srednicki 7
+> <br> 02/06 · &#10005;
+> <br> 02/07 · dodelson semi
+> <br> 02/08 · &#10005;
+> <br> 02/09 · &#10005;
+> <br> 02/10 · Schwartz 8.1-8.3
+> <br> 02/11 · &#10005;
+> <br> 02/12 · Tong qft 1-3
+> <br> 02/13 · dodelson 9
+> <br> 02/14 · dodelson semi
+> <br> 02/15 · &#10005;
+> <br> 02/16 · Toolkit lec 07-09
+> <br> 02/17 · Toolkit lec 10; dodelson 10
+> <br> 02/18 · coding for CMB
+> <br> 02/19 · coding for CMB
+> <br> 02/20 · coding for CMB
 > <br> 02/21 · &#10005;
 > <br> 02/22 · &#10005;
 > <br> 02/23 · &#10005;
 > <br> 02/24 · &#10005;
 > <br> 02/25 · &#10005;
 > <br> 02/26 · &#10005;
-> <br> 02/27 · 
-> <br> 02/28 · 
+> <br> 02/27 · &#10005;
+> <br> 02/28 · dodelson semi; 
 
 
 
 #### summary
 
+……无语。无语啊。我都在干什么……
+
 
 ## 2025.03
-#### 目标 🎯
+#### completed
 
-5. Toolkit bilibili chap 5
-7. Morden Cosmology Dodelson Chap13-14 看完
-4. Wangyi QFT srednicki 27-40 
-6. QFT Schwartz 15-24
+5. Toolkit bilibili chap 4.2-5
+7. Morden Cosmology Dodelson Chap11-14 看完
+1. David Tong QFT 看完
+4. Wangyi QFT srednicki 8-40
+6. QFT Schwartz 8-14
+6. Liang book 上册（抄书1-5章）
 
 
 #### memo
 
-> 03/01 · 
-> <br> 03/02 · 
-> <br> 03/03 · 
-> <br> 03/04 · 
-> <br> 03/05 · 
-> <br> 03/06 · 
+> 03/01 · &#10005;
+> <br> 03/02 · &#10005;
+> <br> 03/03 · ?
+> <br> 03/04 · ?
+> <br> 03/05 · ?
+> <br> 03/06 · Toolkit lec 24
 > <br> 03/07 · 
 > <br> 03/08 · 
 > <br> 03/09 · 
@@ -283,3 +286,4 @@ from 2024.10 to 2025.03
 【2】HongLiu [MIT 8.323 Relativistic Quantum Field Theory I, Spring 2023]
 
 【3】【Hannover】Introduction to conformal field theory
+
