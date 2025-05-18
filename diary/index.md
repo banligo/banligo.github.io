@@ -8,9 +8,12 @@ layout: article
 
 <a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">M1-1</a> 重新学习基础知识，努力寻找研究课题。
 
+<a class="button button--primary button--rounded button--sm" href="M1-2-studymemo">M1-2</a> 课题 -- 宇宙的拓扑结构
+
 ---
 
 ## year 2025 diary
+<a class="button button--primary button--rounded button--sm" href="y25-0506-searching">05-06</a> 恋に堕ちた & 找到课题了？
 
 <a class="button button--primary button--rounded button--sm" href="y25-0304-planning">03-04</a> 是时候规划一下未来的计划了。
 
