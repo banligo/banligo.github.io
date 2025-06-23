@@ -7,7 +7,7 @@ My master period daily boring notes from seminars, conference, balabala...
 
 ---
 
-#### 2025-06-
+#### 2025-06-24
 
 #### 2025-06-12 // Cosmo Internal Talk by Akitsu-san 
 
