@@ -9,6 +9,8 @@ layout: article
 
 ## year 2025 
 
+<a class="button button--primary button--rounded button--sm" href="y25-0708-working">07-08</a> 努力工作，暂时不考虑未来。
+
 <a class="button button--primary button--rounded button--sm" href="y25-0506-searching">05-06</a> 恋に堕ちた & 找到课题了？
 
 <a class="button button--primary button--rounded button--sm" href="y25-0304-planning">03-04</a> 是时候规划一下未来的计划了。
