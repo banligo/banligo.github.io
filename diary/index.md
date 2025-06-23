@@ -1,29 +1,23 @@
 ---
-title: "CHESTNUT DIARY"
+title: "DIARY"
 layout: article
 ---
 
-
-## A PhD Candidate の study/research memo
-
-<a class="button button--primary button--rounded button--sm" href="M1-1-studymemo">M1-1</a> 重新学习基础知识，努力寻找研究课题。
-
-<a class="button button--primary button--rounded button--sm" href="M1-2-studymemo">M1-2</a> 课题 -- 宇宙的拓扑结构
+随心记录的小电子日记本。
 
 ---
 
-## year 2025 diary
+## year 2025 
+
 <a class="button button--primary button--rounded button--sm" href="y25-0506-searching">05-06</a> 恋に堕ちた & 找到课题了？
 
 <a class="button button--primary button--rounded button--sm" href="y25-0304-planning">03-04</a> 是时候规划一下未来的计划了。
 
-
 <a class="button button--primary button--rounded button--sm" href="y25-0102-thinking">01-02</a> 享受，不完美，展现自我。
 
 
+## year 2024 
 
-
-## year 2024 diary
 <a class="button button--primary button--rounded button--sm" href="y24-12-discouraged">12月</a> 不知所措，毫无目标，自我认同感归零。
 
 <a class="button button--primary button--rounded button--sm" href="y24-11-adapting">11月</a> 搬入新家咯，要慢慢调整作息。
@@ -44,12 +38,9 @@ layout: article
 
 <a class="button button--primary button--rounded button--sm" href="y24-3-saddddd">03月</a> 悲伤，烦躁，迷茫。
 
-## 其他
+## Archive
 
-[腿部复健日记](leg-rehabitation)，2021年4月运动受伤之后……
-
-## Posts
-
+[腿部复健日记](leg-rehabitation)，2021年4月运动受伤之后……<br>
 [2024-03-08](2024-03-08-dream1)，噩梦两则。<br>
 [2024-03-16](2024-03-16-chestnutbio)，我的小初高。<br>
 [2024-03-21](2024-03-21)，喜欢物理？。<br>

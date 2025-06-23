@@ -43,8 +43,8 @@ mermaid: true
 </div>
 
 Education: 
-- 2020.10-2024.07: Zhejiang University of Technology (Bachelor of Science, Optical Engineering)
 - 2024.10-present: SOKENDAI (Theoretical Cosmology)
+- 2020.10-2024.07: Zhejiang University of Technology (Bachelor of Science, Optical Engineering)
 
 Research: 
 - 2024.02-2024.06: Simulation of matter power spectrum (personal)
