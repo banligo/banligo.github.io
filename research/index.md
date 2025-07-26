@@ -10,13 +10,13 @@ layout: article
 ## daily boring notes
 
 
-<a class="button button--primary button--rounded button--sm" href="y25_spring_cosmo">2025 spring semester note 1 (cosmology)</a> 
+<a class="button button--primary button--rounded button--sm" href="y25_spring_cosmo">2025 spring semester note 1 (cosmology)</a>
 
-<a class="button button--primary button--rounded button--sm" href="y25_spring_noncosmo">2025 spring semester note 2 (not directly related to cosmology)</a> 
+<a class="button button--primary button--rounded button--sm" href="y25_spring_noncosmo">2025 spring semester note 2 (not directly related to cosmology)</a>
 
 ## events participated/scheduled
 
-`2025.07.28~2025.07.31` Astronomy Summer School in Japan [🔗](https://astro-wakate.sakura.ne.jp/ss2025/) poster 
+`2025.07.28~2025.07.31` Astronomy Summer School in Japan [🔗](https://astro-wakate.sakura.ne.jp/ss2025/) poster
 
 ## events attended/scheduled
 
