@@ -37,15 +37,16 @@ mermaid: true
       <h4>Yingqiu He</h4>
     </div>
     <div class="item__description">
-      <p>Theory Center, IPNS, KEK, SOKENDAI, PhD Student</p>
+      <p>Theory Center, IPNS, KEK, SOKENDAI</p>
+      <p>5-year PhD Student</p>
     </div>
   </div>
 </div>
 
-Education: 
-- 2024.10-present: SOKENDAI (Theoretical Cosmology)
-- 2020.10-2024.07: Zhejiang University of Technology (Bachelor of Science, Optical Engineering)
+Education:
+- 2024.10-present: SOKENDAI (PhD, Theoretical Cosmology)
+- 2020.10-2024.07: Zhejiang University of Technology (BSc, Optical Engineering)
 
-Research: 
-- 2024.02-2024.06: Simulation of matter power spectrum (personal)
-- 2022.11-2023.07: Optical frequency comb experiment (lab)
+Research:
+- 2024.02-2024.06: Simulation of matter power spectrum (personal) <a href="/assets/documents/BScThesis-heyingqiu.pdf">thesis</a>
+- 2022.11-2023.07: Optical frequency comb experiment (lab) <a href="/assets/documents/he-uec-paper.pdf">report</a>

@@ -14,9 +14,9 @@ Cosmo Group Talk by Tsuji
 **Could Gravitational Waves Unlock the Inflation Sector?**
 
 Inflation - inflaton :
-- unknown scalar field, 
+- unknown scalar field,
 - flat potential @slow roll
-- not constrained @minimum 
+- not constrained @minimum
 
 $$V^{1/4}\sim \left(\frac{r}{0.1}\right)10^{16} \text{ GeV},\quad r<0.036$$
 
@@ -24,7 +24,7 @@ Inflation v.s. Reheating
 - the shape of the potential @ flat regime / @ minimum
 - primordial GW / GW from reheating
 
-Inflaton $\phi$ must convert its energy into radiation. 
+Inflaton $\phi$ must convert its energy into radiation.
 
 Perturbative reheating EOM: $\ddot{\phi} + 3H\dot{\phi} + V'(\phi) = -\Gamma\dot{\phi}$, $\Gamma$: decay
 
@@ -45,15 +45,15 @@ Cosmo Group Talk by Takahashi-san
 
 "Ultralight" Dark Matter (non-thermal bosonic fields).
 
-look for Axions: light shining through a wall experiments; Helioscopes; Haloscopes. 
+look for Axions: light shining through a wall experiments; Helioscopes; Haloscopes.
 
-Constraints on axions by high-energy astrophysics. 
+Constraints on axions by high-energy astrophysics.
 
 Broad-band spectrum of crab nebula, (Large High Altitude Air Shower Observatory) LHAASO, and HAWC. Ultra-high energy gamma-ray observation.
 
-what should be taken into account: 
+what should be taken into account:
 
-Modeling the Crab Nebula:  The dust emission -> two at different temperatures and total mass. B-field is important not only for gamma-ray emission but also for axion-photon conversion in Crab Nebula. 
+Modeling the Crab Nebula:  The dust emission -> two at different temperatures and total mass. B-field is important not only for gamma-ray emission but also for axion-photon conversion in Crab Nebula.
 
 
 #### 2025-07-15
@@ -66,7 +66,7 @@ Fluctuation: $\delta(\vec{k}) = |\delta_{\vec{k}}| e^{i\theta_{\vec{k}}}$. The p
 
 $$\langle e^{i\theta_{\vec{k}_1}} e^{i\theta_{\vec{k}_2}} \rangle = \text{const}$$
 
-$$\langle e^{i\theta_{\vec{k}_1}} e^{i\theta_{\vec{k}_2}} e^{i\theta_{\vec{k}_3}} \rangle = \langle \cos(\theta_1 + \theta_2 + \theta_3) + i\sin(\theta_1 + \theta_2 + \theta_3) \rangle \\ 
+$$\langle e^{i\theta_{\vec{k}_1}} e^{i\theta_{\vec{k}_2}} e^{i\theta_{\vec{k}_3}} \rangle = \langle \cos(\theta_1 + \theta_2 + \theta_3) + i\sin(\theta_1 + \theta_2 + \theta_3) \rangle \\
 = F(k_1, k_2, k_3) \text{ or } F(\vec{k}_1, \vec{k}_2, \vec{k}_3) \text{ related to } \cos\theta...$$
 
 For example, $|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2 e^{i(\theta_{\vec{k}} + \theta_{-\vec{k}})}$. Since $\theta_{-\vec{k}} = -\theta_{\vec{k}}$, we have $|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2$, which contains no phase information.
@@ -93,7 +93,7 @@ where $g_1$ and $g_2$ are independent Gaussian random variables, and $P(k)$ is t
 
 Furthermore, for the bispectrum, we can define $\delta_{NG}(\vec{x}) = \delta_{G}(\vec{x}) + \delta_{G}^2(\vec{x})$.
 
-* Discretization: $N^2(k) = V \cdot \delta_D(\vec{k}_1 + \vec{k}_2) P(k) \Rightarrow N(k) = \sqrt{\frac{P(k)}{2V}}$, a normalization factor. 
+* Discretization: $N^2(k) = V \cdot \delta_D(\vec{k}_1 + \vec{k}_2) P(k) \Rightarrow N(k) = \sqrt{\frac{P(k)}{2V}}$, a normalization factor.
 
 $$\langle \delta(\vec{k})\delta(\vec{k'})
 \rangle=(2\pi)^3\delta_D(\vec{k}+\vec{k'})P(k)$$
@@ -102,7 +102,7 @@ $$\langle \delta(\vec{k})\delta(\vec{k'})
 
 #### 2025-07-10
 
-Cosmo Group Talk by Jenney 
+Cosmo Group Talk by Jenney
 
 **Quantum Algorithms for Scientific Problems with Applications to Cosmology**
 
@@ -133,48 +133,48 @@ Journal Club by Akitsu Kazuyuki
 
 References:  [arXiv:2411.06000](https://arxiv.org/abs/2411.06000) , [arXiv:2503.14470](https://arxiv.org/abs/2503.14470)  , [arXiv:2504.16932](https://arxiv.org/abs/2504.16932), [arXiv:2505.00659](https://arxiv.org/abs/2505.00659)
 
-**$\omega_m$ Deficit:* 
+**$\omega_m$ Deficit:*
     There is a deficit in the matter density parameter $\omega_m$ when comparing different cosmological probes.
 
-*Apparent Preference for Negative $\sum m_\nu$:* 
+*Apparent Preference for Negative $\sum m_\nu$:*
     Some analyses show a preference for "negative" total neutrino mass, indicating tension between CMB and DESI BAO results.
 
-*Parameter Assumptions:*  
-    - Six cosmological parameters, assuming flat geometry.  
-    - $\sum m_\nu = 0.06\,\mathrm{eV}$ (minimal mass).  
-    - Two dimensionful quantities: $T_{CMB0} \rightarrow \omega_\gamma$, $13.6\,\mathrm{eV} \rightarrow a_*$.  
+*Parameter Assumptions:*
+    - Six cosmological parameters, assuming flat geometry.
+    - $\sum m_\nu = 0.06\,\mathrm{eV}$ (minimal mass).
+    - Two dimensionful quantities: $T_{CMB0} \rightarrow \omega_\gamma$, $13.6\,\mathrm{eV} \rightarrow a_*$.
     - $\omega_\nu = \frac{\sum m_\nu}{93.1\,\mathrm{eV}}$.
 
-*First Peak Location and Parameter Degeneracies:*  
-    - The location of the first CMB peak ($\theta$) relates to $D_A^*$, $\omega_\Lambda$, and $H_0$.  
+*First Peak Location and Parameter Degeneracies:*
+    - The location of the first CMB peak ($\theta$) relates to $D_A^*$, $\omega_\Lambda$, and $H_0$.
     - For flat geometry: $h^2 = \omega_m + \omega_\Lambda$.
 
-*Massive Neutrinos and CMB Lensing:* 
-    - Neutrinos become non-relativistic after recombination: $1+z_{nr} \sim 113 \frac{m_\nu}{0.06\,\mathrm{eV}}$.  
-    - CMB lensing helps break the degeneracy between $\omega_m$ and $\omega_\Lambda$.  
-    - High-$\ell$ CMB power spectrum is enhanced by lensing, allowing $m_\nu$ measurement (suppressed in unlensed spectra).  
+*Massive Neutrinos and CMB Lensing:*
+    - Neutrinos become non-relativistic after recombination: $1+z_{nr} \sim 113 \frac{m_\nu}{0.06\,\mathrm{eV}}$.
+    - CMB lensing helps break the degeneracy between $\omega_m$ and $\omega_\Lambda$.
+    - High-$\ell$ CMB power spectrum is enhanced by lensing, allowing $m_\nu$ measurement (suppressed in unlensed spectra).
     - Lensing anomaly: $A_{lens} > 1$ when $C_L^{\phi\phi}$ is enhanced.
 
-*Massive Neutrinos and BAO:*  
-    - With massive neutrinos: $\omega_m = \omega_c + \omega_b + \omega_\nu > \omega_{cb}$.  
-    - DESI finds $\omega_m^{BAO} < \omega_{cb}^{CMB}$, indicating tension.  
-    - BAO is sensitive to $\omega_{cb} + \omega_\nu$; CMB is sensitive to $\omega_{cb} - 0.5\omega_\nu$.  
+*Massive Neutrinos and BAO:*
+    - With massive neutrinos: $\omega_m = \omega_c + \omega_b + \omega_\nu > \omega_{cb}$.
+    - DESI finds $\omega_m^{BAO} < \omega_{cb}^{CMB}$, indicating tension.
+    - BAO is sensitive to $\omega_{cb} + \omega_\nu$; CMB is sensitive to $\omega_{cb} - 0.5\omega_\nu$.
     - With $\sum m_\nu = 0.06\,\mathrm{eV}$, the tension is at $2$–$3\sigma$.
 
-*Optical Depth and CMB:*  
-    - CMB optical depth:  
-        $$\tau_{reio} = \sigma_T \int_0^{z_*} \frac{n_e(z')}{H(z')(1+z')} dz'$$  
-    - Larger $\tau$ relaxes tensions, leading to smaller $\Omega_m$.  
+*Optical Depth and CMB:*
+    - CMB optical depth:
+        $$\tau_{reio} = \sigma_T \int_0^{z_*} \frac{n_e(z')}{H(z')(1+z')} dz'$$
+    - Larger $\tau$ relaxes tensions, leading to smaller $\Omega_m$.
     - $A_s (\Omega_m h^2)^2 [1 - 5\Omega_\nu/\Omega_m]$—affects amplitude and tension.
-
-*Possible Solutions:*  
-    - Tension in optical depth may point to physics beyond flat $\Lambda$CDM:  
-        - Dynamical dark energy  
-        - Negative curvature  
+Qubitization
+*Possible Solutions:*
+    - Tension in optical depth may point to physics beyond flat $\Lambda$ CDM:
+        - Dynamical dark energy
+        - Negative curvature
         - Decaying dark matter to matter/radiation
 
-*$\Lambda$CDM Reference:*
-    - $\omega_0 = -1$, $\omega_a = 0$ (standard $\Lambda$CDM; see Sailer et al. 2025)
+*$\Lambda$ CDM Reference:*
+    - $\omega_0 = -1$, $\omega_a = 0$ (standard $\Lambda$ CDM; see Sailer et al. 2025)
 
 
 #### 2025-07-03
@@ -209,15 +209,15 @@ The asymmetry parameter $\epsilon$ depends on leptogenesis parameters such as to
 
 how primordial black holes (PBHs) can create local hot spots in the early universe, affecting baryon asymmetry through out-of-equilibrium dynamics. The talk covered the role of Hawking radiation, diffusion, and particle trapping in PBH environments, and how these factors modify conventional leptogenesis scenarios. The interplay between PBH properties and particle physics parameters determines the resulting baryon asymmetry.
 
-#### 2025-06-26 
+#### 2025-06-26
 
 Cosmo Group Talk by Mikage
 
 An Accurate Modeling of Nano-Hertz Gravitational Wave Signal from Eccentric Supermassive Binary Black Holes
 
-#### 2025-06-12 
+#### 2025-06-12
 
-Cosmo Group Talk by Akitsu-san 
+Cosmo Group Talk by Akitsu-san
 
  Theory of the Error Bar in Local Primordial Non-Gaussianity (PNG)
 
