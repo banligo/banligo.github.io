@@ -7,6 +7,18 @@ My master period daily boring notes from seminars, conference, balabala...
 
 ---
 
+#### 2025-07-30 summer school (Day 3)
+
+A-> A -> A -> A -> C -> C
+
+#### 2025-07-29 summer school (Day 2)
+
+A-> C -> C -> C -> A -> B
+
+#### 2025-07-28 summer school (Day 1)
+
+C -> A -> A
+
 #### 2025-07-24
 
 Cosmo Group Talk by Tsuji

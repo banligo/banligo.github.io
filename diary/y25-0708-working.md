@@ -130,4 +130,11 @@ double click or command+click: backward search
 
 #### 2025-07-26
 
+完蛋了，感觉很无力，有点发热的感觉，喉咙还不舒服。
+
+#### 2025-07-27
+
+Preperation for the poster speech...
+
+
 
