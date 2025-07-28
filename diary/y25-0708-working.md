@@ -136,5 +136,79 @@ double click or command+click: backward search
 
 Preperation for the poster speech...
 
+👋 1. Introduction (Greeting and Motivation)
+
+Hello, thank you for stopping by my poster. Today, I’m presenting a research topic that I am interested -- cosmic topology, with a central question:
+Is our Universe finite, or infinite? This is not just a philosophical question — it has testable consequences in physics. While general relativity gives us a theory of the local geometry of spacetime, it doesn't uniquely determine the global topology, or shape, of the Universe. So, it usuaally assumed to be simply connected, like a sphere. But what if it’s not? What if the Universe has a more complex topology? This field, called cosmic topology, is concerned with these global properties: is space multiply connected? Compact? Orientable? And if the Universe does have a non-trivial topology, can we detect it observationally?
+
+🌀 2. Historical Context & Theoretical Background
+
+Let me briefly walk you through the history. In the 18th century, philosophers like Kant and physicists like Newton assumed infinite, Euclidean space. But in the 19th century, Mathematicians like Riemann and Schwarzschild began considering finite and unbounded spaces, such as a torus universe. Einstein’s general relativity in the 1920s introduced curved, static spacetimes — but still, the topology was often assumed to be simple. Later, we all know that the universe is expanding. Besides, a multiply connected space comes to people's mind. And Researchers started to explore using observational methods.
+
+This poster focuses on a simplest case: the 3-torus universe. As two dimensional surfaces, we can use one sheet and wrap the two edges to form a 2-torus. So we can also extend to three dimensions. Then, the space is unbounded but compact, with edges or boundaries. It is clear in two dimensions that the torus has hole, so we can consider the universe is multiply connected. And orientable means that we and define left and right in space.
+
+🔭 3. Observational Signatures of Cosmic Topology
+
+Now, how can we test these ideas? There are two main strategies used to search for topological signatures.
+
+🪞 3.1 Circles-in-the-Sky (CMB Method)
+
+First is the “circles-in-the-sky” method, proposed for the Cosmic Microwave Background (CMB). We know that the CMB is a sperical last scattering surface. The idea of this method is that if the spheres intersect with each other, it will have circles of matching temperature distribution. So, it consider the torus universe side length should be smaller than the radius of the last scattering surface. Look at this figure, if we divide the CMB to a b s d e f regions, it should have matching pairs of them in other regions. However, Plank 2015 results using this method disfavored the a non-trivial topology in this scale. But recently, a new collaboration called COMPACT in 2024 suggests that many viable topologies remain to be tested.
+
+🧊 3.2 Cosmic Crystallography (3D Galaxy Method)
+
+The second method is cosmic crystallography. This involves analyzing the galaxy clusters. If the Universe has a periodic structure — like in a 3-torus — the same object may appear in different places, like mirror images. We analyze the histogram of pairwise separations, looking for sharp peaks that indicate repeated distances — a sign of a multiply connected space.
+
+🧮 4. New Method: Betti Functionals from Topological Data Analysis
+
+Now I’d like to focus on a recent, more mathematical approach: using Betti numbers and gradient temperature fluctuations.
+
+We start by defining the normalized CMB temperature fluctuation as:
+
+We define the excursion set E(ν), which is the set of directions where the temperature is above a threshold ν
+ν. Over this excursion set, we compute Betti numbers:
+
+β1(ν): Number of holes in the region
+These numbers describe the topological complexity of the hot and cold spots in the CMB.
+
+One key symmetry is:
+
+This comes from the statistical symmetry of the Gaussian field. So, deviations from this symmetry may suggest non-Gaussianity — or even hints of topology.
+
+📐 4.1 Gradient-Based Observable:
+ρρ
+Another derived quantity is:
+Where
+  is the standard deviation of the gradient of the temperature field. This quantity reflects how “bumpy” or structured the CMB is.
+
+A key result from recent literature shows that:
+
+⟨ρ(L)⟩≈46.122−3.290 L ⟨ρ(L)⟩≈46.122−3.290L So, if we assume a Gaussian, isotropic CMB, we can relate the observed gradient properties to the possible torus size
+L L. This makes ρ ρ a useful estimator of topological scale.
+
+📊 5. Results: Comparison with Simulations
+In this study, we compared Planck CMB maps with simulated universes having cubic 3-torus topologies.
+
+The Betti functional curves from the Planck maps lie between the simulated models with side lengths
+. This suggests that a 3-torus topology with a side length in that range could be consistent with observations.
+
+While not conclusive, this is an exciting hint toward a finite, multiply-connected Universe.
+
+🧠 6. Discussion & Future Work
+Let me summarize some key takeaways:
+
+Betti numbers give a new mathematical way to analyze CMB topology.
+They are sensitive to non-Gaussianity and topology, but they’re also vulnerable to noise and foreground contamination.
+The current results are suggestive, but we need more data and better masks.
+Next steps include:
+Using CMB polarization data.
+Combining with galaxy surveys.
+Extending Betti analysis to 3D or non-Gaussian simulations.
+🙏 7. Conclusion
+In conclusion, cosmic topology is a frontier where geometry meets cosmology. Understanding the true shape of space may tell us something profound about the early Universe and the nature of space itself.
+
+Thank you so much for your time. I’d love to discuss further if you have questions!
+
+#### 2025-07-28
 
 
