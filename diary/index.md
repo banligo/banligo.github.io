@@ -1,13 +1,11 @@
 ---
-title: "DIARY"
+title: "HOME"
 layout: article
 ---
 
-随心记录的小电子日记本。
-
 ---
 
-## year 2025 
+## dairy 2025
 
 <a class="button button--primary button--rounded button--sm" href="y25-0708-working">07-08</a> 努力工作，暂时不考虑未来。
 
@@ -18,7 +16,7 @@ layout: article
 <a class="button button--primary button--rounded button--sm" href="y25-0102-thinking">01-02</a> 享受，不完美，展现自我。
 
 
-## year 2024 
+## dairy 2024
 
 <a class="button button--primary button--rounded button--sm" href="y24-12-discouraged">12月</a> 不知所措，毫无目标，自我认同感归零。
 
@@ -39,6 +37,11 @@ layout: article
 <a class="button button--primary button--rounded button--sm" href="y24-4-busyyyyy">04月</a> 开始忙碌，收到内诺。
 
 <a class="button button--primary button--rounded button--sm" href="y24-3-saddddd">03月</a> 悲伤，烦躁，迷茫。
+
+## reading
+
+<a class="button button--primary button--rounded button--sm" href="reading_JaneEyre">Jane Eyre</a>
+
 
 ## Archive
 

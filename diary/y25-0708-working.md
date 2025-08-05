@@ -195,20 +195,49 @@ The Betti functional curves from the Planck maps lie between the simulated model
 While not conclusive, this is an exciting hint toward a finite, multiply-connected Universe.
 
 🧠 6. Discussion & Future Work
+
 Let me summarize some key takeaways:
 
 Betti numbers give a new mathematical way to analyze CMB topology.
 They are sensitive to non-Gaussianity and topology, but they’re also vulnerable to noise and foreground contamination.
 The current results are suggestive, but we need more data and better masks.
-Next steps include:
-Using CMB polarization data.
-Combining with galaxy surveys.
-Extending Betti analysis to 3D or non-Gaussian simulations.
+
 🙏 7. Conclusion
+
 In conclusion, cosmic topology is a frontier where geometry meets cosmology. Understanding the true shape of space may tell us something profound about the early Universe and the nature of space itself.
 
 Thank you so much for your time. I’d love to discuss further if you have questions!
 
 #### 2025-07-28
 
+打算以后poster都做一些自己感兴趣但是没有深入研究的领域。所以，第一次，我做了 cosmic topology，算是一个开篇吧。
 
+#### 2025-07-29
+
+失败……逃走了，站在那太尴尬了……不喜欢吵的。以及。好像还是做点自己的研究比较好啊……
+
+失败。不想了。他要咋样咋样吧，反正大家都是炮友。以后自己走自己的路。回家也挺好的……算了，不想。
+
+一间屋子的凛凛，人好好啊……那个人见了不喜欢呢。算了，不和别人比了。
+
+#### 2025-07-30
+
+遇到了学姐～
+
+纠正一下态度，做一个低调的人。反正千错万错都是他的错。
+
+天文果然还是站在旁边看看就行，数据处理太复杂了。
+
+第一次下水温泉……
+
+我想把你变成我人生中最重要的一个人，但是我害怕……我不知道在害怕什么……
+
+#### 2025-08-04
+
+感觉要得乳腺结节了……我好自私……自私的人还是一个人待着比较好。
+
+#### 2025-08-05
+
+回家。现在在成田机场里面，晚上8点的飞机，现在6点。这几天又发生了很多事，关于他的，但是我好像不想记录了，不想再思考和他的任何事情了，我变得懒惰了。不知道自己想要什么，但是又什么都想要。我也不知道自己要什么。好累。不想想了，随便他吧，都随便吧。我就是他的一条狗，甚至一条狗都不如，无足轻重，想丢就丢，想做就做。感觉我的人性在他那里泯灭。好挫败，感觉在他那里我就像个傻子。我真的好难受，我感觉自己就是被别人随意可以踩在脚下的一只毛毛虫。什么都不配。
+
+好热……为什么这么热……
