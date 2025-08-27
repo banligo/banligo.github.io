@@ -97,20 +97,20 @@ Modeling the Crab Nebula:  The dust emission -> two at different temperatures an
 
 Recommended papers: [arXiv:2401.15891](https://arxiv.org/abs/2401.15891) (initial idea), [arXiv:1512.07295](https://arxiv.org/abs/1512.07295) (basics)
 
-Fluctuation: $\delta(\vec{k}) = |\delta_{\vec{k}}| e^{i\theta_{\vec{k}}}$. The power spectrum does not contain phase information. For example, $\frac{P(k)}{P_{DM}(k)}$ is nearly 1 on large scales ($k < 1\,\text{h/Mpc}$), but baryonic effects become significant at smaller scales. [arXiv:2401.15891](https://arxiv.org/abs/2401.15891) proposes using the cross-correlation $r(k) = \frac{\langle \delta_{DM}(\vec{k}) \delta_{full}^*(\vec{k}) \rangle}{\sqrt{P_{DM}(k) P_{full}(k)}}$, which contains phase information and is less affected by baryonic effects compared to the power spectrum. The scale $k$ is valid up to approximately $1\,\text{h/Mpc}$.
+Fluctuation: $$\delta(\vec{k}) = |\delta_{\vec{k}}| e^{i\theta_{\vec{k}}}$$. The power spectrum does not contain phase information. For example, $\frac{P(k)}{P_{DM}(k)}$ is nearly 1 on large scales ($k < 1\,\text{h/Mpc}$), but baryonic effects become significant at smaller scales. [arXiv:2401.15891](https://arxiv.org/abs/2401.15891) proposes using the cross-correlation $$r(k) = \frac{\langle \delta_{DM}(\vec{k}) \delta_{full}^*(\vec{k}) \rangle}{\sqrt{P_{DM}(k) P_{full}(k)}}$$, which contains phase information and is less affected by baryonic effects compared to the power spectrum. The scale $k$ is valid up to approximately $1\,\text{h/Mpc}$.
 
 $$\langle e^{i\theta_{\vec{k}_1}} e^{i\theta_{\vec{k}_2}} \rangle = \text{const}$$
 
 $$\langle e^{i\theta_{\vec{k}_1}} e^{i\theta_{\vec{k}_2}} e^{i\theta_{\vec{k}_3}} \rangle = \langle \cos(\theta_1 + \theta_2 + \theta_3) + i\sin(\theta_1 + \theta_2 + \theta_3) \rangle \\
 = F(k_1, k_2, k_3) \text{ or } F(\vec{k}_1, \vec{k}_2, \vec{k}_3) \text{ related to } \cos\theta...$$
 
-For example, $|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2 e^{i(\theta_{\vec{k}} + \theta_{-\vec{k}})}$. Since $\theta_{-\vec{k}} = -\theta_{\vec{k}}$, we have $|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2$, which contains no phase information.
+For example, $$|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2 e^{i(\theta_{\vec{k}} + \theta_{-\vec{k}})}$$. Since $\theta_{-\vec{k}} = -\theta_{\vec{k}}$, we have $|\langle \delta(\vec{k}) \rangle|^2 = |\delta_{\vec{k}}|^2$, which contains no phase information.
 
 Next, consider the volume scaling:
 
 $$N_{\text{max}} \sim \frac{V}{\lambda_{\text{min}}^3} = V \cdot k_{\text{max}}^3$$
 
-where $V$ is the volume of the universe, $\lambda_{\text{min}}$ is the minimum wavelength, and $k_{\text{max}}$ is the maximum wave number. Therefore, for an infinite universe, the number of modes $N_{\text{max}}$ is infinite. In the continuous limit, the infinite universe corresponds to phase correlations disappearing. A loose proof: the signal $\delta_{\vec{k}}$ is of order $1/\sqrt{V}$, and $N_{\vec{k}} \propto V$, so $|\delta_{\vec{k}}|^2 \times N_{\vec{k}}$ is finite. Matsubara-san noted that the signal should scale as $(1/\sqrt{V})^n$.
+where $V$ is the volume of the universe, $\lambda_{\text{min}}$ is the minimum wavelength, and $k_{\text{max}}$ is the maximum wave number. Therefore, for an infinite universe, the number of modes $N_{\text{max}}$ is infinite. In the continuous limit, the infinite universe corresponds to phase correlations disappearing. A loose proof: the signal $\delta_{\vec{k}}$ is of order $1/\sqrt{V}$, and $N_{\vec{k}} \propto V$, so $$|\delta_{\vec{k}}|^2 \times N_{\vec{k}}$$ is finite. Matsubara-san noted that the signal should scale as $(1/\sqrt{V})^n$.
 
 * Regarding boundary conditions: N-body simulations use periodic boundary conditions, which are equivalent to a toroidal universe. This does not imply an infinite universe, and the phase information remains unchanged.
 

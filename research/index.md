@@ -7,19 +7,21 @@ layout: article
 
 ---
 
-## notes
+### notes
+
+<a href="env_note">Computer Environment Setup Notes (Mac)</a>
 
 
-<a class="button button--primary button--rounded button--sm" href="y25_spring_cosmo">2025 spring semester note 1 (cosmology)</a>
+<a href="y25_spring_cosmo">2025 spring for cosmology</a>
 
-<a class="button button--primary button--rounded button--sm" href="y25_spring_noncosmo">2025 spring semester note 2 (not directly related to cosmology)</a>
+<a href="y25_spring_noncosmo">2025 spring for non-cosmology</a>
 
 
-## events participated/scheduled
+### events participated
 
 `2025.07.28~2025.07.31` Astronomy Summer School in Japan [🔗](https://astro-wakate.sakura.ne.jp/ss2025/) <a href="/assets/documents/cosmic_topology_poster.pdf">poster</a>
 
-## events attended/scheduled
+### events attended
 
 `2025.08.21` The 2nd iTHEMS-NCTS Joint Workshop [🔗](https://www.topoquantum.vip/inworkshop/)
 

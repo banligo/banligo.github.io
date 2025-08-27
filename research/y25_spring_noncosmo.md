@@ -10,9 +10,10 @@ My master period daily boring notes from seminars, conference, balabala...
 
 **Challenges to solve few-body problems using quantum machine learning with hybrid quantum and massively parallel computers** by S. Aoyama CRC KEK
 
-Gaussian Expansion Method (GEM) for few-body system
+Gaussian Expansion Method (GEM)
 
-$$\phi_{nL}(r) = $$
+Stochastic variational method (SVM, ML)
+
 
 #### 2025-08-21
 
