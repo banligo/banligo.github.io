@@ -3,9 +3,36 @@ title: "2025 Year spring notes 2"
 layout: article
 ---
 
-My master period daily boring notes from seminars, conference, balabala... 
+My master period daily boring notes from seminars, conference, balabala...
 
 ---
+#### 2025-08-27
+
+**Challenges to solve few-body problems using quantum machine learning with hybrid quantum and massively parallel computers** by S. Aoyama CRC KEK
+
+Gaussian Expansion Method (GEM) for few-body system
+
+$$\phi_{nL}(r) = $$
+
+#### 2025-08-21
+
+The 2th iTHEMS-NCTS Joint Workshop
+
+
+#### 2025-08-20
+
+**Some rigidity and dynamical stability results of calibrated submanifolds**
+_Chung-Jun Tsai (NCTS, Taiwan)_
+
+- Discussed Dijkgraaf's conjecture, Hodge theory, and the role of the mean curvature vector and its flow in submanifold geometry.
+- Explored mechanisms of singularity formation and stability properties of calibrated submanifolds.
+
+**A diagrammatic view of Khovanov homology**
+_Taketo Sano (RIKEN, iTHEMS)_
+
+- Presented a physical interpretation of Khovanov homology in the context of 4d and 5d gauge theories.
+- Explained the categorification of the Jones polynomial, with the relation $\mathrm{Kh}(K) > J(K)$ for knots $K$.
+- Introduced (1+1)-dimensional topological quantum field theory (TQFT) and Bor-Naton's reformulation of Khovanov homology.
 
 #### 2025-07-08
 
@@ -17,29 +44,29 @@ KEK Theory Seminar by Kai Murai (Tohoku U)
     $V_{QCD}(a) = \chi(T)\left[1 - \cos\left(\frac{a}{f_a}\right)\right]$, where $\chi(T) = m_a T_a^2$.
 
 *PQ Symmetry Breaking Scenarios:*
-- *Pre-inflationary (homogeneous):* $a_{\text{init}}/f = \mathcal{O}(1)$  
+- *Pre-inflationary (homogeneous):* $a_{\text{init}}/f = \mathcal{O}(1)$
 - *Post-inflationary (defects):* Topological defects form after inflation.
 
-*Topological Defects:*  
+*Topological Defects:*
 - *Cosmic Strings:* Arise from a complex field $\Phi$ with a wine-bottle potential $V(\Phi)$.
-- *Domain Walls:* Result from explicit breaking of $U(1)$ symmetry to $\mathbb{Z}_{N_{DM}}$,  
+- *Domain Walls:* Result from explicit breaking of $U(1)$ symmetry to $\mathbb{Z}_{N_{DM}}$,
         $V_{QCD}(a) = \chi(T)\left[1 - \cos\left(N_{DM} \frac{a}{f_a}\right)\right]$.
 
-*Domain Wall Number:*  $N_{DM}$  
-- For $N_{DM} = 1$, the network decays due to domain wall tension.  
+*Domain Wall Number:*  $N_{DM}$
+- For $N_{DM} = 1$, the network decays due to domain wall tension.
 - For $N_{DM} > 1$, domain walls can dominate the universe, conflicting with CMB anisotropies (domain wall problem).
 
- *Avoiding Overclosure:*  
-- Introduce a bias term to collapse domain walls:  
+ *Avoiding Overclosure:*
+- Introduce a bias term to collapse domain walls:
         $$
         V(a) = \chi(T)\left[1 - \cos\left(N_{DM} \frac{a}{f_a}\right)\right] + \epsilon \chi(T)\left[1 - \cos\left(N_{DM} \frac{a}{f_a} + \theta\right)\right]
         $$
 
- *Multi-Axion Systems:*  
-- Topological defects are well studied for single-axion models.  
-- In two-axion systems (two potentials), new phenomena arise:  
+ *Multi-Axion Systems:*
+- Topological defects are well studied for single-axion models.
+- In two-axion systems (two potentials), new phenomena arise:
     - String bundles
-    - Induced domain walls 
+    - Induced domain walls
     - Transient bias effects
 
 #### 2025-06-27
@@ -52,10 +79,10 @@ Kinchakai by Masahito Yamazaki (UT, IPMU)
 
 - Thomas Kuhn's "paradigm shift" concept is relevant here.
 
-*Quantum Gravity:*  
+*Quantum Gravity:*
 - In principle, there are no free parameters; all "parameters" are determined dynamically.
 
-*Calabi-Yau Manifolds:* 
+*Calabi-Yau Manifolds:*
 - Provide many moduli: size (Kähler modulus), shape (complex structure modulus).
 - Generate rich physics in 4D: matter content, gauge bosons, axions via D-brane wrapping cycles.
 
@@ -71,10 +98,10 @@ Kinchakai by Masahito Yamazaki (UT, IPMU)
 - Shape moduli can be stabilized by turning on gauge flux (Giddings-Kachru-Polchinski, 2001).
 - However, the choice of flux number ($\int F = n \in \mathbb{Z}$) is arbitrary.
 
-*Flux Vacua and the String Landscape:*  
+*Flux Vacua and the String Landscape:*
 - Flux vacua are generally expected in extra dimensions.
 - Searching for "our universe" among these vacua is computationally hard (possibly NP-hard).
-- Anthropic selection may play a role. 
+- Anthropic selection may play a role.
 
 *Directions for Progress:*
 1. Better understanding of (UV) string theory—it's more than just supergravity.
@@ -82,9 +109,9 @@ Kinchakai by Masahito Yamazaki (UT, IPMU)
 3. Learn from experiments: String theory $\leftrightarrow$ EFT $\leftrightarrow$ observations (e.g., DESI DR2 hints at dynamical dark energy).
 4. Be pragmatic and humble. s
 
-*Recent Research Example:*  
+*Recent Research Example:*
 - Conjecture in QG: No exact global symmetry (e.g., wormholes [Coleman '88] allow global charge to escape to "other universes").
-- No domain wall problem:  
+- No domain wall problem:
     $$V = \frac{\phi^5}{\Lambda}$$
 - Gouttenoire-King-Roshen-Wang-White-My ('25): Universe from wormholes to wormholes.
 
@@ -111,4 +138,3 @@ Key Concepts:
 - Effective Action & Equations of Motion: Discusses how quantum gravity modifies the equations that govern spacetime, especially during cosmic inflation and phase transitions (like the Big Bang).
 - Localized Excitations: Describes how quantum gravity predicts new types of massive, localized objects with properties similar to black holes, possibly related to dark matter or primordial black holes.
 
-> i'm sure i will not attend the speaker's class next semester now

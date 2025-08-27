@@ -47,6 +47,7 @@ Education:
 - 2024.10-present: SOKENDAI (PhD, Theoretical Cosmology)
 - 2020.10-2024.07: Zhejiang University of Technology (BSc, Optical Engineering)
 
-Research:
-- 2024.02-2024.06: Simulation of matter power spectrum (personal) <a href="/assets/documents/BScThesis-heyingqiu.pdf">thesis</a>
+Research Experience:
+- 2025.06-present: Fourier mode of N-body simulation (lab)
+- 2024.02-2024.06: Simulation of matter power spectrum (individual) <a href="/assets/documents/BScThesis-heyingqiu.pdf">thesis</a>
 - 2022.11-2023.07: Optical frequency comb experiment (lab) <a href="/assets/documents/he-uec-paper.pdf">report</a>

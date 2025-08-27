@@ -6,7 +6,41 @@ layout: article
 My master period daily boring notes from seminars, conference, balabala...
 
 ---
+#### 2025-07-25
 
+**Static nonlinear love numbers of non-rotating compact objects** by Filippo Vernizzi
+
+arxiv: [2312.05065](https://arxiv.org/abs/2312.05065), [2410.03542](https://arxiv.org/abs/2410.03542)
+
+
+1. Tidal Response and Electromagnetic Analogy
+
+    The tidal response of compact objects (such as neutron stars and black holes) can be described analogously to electromagnetic multipole moments. In the Newtonian case (e.g., Earth-Moon system), the gravitational potential is expanded as:
+    $$
+    \Phi = G \int d^3x \frac{\rho}{|\vec{x}-\vec{x}'|} + \sum_{\ell \geq 2, m} \mathcal{E}_{\ell m} r^\ell Y_{\ell m}
+    $$
+    The induced multipole moment is:
+    $$
+    Q_{\ell m} = \lambda_\ell \mathcal{E}_{\ell m} = k_{\ell} \frac{R^{2\ell+1}}{G} \mathcal{E}_{\ell m}
+    $$
+    where $k_{\ell}$ is the linear tidal Love number, quantifying the object's response to external tidal fields.
+
+    - For black holes in 4D general relativity, $k_\ell = 0$ (no tidal deformation), but in higher dimensions or modified gravity theories, $k_\ell$ can be nonzero, indicating possible tidal deformability for exotic black holes.
+
+    - In GR, tidal perturbations are classified as polar (parity even, e.g., $\delta g_{tt}$) and axial (parity odd, e.g., $\delta g_{tA}$).
+
+2. Worldline Effective Field Theory (EFT)
+
+    The dynamics of compact objects in external fields can be systematically described using EFT:
+    $$
+    S = S_{EH}[g_{\mu\nu}] + S_{pp}[g_{\mu\nu}, x^\mu(\lambda)]
+    $$
+    where $S_{EH}$ is the Einstein-Hilbert action and $S_{pp}$ is the point-particle action. This formalism allows the use of Feynman diagrams to compute gravitational interactions and reconstruct the metric perturbatively. The tidal response (TNL) can be defined and matched to results from black hole perturbation theory (BHPT).
+
+3. Black Hole Perturbation Theory (BHPT)
+
+    - The Regge-Wheeler formalism is used to study linear perturbations of Schwarzschild black holes.
+    - For Schwarzschild black holes, the quadratic perturbations are finite polynomials, and the tidal Love numbers $k_\ell$ vanish, confirming their rigidity against tidal deformations in 4D GR.
 
 #### 2025-07-24
 
