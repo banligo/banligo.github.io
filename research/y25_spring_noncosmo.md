@@ -10,17 +10,7 @@ My master period daily boring notes from seminars, conference, balabala...
 
 **Challenges to solve few-body problems using quantum machine learning with hybrid quantum and massively parallel computers** by S. Aoyama CRC KEK
 
-Gaussian Expansion Method (GEM)
-
-Stochastic variational method (SVM, ML)
-
-
 #### 2025-08-21
-
-The 2th iTHEMS-NCTS Joint Workshop
-
-
-#### 2025-08-20
 
 **Some rigidity and dynamical stability results of calibrated submanifolds**
 _Chung-Jun Tsai (NCTS, Taiwan)_

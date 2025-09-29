@@ -9,7 +9,7 @@ layout: article
 
 ### notes
 
-<a href="env_note">Computer Environment Setup Notes (Mac)</a>
+<a href="env_notes">Computer Environment Setup Notes (Mac)</a>
 
 
 <a href="y25_spring_cosmo">2025 spring for cosmology</a>

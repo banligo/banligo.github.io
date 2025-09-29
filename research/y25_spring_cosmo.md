@@ -6,7 +6,109 @@ layout: article
 My master period daily boring notes from seminars, conference, balabala...
 
 ---
-#### 2025-07-25
+
+#### 2025-09-19
+
+talk with matsubara-san
+
+next: plot thresholded-critical_point with $f_c = \nu\sigma$ where $\sigma=<f^2>$
+
+#### 2025-09-16~18
+
+IPMU conference on beyond 2-point statistics in cosmology
+
+*Systematics in Weak Lensing:*
+- Intrinsic alignment
+- Baryonic effects
+- Photometric redshift (photo-$z$) error
+- Shear calibration error
+- Magnification bias
+- Point Spread Function (PSF) modeling error
+- Blending
+
+*Advanced Statistical Methods:*
+- Density split statistics
+- Counts-in-cell probability distribution function (PDF)
+- Cosmic voids
+- Wavelet scattering transform
+- Nearest neighbor statistics
+- Mock data challenges
+
+*Modeling and Inference:*
+- Cosmological forward and backward modeling
+- Baryonic feedback to matter via representation learning
+- Modeling galaxy bias and intrinsic alignment for field-level inference
+
+*Higher-Order Statistics and Effects:*
+- Bispectrum and finite volume effects
+- Scoccimarro estimator
+- Wide-angle effects
+- Multiplet applications:
+    - Galaxy multiplets uniquely trace the large-scale tidal field
+    - Mitigating projection effects
+    - Full-space analysis in effective field theory
+
+
+#### 2025-09-11
+
+**Cosmic Tensions: Clues to a Deeper Understanding of the Universe?** Theory Seminar by Tomo Takahashi
+
+Key topics:
+- Cosmic tensions: $H_0$, $S_8$, dynamical dark energy, $n_s$ from ACT
+- Reference: CosmoVerse White Paper [arXiv:2504.01669](https://arxiv.org/abs/2504.01669)
+
+Origins of tension:
+- Systematic uncertainties in direct measurements
+- Systematics in CMB analyses (affecting inferred $H_0$)
+
+Acoustic scale and sound horizon:
+- Acoustic scale: $\theta_s$
+- Tension can be reduced by decreasing the sound horizon, which can be achieved by:
+    - Increasing $H(z)$ before recombination
+    - Raising the redshift of recombination $z_*$
+    - Lowering the sound speed $c_s$ before recombination
+
+Early Dark Energy (EDE) model:
+- Potential:
+  $$
+  V(\phi) = \Lambda^4 \left[1 - \cos\left(\frac{\phi}{f}\right)\right]^n
+  $$
+- Fractional energy density:
+  $$
+  f_{EDE} = \frac{\rho_{EDE}}{\rho_{total}}
+  $$
+
+$S_8$ parameter:
+- Defined as:
+  $$
+  S_8 = \sigma_8 \left(\frac{\Omega_m}{0.3}\right)^{0.5}
+  $$
+- Measures the amplitude of matter fluctuations, relevant for large-scale structure tensions
+
+
+#### 2025-09-03
+
+Very small talk with Matsubara-san
+
+critical points of gaussian fields in 3D
+
+numerically calculated the critical points and their expectation (numbers in each volumns)
+
+
+
+
+#### 2025-08-27
+
+Small talk with Akitsu-Matsubara
+
+Next few steps:
+- non-gaussian power spectrum
+- bispectrum
+- mass assignment to particle
+    - Possion (short-noise) distribution, so $P\sim \frac{1}{\bar{n}}=N/V$
+- ready for N-body simulation
+
+#### 2025-08-25
 
 **Static nonlinear love numbers of non-rotating compact objects** by Filippo Vernizzi
 
