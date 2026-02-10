@@ -30,12 +30,12 @@ key: page-about
   </div>
   <div class="item__content">
     <div class="item__header">
-      <h4>迎秋</h4>
+      <h4>hi</h4>
     </div>
     <div class="item__description">
-      <p>客官，您好。</p>
+      <p></p>
     </div>
   </div>
 </div>
 
-随心搞点。
+客官，您好。

@@ -1,9 +1,15 @@
+---
+layout: none
+---
 <!doctype html>
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Valentine Memory Nebula</title>
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Memory</title>
     <style>
       @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
 
@@ -25,17 +31,19 @@
       body {
         width: 100%;
         height: 100%;
+        overscroll-behavior: none;
       }
 
       body {
         margin: 0;
         overflow: hidden;
+        touch-action: none;
         color: var(--cream);
         font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
         background:
-          radial-gradient(120% 80% at 12% 5%, #9ad8ff 0%, rgba(154, 216, 255, 0) 63%),
-          radial-gradient(120% 90% at 88% 100%, #4a87cd 0%, rgba(74, 135, 205, 0) 68%),
-          linear-gradient(140deg, #77c7f5 0%, #4f9bde 56%, #2b6fb8 100%);
+          radial-gradient(120% 85% at 12% 5%, rgba(189, 231, 255, 0.72) 0%, rgba(189, 231, 255, 0) 66%),
+          radial-gradient(120% 95% at 88% 100%, rgba(123, 189, 242, 0.62) 0%, rgba(123, 189, 242, 0) 70%),
+          linear-gradient(140deg, #bfe9ff 0%, #8fd0fb 56%, #6cb4ea 100%);
       }
 
       #scene {
@@ -44,6 +52,7 @@
         width: 100%;
         height: 100%;
         display: block;
+        touch-action: none;
       }
 
       .top-bar {
@@ -89,64 +98,23 @@
       }
 
       .control-box {
-        min-width: 254px;
-        padding: 10px 12px;
+        min-width: 120px;
+        max-width: 200px;
+        padding: 8px 9px;
       }
 
       .status-line {
-        margin: 0 0 8px;
-        font-size: 0.8rem;
+        margin: 0 0 4px;
+        font-size: 0.9rem;
         font-weight: 700;
         color: #1d5a8f;
+        letter-spacing: 0.01em;
       }
 
       .controls {
-        font-size: 0.76rem;
-        line-height: 1.45;
-        color: #2f5f87;
-      }
-
-      .bottom-panel {
-        position: fixed;
-        left: max(14px, env(safe-area-inset-left));
-        right: max(14px, env(safe-area-inset-right));
-        bottom: max(14px, env(safe-area-inset-bottom));
-        z-index: 12;
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        gap: 12px;
-        pointer-events: none;
-      }
-
-      .uploader,
-      .nav-link {
-        pointer-events: auto;
-        background: rgba(255, 246, 237, 0.84);
-        border: 1px solid rgba(255, 255, 255, 0.84);
-        border-radius: 12px;
-        backdrop-filter: blur(9px);
-        color: var(--wine);
-        padding: 9px 11px;
         font-size: 0.8rem;
-      }
-
-      .uploader label {
-        display: block;
-        margin-bottom: 5px;
-        font-weight: 700;
-      }
-
-      .uploader input {
-        display: block;
-        width: min(340px, 73vw);
-        font: inherit;
-      }
-
-      .nav-link a {
-        color: #2b628d;
-        text-decoration: none;
-        font-weight: 700;
+        line-height: 1.32;
+        color: #2f5f87;
       }
 
       .focus-overlay {
@@ -156,7 +124,7 @@
         opacity: 0;
         pointer-events: none;
         transition: opacity 260ms ease;
-        background: radial-gradient(circle at center, rgba(35, 95, 156, 0.4), rgba(8, 25, 48, 0.7));
+        background: radial-gradient(circle at center, rgba(102, 165, 228, 0.32), rgba(20, 54, 94, 0.52));
       }
 
       .focus-overlay.show {
@@ -169,13 +137,13 @@
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%) translateY(10px);
-        width: min(560px, calc(100vw - 28px));
+        width: min(430px, calc(100vw - 26px));
         background: rgba(255, 246, 236, 0.92);
         border: 1px solid rgba(255, 255, 255, 0.88);
-        border-radius: 16px;
-        color: #581f34;
+        border-radius: 14px;
+        color: #761f3f;
         box-shadow: 0 22px 52px rgba(0, 0, 0, 0.34);
-        padding: 16px;
+        padding: 12px;
         transition: transform 260ms ease;
       }
 
@@ -185,8 +153,10 @@
 
       .focus-photo {
         width: 100%;
-        aspect-ratio: 4 / 5;
-        object-fit: cover;
+        height: auto;
+        max-height: min(72vh, 520px);
+        object-fit: contain;
+        background: rgba(255, 255, 255, 0.35);
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.8);
         display: none;
@@ -197,36 +167,37 @@
         background: linear-gradient(140deg, rgba(255, 230, 240, 0.9), rgba(255, 234, 205, 0.86));
         border-radius: 10px;
         border: 1px solid rgba(255, 255, 255, 0.86);
-        padding: 18px;
+        padding: 12px;
       }
 
       .focus-text-wrap h2 {
-        margin: 0 0 10px;
+        margin: 0 0 8px;
         font-family: "Cormorant Garamond", serif;
-        font-size: 1.6rem;
+        font-size: 1.3rem;
         color: #8f1f46;
       }
 
       .focus-text-wrap p {
         margin: 0;
-        line-height: 1.8;
-        font-size: 1rem;
+        line-height: 1.62;
+        font-size: 0.92rem;
       }
 
       .focus-actions {
-        margin-top: 12px;
+        margin-top: 10px;
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
+        gap: 6px;
       }
 
       .focus-actions button {
         border: 0;
         border-radius: 999px;
-        padding: 8px 12px;
+        padding: 6px 10px;
         font: inherit;
         font-weight: 700;
-        background: linear-gradient(135deg, #cc567f 0%, #8e2047 100%);
+        font-size: 0.82rem;
+        background: linear-gradient(135deg, #cc567f 0%, #af2757 100%);
         color: #fff8ef;
         cursor: pointer;
       }
@@ -242,44 +213,26 @@
           max-width: 100%;
         }
 
-        .bottom-panel {
-          flex-direction: column;
-          align-items: flex-start;
-        }
       }
     </style>
   </head>
   <body>
     <canvas id="scene"></canvas>
 
-    <div class="top-bar">
-      <div class="title-box">
-        <h1>Valentine Memory Nebula</h1>
-        <p>拖拽旋转、缩放视角，点击照片或话语查看</p>
-      </div>
+      <div class="top-bar">
       <div class="control-box">
-        <p id="statusLine" class="status-line">形态：聚合 0%</p>
+        <p id="statusLine" class="status-line">聚合 0%</p>
         <div class="controls">
-          拖动屏幕：旋转视角<br />
-          滚轮 / 双指：缩放并切换聚合/漫游形态<br />
-          点击卡片：仅查看照片或仅查看文字
+          缩放或点击 💗
         </div>
       </div>
-    </div>
-
-    <div class="bottom-panel">
-      <div class="uploader">
-        <label for="uploadPhotos">替换照片（多选）</label>
-        <input id="uploadPhotos" type="file" accept="image/*" multiple />
-      </div>
-      <div class="nav-link"><a href="/">返回首页</a></div>
     </div>
 
     <div id="focusOverlay" class="focus-overlay">
       <div class="focus-card">
         <img id="focusPhoto" class="focus-photo" alt="selected photo" />
         <div id="focusTextWrap" class="focus-text-wrap">
-          <h2>想对你说</h2>
+          <h2>悄悄话</h2>
           <p id="focusText"></p>
         </div>
         <div class="focus-actions">
@@ -292,6 +245,20 @@
 
     <script type="module">
       import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
+      import { LOVE_MESSAGES } from "./content/messages.js";
+
+      const PHOTO_URLS = [
+        {%- assign _image_exts = ".jpg,.jpeg,.png,.webp,.gif,.avif,.bmp,.svg" -%}
+        {%- assign _first_photo = true -%}
+        {%- assign _sorted_files = site.static_files | sort: "path" -%}
+        {%- for f in _sorted_files -%}
+          {%- assign _ext = f.extname | downcase -%}
+          {%- if f.path contains "/valentine/content/photos/" and _image_exts contains _ext -%}
+            {%- unless _first_photo -%}, {%- endunless -%}"{{ f.path | relative_url }}"
+            {%- assign _first_photo = false -%}
+          {%- endif -%}
+        {%- endfor -%}
+      ];
 
       /* ---------------------------
        * 可配置区
@@ -305,24 +272,6 @@
         sky: "#69c8ff",
         azure: "#3f8fd6",
       };
-
-      const PHOTO_URLS = [
-        "https://picsum.photos/seed/love-a/900/1200",
-        "https://picsum.photos/seed/love-b/900/1200",
-        "https://picsum.photos/seed/love-c/900/1200",
-        "https://picsum.photos/seed/love-d/900/1200",
-        "https://picsum.photos/seed/love-e/900/1200",
-        "https://picsum.photos/seed/love-f/900/1200",
-      ];
-
-      const LOVE_MESSAGES = [
-        "今天也想把最温柔的一束光留给你。",
-        "愿我们分享的每个平凡瞬间，都慢慢长成浪漫。",
-        "谢谢你让我的日常，变成值得收藏的电影镜头。",
-        "如果世界很吵，那我们就靠近一点，听见彼此就好。",
-        "想和你把很多个明天，过成一个长长的心动。",
-        "你出现以后，连风都像在说好喜欢你。",
-      ];
 
       const APP_STATE = {
         MAIN: "main",
@@ -339,15 +288,15 @@
        * 基础对象
        * --------------------------- */
       const isMobile = window.matchMedia("(max-width: 860px)").matches;
-      const HEART_INSTANCE_COUNT = isMobile ? 520 : 880;
-      const SPARK_COUNT = isMobile ? 260 : 420;
+      const HEART_INSTANCE_COUNT = isMobile ? 380 : 660;
+      const SPARK_COUNT = isMobile ? 240 : 420;
       const DUST_COUNT = isMobile ? 900 : 1600;
-      const MAX_PHOTO_CARDS = isMobile ? 8 : 10;
+      const GLINT_COUNT = isMobile ? 220 : 360;
+      const MAX_PHOTO_CARDS = PHOTO_URLS.length;
       const MAX_TEXT_CHIPS = isMobile ? 8 : 10;
 
       const canvas = document.getElementById("scene");
       const statusLine = document.getElementById("statusLine");
-      const uploadInput = document.getElementById("uploadPhotos");
 
       const focusOverlay = document.getElementById("focusOverlay");
       const focusPhotoEl = document.getElementById("focusPhoto");
@@ -370,7 +319,7 @@
       renderer.toneMappingExposure = 1.08;
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x6aaee2, 0.05);
+      scene.fog = new THREE.FogExp2(0x9cd2f5, 0.038);
 
       const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 120);
       const cameraRig = {
@@ -445,7 +394,19 @@
         const y = base.y * radial;
         const depth = (Math.random() - 0.5) * (1 - radial * 0.62) * 1.8;
 
-        return new THREE.Vector3(x * scale, y * scale * 1.04 + 0.45, depth * scale * 0.72);
+        return new THREE.Vector3(x * scale, y * scale * 1.04 + 0.68, depth * scale * 0.72);
+      }
+
+      // Hollow heart shell sampler: denser near outer contour, sparse in the core.
+      function sampleHeartShell(scale = 2.8, shellMin = 0.7, shellExponent = 0.34) {
+        const t = Math.random() * Math.PI * 2;
+        const radial = shellMin + Math.pow(Math.random(), shellExponent) * (1 - shellMin);
+        const base = heartCurve2D(t);
+        const x = base.x * radial;
+        const y = base.y * radial;
+        const depthSpread = 0.5 + (1 - radial) * 0.5;
+        const depth = (Math.random() - 0.5) * depthSpread * 1.8;
+        return new THREE.Vector3(x * scale, y * scale * 1.04 + 0.68, depth * scale * 0.72);
       }
 
       function createHeartGeometry() {
@@ -466,7 +427,7 @@
           bevelThickness: 0.05,
           curveSegments: 14,
         });
-        g.scale(0.14, 0.14, 0.14);
+        g.scale(0.115, 0.115, 0.115);
         g.center();
         g.computeVertexNormals();
         return g;
@@ -575,14 +536,20 @@
       const dustSizes = new Float32Array(DUST_COUNT);
       const dustParticles = [];
 
+      const glintGeometry = new THREE.BufferGeometry();
+      const glintPositions = new Float32Array(GLINT_COUNT * 3);
+      const glintColors = new Float32Array(GLINT_COUNT * 3);
+      const glintSizes = new Float32Array(GLINT_COUNT);
+      const glintParticles = [];
+
       const hearts = [];
       for (let i = 0; i < HEART_INSTANCE_COUNT; i += 1) {
         hearts.push({
-          pos: sampleHeartVolume(2.85),
-          heartPos: sampleHeartVolume(2.85),
+          pos: sampleHeartShell(2.35, 0.72, 0.3),
+          heartPos: sampleHeartShell(2.35, 0.72, 0.3),
           wanderPos: randomInSphere(3.4, 8.2),
           rot: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
-          scale: 0.65 + Math.random() * 1.2,
+          scale: 0.5 + Math.random() * 0.9,
           phase: Math.random() * Math.PI * 2,
         });
       }
@@ -590,8 +557,8 @@
       const sparks = [];
       for (let i = 0; i < SPARK_COUNT; i += 1) {
         sparks.push({
-          pos: sampleHeartVolume(3.1),
-          heartPos: sampleHeartVolume(3.1),
+          pos: sampleHeartShell(2.55, 0.68, 0.36),
+          heartPos: sampleHeartShell(2.55, 0.68, 0.36),
           wanderPos: randomInSphere(3, 9),
           scale: 0.5 + Math.random() * 1.2,
           phase: Math.random() * Math.PI * 2,
@@ -602,7 +569,7 @@
       const dustColorB = new THREE.Color(THEME_COLORS.sky);
       const dustColorMix = new THREE.Color();
       for (let i = 0; i < DUST_COUNT; i += 1) {
-        const heartPos = sampleHeartVolume(3.1);
+        const heartPos = sampleHeartShell(2.6, 0.7, 0.34);
         const wanderPos = randomInSphere(3.8, 9.8);
         const pos = heartPos.clone();
         const phase = Math.random() * Math.PI * 2;
@@ -662,6 +629,72 @@
       const dustPoints = new THREE.Points(dustGeometry, dustMaterial);
       scene.add(dustPoints);
 
+      const glintColorA = new THREE.Color(THEME_COLORS.rose);
+      const glintColorB = new THREE.Color(THEME_COLORS.cream);
+      const glintColorMix = new THREE.Color();
+      for (let i = 0; i < GLINT_COUNT; i += 1) {
+        const heartPos = sampleHeartShell(2.25, 0.74, 0.28);
+        const wanderPos = randomInSphere(4.4, 11.3);
+        const pos = heartPos.clone();
+        const phase = Math.random() * Math.PI * 2;
+        const size = 0.11 + Math.random() * 0.16;
+        glintParticles.push({ heartPos, wanderPos, pos, phase, size });
+        glintPositions[i * 3] = pos.x;
+        glintPositions[i * 3 + 1] = pos.y;
+        glintPositions[i * 3 + 2] = pos.z;
+        glintSizes[i] = size;
+        const mixT = 0.2 + Math.abs(Math.cos(phase * 1.3)) * 0.72;
+        glintColorMix.copy(glintColorA).lerp(glintColorB, mixT);
+        glintColors[i * 3] = glintColorMix.r;
+        glintColors[i * 3 + 1] = glintColorMix.g;
+        glintColors[i * 3 + 2] = glintColorMix.b;
+      }
+      glintGeometry.setAttribute("position", new THREE.BufferAttribute(glintPositions, 3));
+      glintGeometry.setAttribute("color", new THREE.BufferAttribute(glintColors, 3));
+      glintGeometry.setAttribute("size", new THREE.BufferAttribute(glintSizes, 1));
+
+      const glintMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uTime: { value: 0 },
+          uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
+          uMap: { value: createSoftDotTexture() },
+          uOpacity: { value: 0.62 },
+        },
+        vertexShader: `
+          attribute float size;
+          varying vec3 vColor;
+          varying float vPulse;
+          uniform float uTime;
+          uniform float uPixelRatio;
+          void main() {
+            vColor = color;
+            float baseTwinkle = 0.4 + 0.6 * sin(uTime * 0.95 + position.x * 0.32 + position.z * 0.42);
+            float burst = pow(max(sin(uTime * 2.2 + position.x * 1.15 + position.y * 0.85), 0.0), 7.0);
+            vPulse = baseTwinkle + burst * 1.35;
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+            gl_PointSize = size * (118.0 / -mvPosition.z) * uPixelRatio * vPulse;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          uniform float uOpacity;
+          varying vec3 vColor;
+          varying float vPulse;
+          void main() {
+            vec4 tex = texture2D(uMap, gl_PointCoord);
+            float alpha = tex.a * uOpacity * vPulse;
+            gl_FragColor = vec4(vColor, alpha);
+          }
+        `,
+        vertexColors: true,
+      });
+      const glintPoints = new THREE.Points(glintGeometry, glintMaterial);
+      scene.add(glintPoints);
+
       const heartColorA = new THREE.Color(THEME_COLORS.rose);
       const heartColorB = new THREE.Color(THEME_COLORS.gold);
       const heartColorMix = new THREE.Color();
@@ -689,31 +722,40 @@
       }
 
       /* ---------------------------
-       * 照片与话语对象
+       * 照片与悄悄话对象
        * --------------------------- */
       const textureLoader = new THREE.TextureLoader();
       textureLoader.crossOrigin = "anonymous";
 
-      let uploadedObjectUrls = [];
-      let activePhotoUrls = PHOTO_URLS.slice(0, MAX_PHOTO_CARDS);
+      const activePhotoUrls = PHOTO_URLS.slice();
       const photoOverlaySources = new Array(MAX_PHOTO_CARDS).fill("");
+      const PHOTO_BASE = {
+        planeW: 0.64,
+        planeH: 0.88,
+        frameW: 0.72,
+        frameH: 0.98,
+        haloW: 0.82,
+        haloH: 1.08,
+      };
+      const DEFAULT_PHOTO_ASPECT = PHOTO_BASE.planeW / PHOTO_BASE.planeH;
 
-      function createFallbackPhotoDataURL(i) {
-        const c = document.createElement("canvas");
-        c.width = 640;
-        c.height = 860;
-        const ctx = c.getContext("2d");
-        const g = ctx.createLinearGradient(0, 0, c.width, c.height);
-        g.addColorStop(0, "#ffd0df");
-        g.addColorStop(1, "#ffdcb2");
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, c.width, c.height);
-        ctx.fillStyle = "rgba(114, 26, 53, 0.62)";
-        ctx.font = "700 48px 'Noto Sans SC'";
-        ctx.fillText("LOVE", 48, 88);
-        ctx.font = "500 36px 'Noto Sans SC'";
-        ctx.fillText(`Memory ${i + 1}`, 48, 144);
-        return c.toDataURL("image/png");
+      function applyPhotoAspect(card, aspectRatio) {
+        const aspect = aspectRatio > 0 ? aspectRatio : DEFAULT_PHOTO_ASPECT;
+        const maxW = 0.74;
+        const maxH = 0.9;
+        let displayW;
+        let displayH;
+        if (aspect >= maxW / maxH) {
+          displayW = maxW;
+          displayH = displayW / aspect;
+        } else {
+          displayH = maxH;
+          displayW = displayH * aspect;
+        }
+
+        card.photoPlane.scale.set(displayW / PHOTO_BASE.planeW, displayH / PHOTO_BASE.planeH, 1);
+        card.frame.scale.set((displayW + 0.08) / PHOTO_BASE.frameW, (displayH + 0.08) / PHOTO_BASE.frameH, 1);
+        card.halo.scale.set((displayW + 0.18) / PHOTO_BASE.haloW, (displayH + 0.18) / PHOTO_BASE.haloH, 1);
       }
 
       function createTextChipTexture(text, i) {
@@ -730,7 +772,7 @@
 
         ctx.fillStyle = "rgba(96, 24, 48, 0.78)";
         ctx.font = "700 44px 'Noto Sans SC'";
-        ctx.fillText(`话语 ${i + 1}`, 36, 78);
+        ctx.fillText(`悄悄话 ${i + 1}`, 36, 78);
 
         const preview = text.length > 16 ? `${text.slice(0, 16)}...` : text;
         ctx.font = "500 33px 'Noto Sans SC'";
@@ -745,25 +787,20 @@
         return tex;
       }
 
-      function loadTexture(url, idx) {
-        const fallback = createFallbackPhotoDataURL(idx);
-        const src = url || fallback;
+      function loadTexture(url) {
+        if (!url) {
+          return Promise.resolve({ texture: null, src: "" });
+        }
         return new Promise((resolve) => {
           textureLoader.load(
-            src,
+            url,
             (texture) => {
               texture.colorSpace = THREE.SRGBColorSpace;
               texture.anisotropy = renderer.capabilities.getMaxAnisotropy() || 1;
-              resolve({ texture, src });
+              resolve({ texture, src: url });
             },
             undefined,
-            () => {
-              textureLoader.load(fallback, (texture2) => {
-                texture2.colorSpace = THREE.SRGBColorSpace;
-                texture2.anisotropy = renderer.capabilities.getMaxAnisotropy() || 1;
-                resolve({ texture: texture2, src: fallback });
-              });
-            }
+            () => resolve({ texture: null, src: "" })
           );
         });
       }
@@ -834,8 +871,9 @@
             heartPos: sampleHeartVolume(2.3),
             wanderPos: randomInSphere(2.8, 6.8),
             phase: Math.random() * Math.PI * 2,
-            scale: 0.55 + Math.random() * 0.16,
+            scale: 0.46 + Math.random() * 0.14,
           });
+          applyPhotoAspect(photoCards[photoCards.length - 1], DEFAULT_PHOTO_ASPECT);
         }
       }
 
@@ -850,12 +888,12 @@
             transparent: true,
             opacity: 0.9,
           });
-          const chip = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.34), mat);
+          const chip = new THREE.Mesh(new THREE.PlaneGeometry(0.62, 0.24), mat);
           chip.userData.pickType = FOCUS_KIND.TEXT;
           chip.userData.pickIndex = i;
 
           const shell = new THREE.Mesh(
-            new THREE.PlaneGeometry(0.88, 0.42),
+            new THREE.PlaneGeometry(0.7, 0.32),
             new THREE.MeshPhysicalMaterial({
               color: new THREE.Color(THEME_COLORS.cream),
               emissive: new THREE.Color(THEME_COLORS.rose),
@@ -882,7 +920,7 @@
             heartPos: sampleHeartVolume(2.2),
             wanderPos: randomInSphere(2.6, 6.4),
             phase: Math.random() * Math.PI * 2,
-            scale: 0.45 + Math.random() * 0.12,
+            scale: 0.36 + Math.random() * 0.1,
             textIndex: i % LOVE_MESSAGES.length,
           });
         }
@@ -890,16 +928,31 @@
 
       async function setPhotoTextures(urls) {
         const tasks = [];
-        for (let i = 0; i < MAX_PHOTO_CARDS; i += 1) {
-          tasks.push(loadTexture(urls[i], i));
+        for (let i = 0; i < photoCards.length; i += 1) {
+          tasks.push(loadTexture(urls[i]));
         }
         const loaded = await Promise.all(tasks);
         for (let i = 0; i < photoCards.length; i += 1) {
           const { texture, src } = loaded[i];
           const card = photoCards[i];
+          if (!texture) {
+            if (card.photoMat.map) {
+              card.photoMat.map.dispose();
+              card.photoMat.map = null;
+              card.photoMat.needsUpdate = true;
+            }
+            card.group.visible = false;
+            photoOverlaySources[i] = "";
+            continue;
+          }
           if (card.photoMat.map && card.photoMat.map !== texture) {
             card.photoMat.map.dispose();
           }
+          const img = texture.image;
+          const aspect =
+            img && img.width && img.height ? img.width / img.height : DEFAULT_PHOTO_ASPECT;
+          applyPhotoAspect(card, aspect);
+          card.group.visible = true;
           card.photoMat.map = texture;
           card.photoMat.needsUpdate = true;
           photoOverlaySources[i] = src;
@@ -919,13 +972,13 @@
 
       function updateStatus() {
         if (currentState === APP_STATE.FOCUS) {
-          const kindLabel = focusKind === FOCUS_KIND.PHOTO ? "查看照片" : "查看话语";
+          const kindLabel = focusKind === FOCUS_KIND.PHOTO ? "查看照片" : "查看悄悄话";
           statusLine.textContent = `状态：${kindLabel}`;
           return;
         }
         const morph = getZoomMorph();
-        const shapeLabel = morph < 0.5 ? "心聚合" : "漫游";
-        statusLine.textContent = `形态：${shapeLabel} ${Math.round(morph * 100)}%`;
+        const shapeLabel = morph < 0.5 ? "聚合" : "漫游";
+        statusLine.textContent = `${shapeLabel} ${Math.round(morph * 100)}%`;
       }
 
       function setState(nextState) {
@@ -945,7 +998,12 @@
         if (focusKind === FOCUS_KIND.PHOTO) {
           focusPhotoEl.style.display = "block";
           focusTextWrap.style.display = "none";
-          focusPhotoEl.src = photoOverlaySources[focusIndex] || createFallbackPhotoDataURL(focusIndex);
+          const src = photoOverlaySources[focusIndex];
+          if (!src) {
+            closeFocus();
+            return;
+          }
+          focusPhotoEl.src = src;
         } else {
           focusPhotoEl.style.display = "none";
           focusTextWrap.style.display = "block";
@@ -957,7 +1015,18 @@
         focusKind = kind;
 
         if (kind === FOCUS_KIND.PHOTO) {
-          focusIndex = (index + photoCards.length) % photoCards.length;
+          const visiblePhotoIndexes = [];
+          for (let i = 0; i < photoCards.length; i += 1) {
+            if (photoCards[i].group.visible) visiblePhotoIndexes.push(i);
+          }
+          if (visiblePhotoIndexes.length === 0) {
+            return;
+          }
+          if (visiblePhotoIndexes.includes(index)) {
+            focusIndex = index;
+          } else {
+            focusIndex = visiblePhotoIndexes[0];
+          }
         } else {
           focusIndex = (index + LOVE_MESSAGES.length) % LOVE_MESSAGES.length;
         }
@@ -976,12 +1045,43 @@
       }
 
       function stepFocus(delta) {
+        const visiblePhotoIndexes = [];
+        for (let i = 0; i < photoCards.length; i += 1) {
+          if (photoCards[i].group.visible) visiblePhotoIndexes.push(i);
+        }
+        const canPhoto = visiblePhotoIndexes.length > 0;
+        const canText = LOVE_MESSAGES.length > 0;
+        if (!canPhoto && !canText) return;
+
+        const prevKind = focusKind;
+        const prevIndex = focusIndex;
+
+        if (canPhoto && canText) {
+          focusKind = Math.random() < 0.5 ? FOCUS_KIND.PHOTO : FOCUS_KIND.TEXT;
+        } else {
+          focusKind = canPhoto ? FOCUS_KIND.PHOTO : FOCUS_KIND.TEXT;
+        }
+
         if (focusKind === FOCUS_KIND.PHOTO) {
-          focusIndex = (focusIndex + delta + photoCards.length) % photoCards.length;
-        } else if (focusKind === FOCUS_KIND.TEXT) {
-          focusIndex = (focusIndex + delta + LOVE_MESSAGES.length) % LOVE_MESSAGES.length;
+          const len = visiblePhotoIndexes.length;
+          let nextPick = Math.floor(Math.random() * len);
+          if (len > 1 && prevKind === FOCUS_KIND.PHOTO) {
+            const prevVisibleIdx = visiblePhotoIndexes.indexOf(prevIndex);
+            if (prevVisibleIdx >= 0 && nextPick === prevVisibleIdx) {
+              nextPick = (prevVisibleIdx + (delta >= 0 ? 1 : len - 1)) % len;
+            }
+          }
+          focusIndex = visiblePhotoIndexes[nextPick];
+        } else {
+          const len = LOVE_MESSAGES.length;
+          let nextIndex = Math.floor(Math.random() * len);
+          if (len > 1 && prevKind === FOCUS_KIND.TEXT && nextIndex === prevIndex) {
+            nextIndex = (prevIndex + (delta >= 0 ? 1 : len - 1)) % len;
+          }
+          focusIndex = nextIndex;
         }
         applyFocusView();
+        updateStatus();
       }
 
       prevItemBtn.addEventListener("click", () => stepFocus(-1));
@@ -997,25 +1097,6 @@
         if (ev.key === "Escape" && currentState === APP_STATE.FOCUS) closeFocus();
         if (ev.key === "ArrowLeft" && currentState === APP_STATE.FOCUS) stepFocus(-1);
         if (ev.key === "ArrowRight" && currentState === APP_STATE.FOCUS) stepFocus(1);
-      });
-
-      uploadInput.addEventListener("change", async (ev) => {
-        const files = [...(ev.target.files || [])].filter((f) => f.type.startsWith("image/"));
-        if (files.length === 0) return;
-
-        for (const url of uploadedObjectUrls) {
-          URL.revokeObjectURL(url);
-        }
-        uploadedObjectUrls = [];
-
-        activePhotoUrls = files.slice(0, MAX_PHOTO_CARDS).map((f) => {
-          const url = URL.createObjectURL(f);
-          uploadedObjectUrls.push(url);
-          return url;
-        });
-
-        await setPhotoTextures(activePhotoUrls);
-        updateStatus();
       });
 
       /* ---------------------------
@@ -1127,6 +1208,14 @@
         { passive: true }
       );
 
+      // iOS Safari: block browser-level pinch zoom so two-finger gesture only controls scene zoom.
+      const blockBrowserGesture = (ev) => {
+        ev.preventDefault();
+      };
+      document.addEventListener("gesturestart", blockBrowserGesture, { passive: false });
+      document.addEventListener("gesturechange", blockBrowserGesture, { passive: false });
+      document.addEventListener("gestureend", blockBrowserGesture, { passive: false });
+
       /* ---------------------------
        * 动画更新
        * --------------------------- */
@@ -1156,6 +1245,8 @@
         const t = clock.getElapsedTime();
         const morph = getZoomMorph();
         const breath = 1 + Math.sin(t * 2) * (0.02 + (1 - morph) * 0.03);
+        const heartCompact = lerp(0.76, 1, morph);
+        const sparkCompact = lerp(0.8, 1, morph);
 
         heartMat.emissiveIntensity = lerp(0.58, 0.32, morph) + Math.sin(t * 1.8) * 0.02;
         sparkMat.emissiveIntensity = lerp(1.2, 0.74, morph);
@@ -1164,7 +1255,7 @@
         for (let i = 0; i < hearts.length; i += 1) {
           const item = hearts[i];
 
-          const heartTarget = tmpVec.copy(item.heartPos).multiplyScalar(breath);
+          const heartTarget = tmpVec.copy(item.heartPos).multiplyScalar(breath * heartCompact);
           heartTarget.y += Math.sin(t * 2.4 + item.phase) * 0.08;
 
           const wanderTarget = tmpVecB.copy(item.wanderPos);
@@ -1190,7 +1281,7 @@
         for (let i = 0; i < sparks.length; i += 1) {
           const s = sparks[i];
 
-          const heartTarget = tmpVec.copy(s.heartPos).multiplyScalar(breath * 1.1);
+          const heartTarget = tmpVec.copy(s.heartPos).multiplyScalar(breath * 1.1 * sparkCompact);
           heartTarget.y += Math.sin(t * 2.3 + s.phase) * 0.16;
 
           const wanderTarget = tmpVecB.copy(s.wanderPos);
@@ -1213,12 +1304,13 @@
       function updatePhotoCards() {
         const t = clock.getElapsedTime();
         const morph = getZoomMorph();
+        const photoCompact = lerp(0.82, 1, morph);
 
         for (let i = 0; i < photoCards.length; i += 1) {
           const card = photoCards[i];
           const activePhotoFocus = currentState === APP_STATE.FOCUS && focusKind === FOCUS_KIND.PHOTO && focusIndex === i;
 
-          const heartTarget = tmpVec.copy(card.heartPos);
+          const heartTarget = tmpVec.copy(card.heartPos).multiplyScalar(photoCompact);
           heartTarget.y += Math.sin(t * 1.45 + card.phase) * 0.1;
           const wanderTarget = tmpVecB.copy(card.wanderPos);
           wanderTarget.x += Math.sin(t * 0.88 + card.phase) * 0.24;
@@ -1230,7 +1322,8 @@
           card.group.position.copy(card.pos);
           card.group.lookAt(camera.position);
 
-          const baseScale = card.scale * lerp(0.98, 0.9, morph) * (0.96 + Math.sin(t * 1.4 + card.phase) * 0.04);
+          const sizeByMorph = lerp(0.34, 2.2, morph);
+          const baseScale = card.scale * sizeByMorph * (0.96 + Math.sin(t * 1.4 + card.phase) * 0.04);
           const scale = activePhotoFocus ? baseScale * 1.14 : baseScale;
           card.group.scale.lerp(tmpVecB.set(scale, scale, scale), 0.1);
 
@@ -1251,6 +1344,7 @@
       function updateTextCards() {
         const t = clock.getElapsedTime();
         const morph = getZoomMorph();
+        const textCompact = lerp(0.8, 1, morph);
 
         for (let i = 0; i < textCards.length; i += 1) {
           const chip = textCards[i];
@@ -1259,7 +1353,7 @@
             focusKind === FOCUS_KIND.TEXT &&
             focusIndex === chip.textIndex;
 
-          const heartTarget = tmpVec.copy(chip.heartPos);
+          const heartTarget = tmpVec.copy(chip.heartPos).multiplyScalar(textCompact);
           heartTarget.y += Math.cos(t * 1.3 + chip.phase) * 0.08;
           const wanderTarget = tmpVecB.copy(chip.wanderPos);
           wanderTarget.x += Math.cos(t * 0.82 + chip.phase) * 0.2;
@@ -1271,7 +1365,8 @@
           chip.group.position.copy(chip.pos);
           chip.group.lookAt(camera.position);
 
-          const baseScale = chip.scale * lerp(1, 0.88, morph) * (0.96 + Math.sin(t * 1.4 + chip.phase) * 0.04);
+          const textSizeByMorph = lerp(1.0, 2.5, morph);
+          const baseScale = chip.scale * textSizeByMorph * (0.96 + Math.sin(t * 1.4 + chip.phase) * 0.04);
           const scale = activeTextFocus ? baseScale * 1.15 : baseScale;
           chip.group.scale.lerp(tmpVecB.set(scale, scale, scale), 0.1);
 
@@ -1292,9 +1387,10 @@
       function updateDustParticles() {
         const t = clock.getElapsedTime();
         const morph = getZoomMorph();
+        const dustCompact = lerp(0.8, 1, morph);
         for (let i = 0; i < dustParticles.length; i += 1) {
           const p = dustParticles[i];
-          const heartTarget = tmpVec.copy(p.heartPos);
+          const heartTarget = tmpVec.copy(p.heartPos).multiplyScalar(dustCompact);
           heartTarget.y += Math.sin(t * 1.95 + p.phase) * 0.09;
           const wanderTarget = tmpVecB.copy(p.wanderPos);
           wanderTarget.x += Math.sin(t * 0.85 + p.phase) * 0.5;
@@ -1309,11 +1405,34 @@
         dustGeometry.attributes.position.needsUpdate = true;
       }
 
+      function updateGlintParticles() {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+        const glintCompact = lerp(0.66, 1, morph);
+        for (let i = 0; i < glintParticles.length; i += 1) {
+          const p = glintParticles[i];
+          const heartTarget = tmpVec.copy(p.heartPos).multiplyScalar(glintCompact);
+          heartTarget.y += Math.sin(t * 1.45 + p.phase) * 0.07;
+          const wanderTarget = tmpVecB.copy(p.wanderPos);
+          wanderTarget.x += Math.cos(t * 0.62 + p.phase) * 0.36;
+          wanderTarget.y += Math.sin(t * 0.9 + p.phase) * 0.34;
+          wanderTarget.z += Math.cos(t * 0.58 + p.phase * 1.4) * 0.32;
+
+          p.pos.lerpVectors(heartTarget, wanderTarget, morph);
+          glintPositions[i * 3] = p.pos.x;
+          glintPositions[i * 3 + 1] = p.pos.y;
+          glintPositions[i * 3 + 2] = p.pos.z;
+        }
+        glintGeometry.attributes.position.needsUpdate = true;
+      }
+
       function updateBackground(dt) {
         const t = clock.getElapsedTime();
         auraUniforms.uTime.value = t;
         dustMaterial.uniforms.uTime.value = t;
         dustMaterial.uniforms.uOpacity.value = lerp(0.92, 0.62, getZoomMorph());
+        glintMaterial.uniforms.uTime.value = t;
+        glintMaterial.uniforms.uOpacity.value = lerp(0.72, 0.44, getZoomMorph());
         auraSphere.rotation.y += dt * 0.05;
         auraSphere.rotation.x += dt * 0.018;
 
@@ -1330,6 +1449,7 @@
         updatePhotoCards();
         updateTextCards();
         updateDustParticles();
+        updateGlintParticles();
         updateBackground(dt);
         if (currentState !== APP_STATE.FOCUS) {
           updateStatus();
@@ -1346,6 +1466,7 @@
         camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         dustMaterial.uniforms.uPixelRatio.value = pixelRatio;
+        glintMaterial.uniforms.uPixelRatio.value = pixelRatio;
       });
 
       setState(APP_STATE.MAIN);

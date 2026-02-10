@@ -26,15 +26,15 @@ yeah，我又到办公室了。今天周二，下星期就要发表了……怎�
 
 ### 2025-03-06
 
-Although very exicited that Prof. Hu replied me, I still don't know how to deal with the coding. sucks. 
+Although very exicited that Prof. Hu replied me, I still don't know how to deal with the coding. sucks.
 
-I plan to stop computing, and focuse on the study, rather than "research". and I'll use English and Chinese (and Japanese??) to write the daily log one time by time. 
+I plan to stop computing, and focuse on the study, rather than "research". and I'll use English and Chinese (and Japanese??) to write the daily log one time by time.
 
-I like him. maybe. I felt tired and 迷茫 recently. about him. it influent me a lot actually. 
+I like him. maybe. I felt tired and 迷茫 recently. about him. it influent me a lot actually.
 
-I don't want this website to be discover by anyone except someone I share with. 
+I don't want this website to be discover by anyone except someone I share with.
 
-I finally know why Kuramoto-san doesn't like Cosmology... I don't like too. Actually, I don't like particles. too complicated. maybe because there is too many numerical result and approximations. I want to learn gravity. maybe. not sure. I think I should not default myself what should I learn and should I do. Learn diversity. ... . I don't know what I like. .. . . 
+I finally know why Kuramoto-san doesn't like Cosmology... I don't like too. Actually, I don't like particles. too complicated. maybe because there is too many numerical result and approximations. I want to learn gravity. maybe. not sure. I think I should not default myself what should I learn and should I do. Learn diversity. ... . I don't know what I like. .. . .
 
 #### 2025-03-07
 
@@ -210,7 +210,7 @@ INFJ可帮助INFP将个人价值观（Fi）转化为行动（Fe），而他能�
 
 #### 2025-03-17
 
-今日兴趣，想学thermal history and the boundary of the universe. 
+今日兴趣，想学thermal history and the boundary of the universe.
 
 #### 2025-03-19
 
@@ -350,9 +350,9 @@ Hunting Parity Violations in Cosmology
 
 - ALP, differentiates the phase velocities of circularized polarized photon (CMB: C^TB, C^EB P-tran, not observed)
 
-isotropic cosmic birefringence: Lue,wang&kamiokowski 1999. . produces  parity-odd C^EB. 
+isotropic cosmic birefringence: Lue,wang&kamiokowski 1999. . produces  parity-odd C^EB.
 
-- with interferometer GM detector. bowtie ring cavity method. 
+- with interferometer GM detector. bowtie ring cavity method.
 
 ⬆️ 本学期第一次cosmo GM……在讲啥……只能听懂前10分钟xs。
 
@@ -466,7 +466,7 @@ ljy昨天来我家了……应该是第三次。今天他也要来。没有肢�
 
 这个晚上，我好像终于走进了一些他的内心，终于了解了一些他的秘密。他说他害怕一个人，我本来不理解，好像终于有些理解了，但是好像还是不理解。为什么一个人有什么好怕的。为什么终究还是要分开还是想在一起。这是一段exotic的关系。我觉得我应该切断……
 
---- 
+---
 
 ：：AI 分析：：
 
@@ -478,7 +478,7 @@ ljy昨天来我家了……应该是第三次。今天他也要来。没有肢�
 
 自我成长：对女主而言，这是情感和性的启蒙，带有探索和学习性质。
 
---- 
+---
 
 晚上又要来……兴奋……呢。
 
