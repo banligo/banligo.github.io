@@ -1,11 +1,21 @@
 ---
-title: "2025 Year spring notes 1"
+title: "2025 Year spring cosmo notes"
 layout: article
 ---
 
-My master period daily boring notes from seminars, conference, balabala...
-
 ---
+
+#### 2025-10-02
+
+**What constitutes a gravitational wave in an expanding universe?** by Yi-Zhen Chu National Central University
+
+Grav radiation constistes of only malles spin 2 waves. quadrupole formula [arXiv: 1501.05593](https://arxiv.org/abs/1510.05593)
+
+here radiation ($w=1/3$) and (scale) dark energy ($w=-1+\delta w$) dominated.
+
+(traceless) tidal forces acting on a pair of co-moving free falling test masses placed in the far zone
+$$a^i = -a^{-2}\delta_1R^{i}_{0j0}\xi^{j} = -a^{-2}\delta_1C^{i}_{0j0}\xi^{j}+\text{trace term}$$
+
 
 #### 2025-09-19
 

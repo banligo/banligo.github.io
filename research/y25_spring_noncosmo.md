@@ -1,11 +1,90 @@
 ---
-title: "2025 Year spring notes 2"
+title: "2025 Year spring non-cosmo notes"
 layout: article
 ---
 
-My master period daily boring notes from seminars, conference, balabala...
-
 ---
+
+#### 2025-10-08
+
+[**General Probabilistic Theories**](https://ithems.riken.jp/en/events/lectures-on-general-probabilistic-theories-from-introduction-to-research-participation)
+
+- *Convex geometry, positive cones, and operational formulation of probabilistic models:*
+    - Study of state spaces as convex sets, with positive cones representing physically allowed states.
+    - Operational models use these structures to describe measurement outcomes and transformations.
+
+- *Composite systems, information-theoretic quantities, symmetries, and Euclidean Jordan algebras:*
+    - Composite systems are modeled via tensor products of local state spaces.
+    - Information-theoretic quantities (e.g., distinguishability, entropy) depend on the structure of these composites.
+    - Symmetries and self-duality play key roles; Euclidean Jordan algebras provide a unifying mathematical framework.
+
+*Locally Quantum Model:*
+
+- Local state spaces:
+    $$
+    V_+^A = \mathcal{B}(\mathbb{C}^m)^{\delta u}_+,\quad V_+^B = \mathcal{B}(\mathbb{C}^n)^{\delta u}_+
+    $$
+- Composite systems:
+    - Minimal tensor product: $V_+^A *_{min} V_+^B = SEP_{min}$
+    - Maximal tensor product: $V_+^A *_{max} V_+^B = SEP_{max}$
+    - Separable elements in $\mathcal{B}(\mathbb{C}^n)^{\delta u}_+$
+
+- For $x \in \mathcal{B}(\mathbb{C}^{mn})^{\delta u}$, $x$ is separable if $\operatorname{Tr}(xY) \leq 0$ for all $Y \in SEP_{min}$.
+
+- *Choi-Jamiołkowski isomorphism:* For all $x \in BP_{min}$, there exists a positive map $p: \mathcal{B}(\mathbb{C}^n)^{\delta u} \to \mathcal{B}(\mathbb{C}^m)^{\delta u}$ such that $x = (id \otimes p)\Phi^\dagger$, where $\Phi^\dagger = |\Phi^\dagger\rangle\langle\Phi|$.
+
+- To describe all states in $BP_{min}$, positive but not necessarily completely positive maps are needed (e.g., transpose map $\tau$).
+
+    - *Hurwitz-Schrödinger criterion:* $BP_{min} = \{ X + (id \otimes \tau)(Y) \mid X, Y \in \mathcal{B}(\mathbb{C}^{mn})^{\delta u}_+ \}$
+
+*2-Qubit Case ($m = n = 2$):*
+
+- $$
+    V_+^{AB} = \mathcal{B}(\mathbb{C}^2)^{\delta u}_+ \otimes_{min} \mathcal{B}(\mathbb{C}^2)^{\delta u}_+
+    $$
+- $$
+    V_+^{AB*} = \mathcal{B}(\mathbb{C}^2)^{\delta u}_+ \otimes_{max} \mathcal{B}(\mathbb{C}^2)^{\delta u}_+ = \{ X + (id \otimes \tau)(Y) \mid X, Y \in \mathcal{B}(\mathbb{C}^2)^{\delta u}_+ \}
+    $$
+- Example matrices:
+    $$
+    \begin{pmatrix}
+    1 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 1
+    \end{pmatrix}
+    = (id \otimes \tau)
+    \begin{pmatrix}
+    1 & 0 & 0 & -1 \\
+    0 & 0 & 0 & 0 \\
+    0 & 0 & 0 & 0 \\
+    -1 & 0 & 0 & 1
+    \end{pmatrix}
+    $$
+
+*Distinguishability and Orthogonality:*
+
+- For projectors $P_i, M_j$, $Tr(P_i M_j) = \delta_{ij}$ requires orthogonal bases in quantum theory.
+- For two pure separable states $P_0 = P_0^A \otimes P_0^B$, $P_1 = P_1^A \otimes P_1^B$:
+    $$
+    Tr(P_0^A P_1^A) + Tr(P_0^B P_1^B) \leq 1
+    $$
+    (see [HA Cosbida, Hasob, 2019])
+
+- For finite $n$, the situation differs; Lee considers $(Tr(P_1^A P_1^A))^n \to 0$.
+
+*$n$-Composite System Sequential Models:*
+
+- For a model $(V, V_+, u)$, the $n$-composite system is $((V^{\otimes n}, V_+^{u}, u^{\otimes n}))_n$.
+- Once a sequence family is chosen, complete position is determined.
+
+*Symmetric Cones and Euclidean Jordan Algebras:*
+
+- Symmetric cones: strong self-duality and homogeneity $\implies$ unique spectral decomposition.
+- For $P \in Stu(V_i)$, there exists a perfectly distinguishable state.
+- Euclidean Jordan algebras provide the algebraic structure underlying these cones and state spaces.
+
+
 #### 2025-08-27
 
 **Challenges to solve few-body problems using quantum machine learning with hybrid quantum and massively parallel computers** by S. Aoyama CRC KEK

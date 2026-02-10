@@ -7,6 +7,7 @@ layout: article
 
 ## dairy 2025
 
+<a class="button button--primary button--rounded button--sm" href="y25-0912-working">09-12</a> 我有被看到吗。
 <a class="button button--primary button--rounded button--sm" href="y25-0708-working">07-08</a> 努力工作，暂时不考虑未来。
 
 <a class="button button--primary button--rounded button--sm" href="y25-0506-searching">05-06</a> 恋に堕ちた & 找到课题了？

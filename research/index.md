@@ -11,6 +11,9 @@ layout: article
 
 <a href="env_notes">Computer Environment Setup Notes (Mac)</a>
 
+<a href="y25_fall_cosmo">2025 fall for cosmology</a>
+
+<a href="y25_fall_noncosmo">2025 fall for non-cosmology</a>
 
 <a href="y25_spring_cosmo">2025 spring for cosmology</a>
 

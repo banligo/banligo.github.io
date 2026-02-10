@@ -44,7 +44,7 @@ For LaTeX:
 
 VPN: heyn @=*2R$pKn#k7
 
-`% ssh -L 9001:localhost:9001 heyn@an09.cfca.nao.ac.jp` connect to server
+`% ssh -L 9077:localhost:9077 heyn@an09.cfca.nao.ac.jp` connect to server
 
 `% scp -r /path/to/local/project heyn@an09.cfca.nao.ac.jp:/home/heyn/project` upload local file to server
 
@@ -55,7 +55,7 @@ VPN: heyn @=*2R$pKn#k7
 scp -r /Users/yingqiu/Desktop/master1/05research/02_phase_correlation/step_0.py heyn@an09.cfca.nao.ac.jp:/home/heyn/tryit/02_phase_correlation
 scp heyn@an09.cfca.nao.ac.jp:/home/heyn/tryit/02_phase_correlation/figure_output/Pk_N512_b1000_fNL10_20250828.pdf /Users/yingqiu/Desktop/Downloads
 
-`jupyter lab --no-browser --port=9001`
+`jupyter lab --no-browser --port=9077`
 
 Connect to your server via Remote SSH in VS Code
 - `Cmd+Shift+P` type and select Remote-SSH: Connect to Host...
