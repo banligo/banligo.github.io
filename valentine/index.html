@@ -2,58 +2,1354 @@
 <html lang="zh-CN">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Valentine Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Valentine Memory Nebula</title>
     <style>
+      @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
+
       :root {
-        color-scheme: light;
+        --rose: #ff739f;
+        --gold: #ffd39a;
+        --cream: #f6fbff;
+        --wine: #24496f;
+        --bg-deep: #0a2e53;
+        --panel: rgba(243, 251, 255, 0.88);
+        --panel-border: rgba(255, 255, 255, 0.82);
       }
 
       * {
         box-sizing: border-box;
       }
 
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
       body {
         margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
-        background: radial-gradient(circle at top, #fff0f5 0%, #ffe6ea 40%, #ffd7df 100%);
-        color: #5d2333;
+        overflow: hidden;
+        color: var(--cream);
+        font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
+        background:
+          radial-gradient(120% 80% at 12% 5%, #9ad8ff 0%, rgba(154, 216, 255, 0) 63%),
+          radial-gradient(120% 90% at 88% 100%, #4a87cd 0%, rgba(74, 135, 205, 0) 68%),
+          linear-gradient(140deg, #77c7f5 0%, #4f9bde 56%, #2b6fb8 100%);
       }
 
-      .card {
-        width: min(680px, calc(100vw - 32px));
-        padding: 28px 24px;
+      #scene {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .top-bar {
+        position: fixed;
+        top: max(14px, env(safe-area-inset-top));
+        left: max(14px, env(safe-area-inset-left));
+        right: max(14px, env(safe-area-inset-right));
+        z-index: 12;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .title-box,
+      .control-box {
+        pointer-events: auto;
+        background: var(--panel);
+        border: 1px solid var(--panel-border);
+        backdrop-filter: blur(10px);
+        color: var(--wine);
+        border-radius: 14px;
+      }
+
+      .title-box {
+        max-width: min(560px, 74vw);
+        padding: 14px 16px 12px;
+      }
+
+      .title-box h1 {
+        margin: 0 0 4px;
+        line-height: 1;
+        font-size: clamp(1.4rem, 2.2vw, 2rem);
+        font-family: "Cormorant Garamond", serif;
+        letter-spacing: 0.02em;
+      }
+
+      .title-box p {
+        margin: 0;
+        color: #2e608a;
+        font-size: 0.9rem;
+      }
+
+      .control-box {
+        min-width: 254px;
+        padding: 10px 12px;
+      }
+
+      .status-line {
+        margin: 0 0 8px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #1d5a8f;
+      }
+
+      .controls {
+        font-size: 0.76rem;
+        line-height: 1.45;
+        color: #2f5f87;
+      }
+
+      .bottom-panel {
+        position: fixed;
+        left: max(14px, env(safe-area-inset-left));
+        right: max(14px, env(safe-area-inset-right));
+        bottom: max(14px, env(safe-area-inset-bottom));
+        z-index: 12;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .uploader,
+      .nav-link {
+        pointer-events: auto;
+        background: rgba(255, 246, 237, 0.84);
+        border: 1px solid rgba(255, 255, 255, 0.84);
+        border-radius: 12px;
+        backdrop-filter: blur(9px);
+        color: var(--wine);
+        padding: 9px 11px;
+        font-size: 0.8rem;
+      }
+
+      .uploader label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 700;
+      }
+
+      .uploader input {
+        display: block;
+        width: min(340px, 73vw);
+        font: inherit;
+      }
+
+      .nav-link a {
+        color: #2b628d;
+        text-decoration: none;
+        font-weight: 700;
+      }
+
+      .focus-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 20;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 260ms ease;
+        background: radial-gradient(circle at center, rgba(35, 95, 156, 0.4), rgba(8, 25, 48, 0.7));
+      }
+
+      .focus-overlay.show {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      .focus-card {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) translateY(10px);
+        width: min(560px, calc(100vw - 28px));
+        background: rgba(255, 246, 236, 0.92);
+        border: 1px solid rgba(255, 255, 255, 0.88);
         border-radius: 16px;
-        background: rgba(255, 255, 255, 0.78);
-        border: 1px solid rgba(255, 255, 255, 0.9);
-        box-shadow: 0 12px 32px rgba(124, 26, 57, 0.14);
-        backdrop-filter: blur(3px);
+        color: #581f34;
+        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.34);
+        padding: 16px;
+        transition: transform 260ms ease;
       }
 
-      h1 {
-        margin: 0 0 12px;
+      .focus-overlay.show .focus-card {
+        transform: translate(-50%, -50%);
+      }
+
+      .focus-photo {
+        width: 100%;
+        aspect-ratio: 4 / 5;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.8);
+        display: none;
+      }
+
+      .focus-text-wrap {
+        display: none;
+        background: linear-gradient(140deg, rgba(255, 230, 240, 0.9), rgba(255, 234, 205, 0.86));
+        border-radius: 10px;
+        border: 1px solid rgba(255, 255, 255, 0.86);
+        padding: 18px;
+      }
+
+      .focus-text-wrap h2 {
+        margin: 0 0 10px;
+        font-family: "Cormorant Garamond", serif;
         font-size: 1.6rem;
+        color: #8f1f46;
       }
 
-      p {
-        margin: 0 0 12px;
-        line-height: 1.65;
+      .focus-text-wrap p {
+        margin: 0;
+        line-height: 1.8;
+        font-size: 1rem;
       }
 
-      a {
-        color: #a0193f;
+      .focus-actions {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+
+      .focus-actions button {
+        border: 0;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font: inherit;
+        font-weight: 700;
+        background: linear-gradient(135deg, #cc567f 0%, #8e2047 100%);
+        color: #fff8ef;
+        cursor: pointer;
+      }
+
+      @media (max-width: 900px) {
+        .top-bar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+
+        .title-box,
+        .control-box {
+          max-width: 100%;
+        }
+
+        .bottom-panel {
+          flex-direction: column;
+          align-items: flex-start;
+        }
       }
     </style>
   </head>
   <body>
-    <main class="card">
-      <h1>情人节互动页已创建</h1>
-      <p>这个目录已经可以独立访问，后续你可以把 Three.js + MediaPipe Hands 的单文件应用直接放在这里。</p>
-      <p>当前路径：<code>/valentine/</code></p>
-      <p><a href="/">返回首页</a></p>
-    </main>
+    <canvas id="scene"></canvas>
+
+    <div class="top-bar">
+      <div class="title-box">
+        <h1>Valentine Memory Nebula</h1>
+        <p>拖拽旋转、缩放视角，点击照片或话语查看</p>
+      </div>
+      <div class="control-box">
+        <p id="statusLine" class="status-line">形态：聚合 0%</p>
+        <div class="controls">
+          拖动屏幕：旋转视角<br />
+          滚轮 / 双指：缩放并切换聚合/漫游形态<br />
+          点击卡片：仅查看照片或仅查看文字
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom-panel">
+      <div class="uploader">
+        <label for="uploadPhotos">替换照片（多选）</label>
+        <input id="uploadPhotos" type="file" accept="image/*" multiple />
+      </div>
+      <div class="nav-link"><a href="/">返回首页</a></div>
+    </div>
+
+    <div id="focusOverlay" class="focus-overlay">
+      <div class="focus-card">
+        <img id="focusPhoto" class="focus-photo" alt="selected photo" />
+        <div id="focusTextWrap" class="focus-text-wrap">
+          <h2>想对你说</h2>
+          <p id="focusText"></p>
+        </div>
+        <div class="focus-actions">
+          <button id="prevItem">上一项</button>
+          <button id="nextItem">下一项</button>
+          <button id="closeFocus">关闭</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
+
+      /* ---------------------------
+       * 可配置区
+       * --------------------------- */
+      const THEME_COLORS = {
+        rose: "#ff739f",
+        gold: "#ffd39a",
+        cream: "#f6fbff",
+        wine: "#24496f",
+        glow: "#d5f1ff",
+        sky: "#69c8ff",
+        azure: "#3f8fd6",
+      };
+
+      const PHOTO_URLS = [
+        "https://picsum.photos/seed/love-a/900/1200",
+        "https://picsum.photos/seed/love-b/900/1200",
+        "https://picsum.photos/seed/love-c/900/1200",
+        "https://picsum.photos/seed/love-d/900/1200",
+        "https://picsum.photos/seed/love-e/900/1200",
+        "https://picsum.photos/seed/love-f/900/1200",
+      ];
+
+      const LOVE_MESSAGES = [
+        "今天也想把最温柔的一束光留给你。",
+        "愿我们分享的每个平凡瞬间，都慢慢长成浪漫。",
+        "谢谢你让我的日常，变成值得收藏的电影镜头。",
+        "如果世界很吵，那我们就靠近一点，听见彼此就好。",
+        "想和你把很多个明天，过成一个长长的心动。",
+        "你出现以后，连风都像在说好喜欢你。",
+      ];
+
+      const APP_STATE = {
+        MAIN: "main",
+        FOCUS: "focus",
+      };
+
+      const FOCUS_KIND = {
+        NONE: "none",
+        PHOTO: "photo",
+        TEXT: "text",
+      };
+
+      /* ---------------------------
+       * 基础对象
+       * --------------------------- */
+      const isMobile = window.matchMedia("(max-width: 860px)").matches;
+      const HEART_INSTANCE_COUNT = isMobile ? 520 : 880;
+      const SPARK_COUNT = isMobile ? 260 : 420;
+      const DUST_COUNT = isMobile ? 900 : 1600;
+      const MAX_PHOTO_CARDS = isMobile ? 8 : 10;
+      const MAX_TEXT_CHIPS = isMobile ? 8 : 10;
+
+      const canvas = document.getElementById("scene");
+      const statusLine = document.getElementById("statusLine");
+      const uploadInput = document.getElementById("uploadPhotos");
+
+      const focusOverlay = document.getElementById("focusOverlay");
+      const focusPhotoEl = document.getElementById("focusPhoto");
+      const focusTextWrap = document.getElementById("focusTextWrap");
+      const focusTextEl = document.getElementById("focusText");
+      const prevItemBtn = document.getElementById("prevItem");
+      const nextItemBtn = document.getElementById("nextItem");
+      const closeFocusBtn = document.getElementById("closeFocus");
+
+      const renderer = new THREE.WebGLRenderer({
+        canvas,
+        antialias: true,
+        alpha: true,
+        powerPreference: "high-performance",
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.08;
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x6aaee2, 0.05);
+
+      const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 120);
+      const cameraRig = {
+        yaw: 0,
+        pitch: 0.18,
+        targetYaw: 0,
+        targetPitch: 0.18,
+        radius: 8.6,
+        targetRadius: 8.6,
+      };
+
+      const MORPH_RANGE = {
+        minRadius: 5.8,
+        maxRadius: 11.8,
+      };
+
+      const raycaster = new THREE.Raycaster();
+      const pointerNDC = new THREE.Vector2();
+      const tmpObject = new THREE.Object3D();
+      const tmpVec = new THREE.Vector3();
+      const tmpVecB = new THREE.Vector3();
+
+      const clock = new THREE.Clock();
+
+      const ambient = new THREE.AmbientLight(0xe8f6ff, 0.78);
+      const keyLight = new THREE.PointLight(0xffd9b0, 14, 42, 2);
+      keyLight.position.set(4.2, 4.4, 4.6);
+      const rimLight = new THREE.PointLight(0x7bc4ff, 9.2, 40, 2);
+      rimLight.position.set(-5.2, -2, -4.2);
+      scene.add(ambient, keyLight, rimLight);
+
+      function lerp(a, b, t) {
+        return a + (b - a) * t;
+      }
+
+      function clamp(v, min, max) {
+        return Math.min(max, Math.max(min, v));
+      }
+
+      function getZoomMorph() {
+        return clamp(
+          (cameraRig.radius - MORPH_RANGE.minRadius) / (MORPH_RANGE.maxRadius - MORPH_RANGE.minRadius),
+          0,
+          1
+        );
+      }
+
+      function randomInSphere(minR, maxR) {
+        const u = Math.random();
+        const v = Math.random();
+        const theta = Math.PI * 2 * u;
+        const phi = Math.acos(2 * v - 1);
+        const r = lerp(minR, maxR, Math.cbrt(Math.random()));
+        return new THREE.Vector3(
+          r * Math.sin(phi) * Math.cos(theta),
+          r * Math.cos(phi) * 0.8,
+          r * Math.sin(phi) * Math.sin(theta)
+        );
+      }
+
+      function heartCurve2D(t) {
+        const x = (16 * Math.pow(Math.sin(t), 3)) / 16;
+        const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 16;
+        return new THREE.Vector2(x * 0.92, y * 0.92);
+      }
+
+      function sampleHeartVolume(scale = 2.8) {
+        const t = Math.random() * Math.PI * 2;
+        const radial = Math.sqrt(Math.random());
+        const base = heartCurve2D(t);
+        const x = base.x * radial;
+        const y = base.y * radial;
+        const depth = (Math.random() - 0.5) * (1 - radial * 0.62) * 1.8;
+
+        return new THREE.Vector3(x * scale, y * scale * 1.04 + 0.45, depth * scale * 0.72);
+      }
+
+      function createHeartGeometry() {
+        const s = new THREE.Shape();
+        s.moveTo(0, 0.34);
+        s.bezierCurveTo(0, 0.58, -0.31, 0.8, -0.56, 0.58);
+        s.bezierCurveTo(-0.84, 0.35, -0.74, -0.07, -0.48, -0.31);
+        s.bezierCurveTo(-0.22, -0.52, 0.01, -0.37, 0, -0.16);
+        s.bezierCurveTo(0.01, -0.37, 0.23, -0.52, 0.48, -0.31);
+        s.bezierCurveTo(0.74, -0.07, 0.84, 0.35, 0.56, 0.58);
+        s.bezierCurveTo(0.31, 0.8, 0, 0.58, 0, 0.34);
+
+        const g = new THREE.ExtrudeGeometry(s, {
+          depth: 0.22,
+          bevelEnabled: true,
+          bevelSegments: 2,
+          bevelSize: 0.03,
+          bevelThickness: 0.05,
+          curveSegments: 14,
+        });
+        g.scale(0.14, 0.14, 0.14);
+        g.center();
+        g.computeVertexNormals();
+        return g;
+      }
+
+      /* ---------------------------
+       * GLSL 背景光晕
+       * --------------------------- */
+      const auraUniforms = {
+        uTime: { value: 0 },
+        uRose: { value: new THREE.Color(THEME_COLORS.rose) },
+        uSky: { value: new THREE.Color(THEME_COLORS.sky) },
+      };
+
+      const auraMat = new THREE.ShaderMaterial({
+        uniforms: auraUniforms,
+        transparent: true,
+        depthWrite: false,
+        side: THREE.BackSide,
+        vertexShader: `
+          varying vec3 vNormal;
+          varying vec3 vWorldPos;
+          void main() {
+            vec4 worldPos = modelMatrix * vec4(position, 1.0);
+            vWorldPos = worldPos.xyz;
+            vNormal = normalize(mat3(modelMatrix) * normal);
+            gl_Position = projectionMatrix * viewMatrix * worldPos;
+          }
+        `,
+        fragmentShader: `
+          uniform float uTime;
+          uniform vec3 uRose;
+          uniform vec3 uSky;
+          varying vec3 vNormal;
+          varying vec3 vWorldPos;
+          void main() {
+            vec3 viewDir = normalize(cameraPosition - vWorldPos);
+            float fresnel = pow(1.0 - max(dot(viewDir, normalize(vNormal)), 0.0), 2.1);
+            float wave = 0.5 + 0.5 * sin(uTime * 0.78 + vWorldPos.y * 0.46 + vWorldPos.x * 0.35);
+            vec3 col = mix(uSky * 0.62, uRose, clamp(fresnel + wave * 0.28, 0.0, 1.0));
+            float alpha = (0.12 + fresnel * 0.52) * (0.58 + wave * 0.42);
+            gl_FragColor = vec4(col, alpha * 0.34);
+          }
+        `,
+      });
+
+      const auraSphere = new THREE.Mesh(new THREE.SphereGeometry(24, 42, 28), auraMat);
+      scene.add(auraSphere);
+
+      /* ---------------------------
+       * 立体心形粒子
+       * --------------------------- */
+      const heartGeom = createHeartGeometry();
+      const heartMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(THEME_COLORS.gold),
+        emissive: new THREE.Color(THEME_COLORS.rose),
+        emissiveIntensity: 0.46,
+        roughness: 0.18,
+        metalness: 0.7,
+        clearcoat: 0.68,
+        clearcoatRoughness: 0.24,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.94,
+      });
+      const heartMesh = new THREE.InstancedMesh(heartGeom, heartMat, HEART_INSTANCE_COUNT);
+      heartMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      scene.add(heartMesh);
+
+      const sparkGeom = new THREE.SphereGeometry(0.046, 8, 8);
+      const sparkMat = new THREE.MeshStandardMaterial({
+        color: new THREE.Color(THEME_COLORS.cream),
+        emissive: new THREE.Color(THEME_COLORS.glow),
+        emissiveIntensity: 1.06,
+        roughness: 0.22,
+        metalness: 0.02,
+        blending: THREE.AdditiveBlending,
+        depthWrite: false,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.88,
+      });
+      const sparkMesh = new THREE.InstancedMesh(sparkGeom, sparkMat, SPARK_COUNT);
+      sparkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+      scene.add(sparkMesh);
+
+      function createSoftDotTexture() {
+        const c = document.createElement("canvas");
+        c.width = 128;
+        c.height = 128;
+        const ctx = c.getContext("2d");
+        const g = ctx.createRadialGradient(64, 64, 4, 64, 64, 64);
+        g.addColorStop(0, "rgba(255,255,255,1)");
+        g.addColorStop(0.45, "rgba(255,255,255,0.86)");
+        g.addColorStop(1, "rgba(255,255,255,0)");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, 128, 128);
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+      }
+
+      const dustGeometry = new THREE.BufferGeometry();
+      const dustPositions = new Float32Array(DUST_COUNT * 3);
+      const dustColors = new Float32Array(DUST_COUNT * 3);
+      const dustSizes = new Float32Array(DUST_COUNT);
+      const dustParticles = [];
+
+      const hearts = [];
+      for (let i = 0; i < HEART_INSTANCE_COUNT; i += 1) {
+        hearts.push({
+          pos: sampleHeartVolume(2.85),
+          heartPos: sampleHeartVolume(2.85),
+          wanderPos: randomInSphere(3.4, 8.2),
+          rot: new THREE.Euler(Math.random() * Math.PI, Math.random() * Math.PI, Math.random() * Math.PI),
+          scale: 0.65 + Math.random() * 1.2,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+
+      const sparks = [];
+      for (let i = 0; i < SPARK_COUNT; i += 1) {
+        sparks.push({
+          pos: sampleHeartVolume(3.1),
+          heartPos: sampleHeartVolume(3.1),
+          wanderPos: randomInSphere(3, 9),
+          scale: 0.5 + Math.random() * 1.2,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+
+      const dustColorA = new THREE.Color(THEME_COLORS.cream);
+      const dustColorB = new THREE.Color(THEME_COLORS.sky);
+      const dustColorMix = new THREE.Color();
+      for (let i = 0; i < DUST_COUNT; i += 1) {
+        const heartPos = sampleHeartVolume(3.1);
+        const wanderPos = randomInSphere(3.8, 9.8);
+        const pos = heartPos.clone();
+        const phase = Math.random() * Math.PI * 2;
+        const size = 0.06 + Math.random() * 0.1;
+        dustParticles.push({ heartPos, wanderPos, pos, phase, size });
+        dustPositions[i * 3] = pos.x;
+        dustPositions[i * 3 + 1] = pos.y;
+        dustPositions[i * 3 + 2] = pos.z;
+        dustSizes[i] = size;
+        const mixT = 0.25 + Math.abs(Math.sin(phase * 1.5)) * 0.7;
+        dustColorMix.copy(dustColorA).lerp(dustColorB, mixT);
+        dustColors[i * 3] = dustColorMix.r;
+        dustColors[i * 3 + 1] = dustColorMix.g;
+        dustColors[i * 3 + 2] = dustColorMix.b;
+      }
+      dustGeometry.setAttribute("position", new THREE.BufferAttribute(dustPositions, 3));
+      dustGeometry.setAttribute("color", new THREE.BufferAttribute(dustColors, 3));
+      dustGeometry.setAttribute("size", new THREE.BufferAttribute(dustSizes, 1));
+
+      const dustMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uTime: { value: 0 },
+          uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
+          uMap: { value: createSoftDotTexture() },
+          uOpacity: { value: 0.84 },
+        },
+        vertexShader: `
+          attribute float size;
+          varying vec3 vColor;
+          varying float vPulse;
+          uniform float uTime;
+          uniform float uPixelRatio;
+          void main() {
+            vColor = color;
+            vPulse = 0.68 + 0.32 * sin(uTime * 1.5 + position.x * 0.55 + position.y * 0.35);
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+            gl_PointSize = size * (90.0 / -mvPosition.z) * uPixelRatio * vPulse;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          uniform float uOpacity;
+          varying vec3 vColor;
+          varying float vPulse;
+          void main() {
+            vec4 tex = texture2D(uMap, gl_PointCoord);
+            float alpha = tex.a * uOpacity * vPulse;
+            gl_FragColor = vec4(vColor, alpha);
+          }
+        `,
+        vertexColors: true,
+      });
+      const dustPoints = new THREE.Points(dustGeometry, dustMaterial);
+      scene.add(dustPoints);
+
+      const heartColorA = new THREE.Color(THEME_COLORS.rose);
+      const heartColorB = new THREE.Color(THEME_COLORS.gold);
+      const heartColorMix = new THREE.Color();
+      for (let i = 0; i < HEART_INSTANCE_COUNT; i += 1) {
+        const p = hearts[i];
+        const mixT = 0.28 + Math.abs(Math.sin(p.phase)) * 0.62;
+        heartColorMix.copy(heartColorA).lerp(heartColorB, mixT);
+        heartMesh.setColorAt(i, heartColorMix);
+      }
+      if (heartMesh.instanceColor) {
+        heartMesh.instanceColor.needsUpdate = true;
+      }
+
+      const sparkColorA = new THREE.Color(THEME_COLORS.cream);
+      const sparkColorB = new THREE.Color(THEME_COLORS.sky);
+      const sparkColorMix = new THREE.Color();
+      for (let i = 0; i < SPARK_COUNT; i += 1) {
+        const p = sparks[i];
+        const mixT = 0.2 + Math.abs(Math.cos(p.phase * 1.4)) * 0.75;
+        sparkColorMix.copy(sparkColorA).lerp(sparkColorB, mixT);
+        sparkMesh.setColorAt(i, sparkColorMix);
+      }
+      if (sparkMesh.instanceColor) {
+        sparkMesh.instanceColor.needsUpdate = true;
+      }
+
+      /* ---------------------------
+       * 照片与话语对象
+       * --------------------------- */
+      const textureLoader = new THREE.TextureLoader();
+      textureLoader.crossOrigin = "anonymous";
+
+      let uploadedObjectUrls = [];
+      let activePhotoUrls = PHOTO_URLS.slice(0, MAX_PHOTO_CARDS);
+      const photoOverlaySources = new Array(MAX_PHOTO_CARDS).fill("");
+
+      function createFallbackPhotoDataURL(i) {
+        const c = document.createElement("canvas");
+        c.width = 640;
+        c.height = 860;
+        const ctx = c.getContext("2d");
+        const g = ctx.createLinearGradient(0, 0, c.width, c.height);
+        g.addColorStop(0, "#ffd0df");
+        g.addColorStop(1, "#ffdcb2");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, c.width, c.height);
+        ctx.fillStyle = "rgba(114, 26, 53, 0.62)";
+        ctx.font = "700 48px 'Noto Sans SC'";
+        ctx.fillText("LOVE", 48, 88);
+        ctx.font = "500 36px 'Noto Sans SC'";
+        ctx.fillText(`Memory ${i + 1}`, 48, 144);
+        return c.toDataURL("image/png");
+      }
+
+      function createTextChipTexture(text, i) {
+        const c = document.createElement("canvas");
+        c.width = 700;
+        c.height = 300;
+        const ctx = c.getContext("2d");
+
+        const g = ctx.createLinearGradient(0, 0, c.width, c.height);
+        g.addColorStop(0, "#ffe6ef");
+        g.addColorStop(1, "#ffe7c8");
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        ctx.fillStyle = "rgba(96, 24, 48, 0.78)";
+        ctx.font = "700 44px 'Noto Sans SC'";
+        ctx.fillText(`话语 ${i + 1}`, 36, 78);
+
+        const preview = text.length > 16 ? `${text.slice(0, 16)}...` : text;
+        ctx.font = "500 33px 'Noto Sans SC'";
+        ctx.fillText(preview, 36, 140);
+
+        ctx.strokeStyle = "rgba(255,255,255,0.55)";
+        ctx.lineWidth = 4;
+        ctx.strokeRect(14, 14, c.width - 28, c.height - 28);
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+      }
+
+      function loadTexture(url, idx) {
+        const fallback = createFallbackPhotoDataURL(idx);
+        const src = url || fallback;
+        return new Promise((resolve) => {
+          textureLoader.load(
+            src,
+            (texture) => {
+              texture.colorSpace = THREE.SRGBColorSpace;
+              texture.anisotropy = renderer.capabilities.getMaxAnisotropy() || 1;
+              resolve({ texture, src });
+            },
+            undefined,
+            () => {
+              textureLoader.load(fallback, (texture2) => {
+                texture2.colorSpace = THREE.SRGBColorSpace;
+                texture2.anisotropy = renderer.capabilities.getMaxAnisotropy() || 1;
+                resolve({ texture: texture2, src: fallback });
+              });
+            }
+          );
+        });
+      }
+
+      const photoRoot = new THREE.Group();
+      const textRoot = new THREE.Group();
+      scene.add(photoRoot, textRoot);
+
+      const photoCards = [];
+      const photoPickMeshes = [];
+      const textCards = [];
+      const textPickMeshes = [];
+
+      function buildPhotoCards() {
+        for (let i = 0; i < MAX_PHOTO_CARDS; i += 1) {
+          const cardGroup = new THREE.Group();
+
+          const frame = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.72, 0.98),
+            new THREE.MeshPhysicalMaterial({
+              color: new THREE.Color(THEME_COLORS.cream),
+              emissive: new THREE.Color(THEME_COLORS.wine),
+              emissiveIntensity: 0.09,
+              roughness: 0.3,
+              metalness: 0.13,
+              transparent: true,
+              opacity: 0.92,
+            })
+          );
+          frame.position.z = -0.01;
+          cardGroup.add(frame);
+
+          const photoMat = new THREE.MeshStandardMaterial({
+            color: 0xffffff,
+            roughness: 0.2,
+            metalness: 0.06,
+            transparent: true,
+            opacity: 0.95,
+          });
+          const photoPlane = new THREE.Mesh(new THREE.PlaneGeometry(0.64, 0.88), photoMat);
+          photoPlane.userData.pickType = FOCUS_KIND.PHOTO;
+          photoPlane.userData.pickIndex = i;
+          cardGroup.add(photoPlane);
+
+          const halo = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.82, 1.08),
+            new THREE.MeshBasicMaterial({
+              color: new THREE.Color(THEME_COLORS.rose),
+              transparent: true,
+              opacity: 0.06,
+              blending: THREE.AdditiveBlending,
+              depthWrite: false,
+            })
+          );
+          halo.position.z = -0.03;
+          cardGroup.add(halo);
+
+          photoRoot.add(cardGroup);
+          photoPickMeshes.push(photoPlane);
+
+          photoCards.push({
+            group: cardGroup,
+            frame,
+            photoPlane,
+            photoMat,
+            halo,
+            pos: sampleHeartVolume(2.3),
+            heartPos: sampleHeartVolume(2.3),
+            wanderPos: randomInSphere(2.8, 6.8),
+            phase: Math.random() * Math.PI * 2,
+            scale: 0.55 + Math.random() * 0.16,
+          });
+        }
+      }
+
+      function buildTextCards() {
+        for (let i = 0; i < MAX_TEXT_CHIPS; i += 1) {
+          const tex = createTextChipTexture(LOVE_MESSAGES[i % LOVE_MESSAGES.length], i);
+          const mat = new THREE.MeshStandardMaterial({
+            map: tex,
+            color: 0xffffff,
+            roughness: 0.24,
+            metalness: 0.06,
+            transparent: true,
+            opacity: 0.9,
+          });
+          const chip = new THREE.Mesh(new THREE.PlaneGeometry(0.8, 0.34), mat);
+          chip.userData.pickType = FOCUS_KIND.TEXT;
+          chip.userData.pickIndex = i;
+
+          const shell = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.88, 0.42),
+            new THREE.MeshPhysicalMaterial({
+              color: new THREE.Color(THEME_COLORS.cream),
+              emissive: new THREE.Color(THEME_COLORS.rose),
+              emissiveIntensity: 0.08,
+              roughness: 0.36,
+              metalness: 0.1,
+              transparent: true,
+              opacity: 0.82,
+            })
+          );
+          shell.position.z = -0.01;
+
+          const group = new THREE.Group();
+          group.add(shell, chip);
+          textRoot.add(group);
+          textPickMeshes.push(chip);
+
+          textCards.push({
+            group,
+            shell,
+            chip,
+            mat,
+            pos: sampleHeartVolume(2.2),
+            heartPos: sampleHeartVolume(2.2),
+            wanderPos: randomInSphere(2.6, 6.4),
+            phase: Math.random() * Math.PI * 2,
+            scale: 0.45 + Math.random() * 0.12,
+            textIndex: i % LOVE_MESSAGES.length,
+          });
+        }
+      }
+
+      async function setPhotoTextures(urls) {
+        const tasks = [];
+        for (let i = 0; i < MAX_PHOTO_CARDS; i += 1) {
+          tasks.push(loadTexture(urls[i], i));
+        }
+        const loaded = await Promise.all(tasks);
+        for (let i = 0; i < photoCards.length; i += 1) {
+          const { texture, src } = loaded[i];
+          const card = photoCards[i];
+          if (card.photoMat.map && card.photoMat.map !== texture) {
+            card.photoMat.map.dispose();
+          }
+          card.photoMat.map = texture;
+          card.photoMat.needsUpdate = true;
+          photoOverlaySources[i] = src;
+        }
+      }
+
+      buildPhotoCards();
+      buildTextCards();
+      setPhotoTextures(activePhotoUrls);
+
+      /* ---------------------------
+       * 状态控制
+       * --------------------------- */
+      let currentState = APP_STATE.MAIN;
+      let focusKind = FOCUS_KIND.NONE;
+      let focusIndex = 0;
+
+      function updateStatus() {
+        if (currentState === APP_STATE.FOCUS) {
+          const kindLabel = focusKind === FOCUS_KIND.PHOTO ? "查看照片" : "查看话语";
+          statusLine.textContent = `状态：${kindLabel}`;
+          return;
+        }
+        const morph = getZoomMorph();
+        const shapeLabel = morph < 0.5 ? "心聚合" : "漫游";
+        statusLine.textContent = `形态：${shapeLabel} ${Math.round(morph * 100)}%`;
+      }
+
+      function setState(nextState) {
+        if (currentState === nextState) {
+          updateStatus();
+          return;
+        }
+        currentState = nextState;
+        if (nextState !== APP_STATE.FOCUS) {
+          focusOverlay.classList.remove("show");
+          focusKind = FOCUS_KIND.NONE;
+        }
+        updateStatus();
+      }
+
+      function applyFocusView() {
+        if (focusKind === FOCUS_KIND.PHOTO) {
+          focusPhotoEl.style.display = "block";
+          focusTextWrap.style.display = "none";
+          focusPhotoEl.src = photoOverlaySources[focusIndex] || createFallbackPhotoDataURL(focusIndex);
+        } else {
+          focusPhotoEl.style.display = "none";
+          focusTextWrap.style.display = "block";
+          focusTextEl.textContent = LOVE_MESSAGES[focusIndex % LOVE_MESSAGES.length] || "想把这句话送给你。";
+        }
+      }
+
+      function openFocus(kind, index) {
+        focusKind = kind;
+
+        if (kind === FOCUS_KIND.PHOTO) {
+          focusIndex = (index + photoCards.length) % photoCards.length;
+        } else {
+          focusIndex = (index + LOVE_MESSAGES.length) % LOVE_MESSAGES.length;
+        }
+
+        applyFocusView();
+        focusOverlay.classList.add("show");
+        currentState = APP_STATE.FOCUS;
+        updateStatus();
+      }
+
+      function closeFocus() {
+        focusOverlay.classList.remove("show");
+        currentState = APP_STATE.MAIN;
+        focusKind = FOCUS_KIND.NONE;
+        updateStatus();
+      }
+
+      function stepFocus(delta) {
+        if (focusKind === FOCUS_KIND.PHOTO) {
+          focusIndex = (focusIndex + delta + photoCards.length) % photoCards.length;
+        } else if (focusKind === FOCUS_KIND.TEXT) {
+          focusIndex = (focusIndex + delta + LOVE_MESSAGES.length) % LOVE_MESSAGES.length;
+        }
+        applyFocusView();
+      }
+
+      prevItemBtn.addEventListener("click", () => stepFocus(-1));
+      nextItemBtn.addEventListener("click", () => stepFocus(1));
+      closeFocusBtn.addEventListener("click", () => closeFocus());
+      focusOverlay.addEventListener("click", (ev) => {
+        if (ev.target === focusOverlay) closeFocus();
+      });
+
+      window.addEventListener("keydown", (ev) => {
+        if (ev.key === "1") cameraRig.targetRadius = MORPH_RANGE.minRadius + 0.15;
+        if (ev.key === "2") cameraRig.targetRadius = MORPH_RANGE.maxRadius - 0.15;
+        if (ev.key === "Escape" && currentState === APP_STATE.FOCUS) closeFocus();
+        if (ev.key === "ArrowLeft" && currentState === APP_STATE.FOCUS) stepFocus(-1);
+        if (ev.key === "ArrowRight" && currentState === APP_STATE.FOCUS) stepFocus(1);
+      });
+
+      uploadInput.addEventListener("change", async (ev) => {
+        const files = [...(ev.target.files || [])].filter((f) => f.type.startsWith("image/"));
+        if (files.length === 0) return;
+
+        for (const url of uploadedObjectUrls) {
+          URL.revokeObjectURL(url);
+        }
+        uploadedObjectUrls = [];
+
+        activePhotoUrls = files.slice(0, MAX_PHOTO_CARDS).map((f) => {
+          const url = URL.createObjectURL(f);
+          uploadedObjectUrls.push(url);
+          return url;
+        });
+
+        await setPhotoTextures(activePhotoUrls);
+        updateStatus();
+      });
+
+      /* ---------------------------
+       * 拖拽与缩放控制（鼠标 + 触摸）
+       * --------------------------- */
+      const controls = {
+        pointers: new Map(),
+        dragMoved: 0,
+        clickThreshold: 8,
+        pinchDistance: 0,
+      };
+
+      function getPointerDistance() {
+        const vals = [...controls.pointers.values()];
+        if (vals.length < 2) return 0;
+        const dx = vals[0].x - vals[1].x;
+        const dy = vals[0].y - vals[1].y;
+        return Math.hypot(dx, dy);
+      }
+
+      function toNDC(clientX, clientY) {
+        const rect = canvas.getBoundingClientRect();
+        pointerNDC.x = ((clientX - rect.left) / rect.width) * 2 - 1;
+        pointerNDC.y = -((clientY - rect.top) / rect.height) * 2 + 1;
+      }
+
+      function pickObject(clientX, clientY) {
+        toNDC(clientX, clientY);
+        raycaster.setFromCamera(pointerNDC, camera);
+        const hits = raycaster.intersectObjects([...photoPickMeshes, ...textPickMeshes], false);
+        if (hits.length === 0) return;
+        const hit = hits[0].object;
+        const type = hit.userData.pickType;
+        const index = hit.userData.pickIndex || 0;
+
+        if (type === FOCUS_KIND.PHOTO) {
+          openFocus(FOCUS_KIND.PHOTO, index);
+        } else if (type === FOCUS_KIND.TEXT) {
+          openFocus(FOCUS_KIND.TEXT, index);
+        }
+      }
+
+      canvas.addEventListener("pointerdown", (ev) => {
+        canvas.setPointerCapture(ev.pointerId);
+        controls.pointers.set(ev.pointerId, {
+          x: ev.clientX,
+          y: ev.clientY,
+          startX: ev.clientX,
+          startY: ev.clientY,
+        });
+        if (controls.pointers.size === 2) {
+          controls.pinchDistance = getPointerDistance();
+        }
+      });
+
+      canvas.addEventListener("pointermove", (ev) => {
+        if (!controls.pointers.has(ev.pointerId)) return;
+        const p = controls.pointers.get(ev.pointerId);
+        const dx = ev.clientX - p.x;
+        const dy = ev.clientY - p.y;
+        p.x = ev.clientX;
+        p.y = ev.clientY;
+        controls.pointers.set(ev.pointerId, p);
+
+        controls.dragMoved += Math.hypot(dx, dy);
+
+        if (controls.pointers.size === 1) {
+          cameraRig.targetYaw -= dx * 0.006;
+          cameraRig.targetPitch += dy * 0.004;
+        } else if (controls.pointers.size >= 2) {
+          const nextDist = getPointerDistance();
+          if (controls.pinchDistance > 0 && nextDist > 0) {
+            const delta = (controls.pinchDistance - nextDist) * 0.012;
+            cameraRig.targetRadius = clamp(
+              cameraRig.targetRadius + delta,
+              MORPH_RANGE.minRadius,
+              MORPH_RANGE.maxRadius
+            );
+          }
+          controls.pinchDistance = nextDist;
+        }
+      });
+
+      canvas.addEventListener("pointerup", (ev) => {
+        const p = controls.pointers.get(ev.pointerId);
+        if (p && controls.dragMoved < controls.clickThreshold && currentState !== APP_STATE.FOCUS) {
+          pickObject(ev.clientX, ev.clientY);
+        }
+        controls.pointers.delete(ev.pointerId);
+        if (controls.pointers.size < 2) controls.pinchDistance = 0;
+        controls.dragMoved = 0;
+      });
+
+      canvas.addEventListener("pointercancel", (ev) => {
+        controls.pointers.delete(ev.pointerId);
+        if (controls.pointers.size < 2) controls.pinchDistance = 0;
+        controls.dragMoved = 0;
+      });
+
+      canvas.addEventListener(
+        "wheel",
+        (ev) => {
+          cameraRig.targetRadius = clamp(
+            cameraRig.targetRadius + ev.deltaY * 0.004,
+            MORPH_RANGE.minRadius,
+            MORPH_RANGE.maxRadius
+          );
+        },
+        { passive: true }
+      );
+
+      /* ---------------------------
+       * 动画更新
+       * --------------------------- */
+      function updateCamera(dt) {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+        const autoYaw = lerp(0.0026, 0.0011, morph);
+        cameraRig.targetYaw += autoYaw + dt * 0.014;
+        const floatPitch = 0.16 + Math.sin(t * lerp(0.52, 0.32, morph)) * lerp(0.055, 0.025, morph);
+        cameraRig.targetPitch = lerp(cameraRig.targetPitch, floatPitch, 0.02);
+
+        cameraRig.targetPitch = clamp(cameraRig.targetPitch, -0.55, 0.72);
+        cameraRig.yaw = lerp(cameraRig.yaw, cameraRig.targetYaw, 0.08);
+        cameraRig.pitch = lerp(cameraRig.pitch, cameraRig.targetPitch, 0.08);
+        cameraRig.radius = lerp(cameraRig.radius, cameraRig.targetRadius, 0.08);
+
+        const cp = Math.cos(cameraRig.pitch);
+        camera.position.set(
+          cameraRig.radius * Math.sin(cameraRig.yaw) * cp,
+          cameraRig.radius * Math.sin(cameraRig.pitch) * 0.95,
+          cameraRig.radius * Math.cos(cameraRig.yaw) * cp
+        );
+        camera.lookAt(0, 0.5, 0);
+      }
+
+      function updateHeartParticles(dt) {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+        const breath = 1 + Math.sin(t * 2) * (0.02 + (1 - morph) * 0.03);
+
+        heartMat.emissiveIntensity = lerp(0.58, 0.32, morph) + Math.sin(t * 1.8) * 0.02;
+        sparkMat.emissiveIntensity = lerp(1.2, 0.74, morph);
+        sparkMat.opacity = lerp(0.94, 0.66, morph);
+
+        for (let i = 0; i < hearts.length; i += 1) {
+          const item = hearts[i];
+
+          const heartTarget = tmpVec.copy(item.heartPos).multiplyScalar(breath);
+          heartTarget.y += Math.sin(t * 2.4 + item.phase) * 0.08;
+
+          const wanderTarget = tmpVecB.copy(item.wanderPos);
+          wanderTarget.x += Math.cos(t * 0.85 + item.phase * 1.1) * 0.38;
+          wanderTarget.y += Math.sin(t * 1.04 + item.phase) * 0.34;
+          wanderTarget.z += Math.sin(t * 0.72 + item.phase * 1.3) * 0.28;
+
+          tmpVec.lerpVectors(heartTarget, wanderTarget, morph);
+          item.pos.lerp(tmpVec, lerp(0.09, 0.05, morph));
+          item.rot.x += dt * lerp(0.32, 0.18, morph);
+          item.rot.y += dt * lerp(0.42, 0.24, morph);
+          item.rot.z += dt * lerp(0.2, 0.14, morph);
+
+          tmpObject.position.copy(item.pos);
+          tmpObject.rotation.copy(item.rot);
+          const twinkle = 0.82 + Math.sin(t * (1.5 + morph) + item.phase) * 0.14;
+          tmpObject.scale.setScalar(item.scale * twinkle * lerp(1.06, 0.9, morph));
+          tmpObject.updateMatrix();
+          heartMesh.setMatrixAt(i, tmpObject.matrix);
+        }
+        heartMesh.instanceMatrix.needsUpdate = true;
+
+        for (let i = 0; i < sparks.length; i += 1) {
+          const s = sparks[i];
+
+          const heartTarget = tmpVec.copy(s.heartPos).multiplyScalar(breath * 1.1);
+          heartTarget.y += Math.sin(t * 2.3 + s.phase) * 0.16;
+
+          const wanderTarget = tmpVecB.copy(s.wanderPos);
+          wanderTarget.x += Math.sin(t * 0.92 + s.phase) * 0.34;
+          wanderTarget.y += Math.cos(t * 1.16 + s.phase) * 0.31;
+          wanderTarget.z += Math.cos(t * 0.76 + s.phase * 1.8) * 0.26;
+
+          tmpVec.lerpVectors(heartTarget, wanderTarget, morph);
+          s.pos.lerp(tmpVec, lerp(0.1, 0.058, morph));
+
+          tmpObject.position.copy(s.pos);
+          tmpObject.rotation.set(0, 0, 0);
+          tmpObject.scale.setScalar(s.scale * (0.72 + Math.sin(t * 3.4 + s.phase) * 0.2));
+          tmpObject.updateMatrix();
+          sparkMesh.setMatrixAt(i, tmpObject.matrix);
+        }
+        sparkMesh.instanceMatrix.needsUpdate = true;
+      }
+
+      function updatePhotoCards() {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+
+        for (let i = 0; i < photoCards.length; i += 1) {
+          const card = photoCards[i];
+          const activePhotoFocus = currentState === APP_STATE.FOCUS && focusKind === FOCUS_KIND.PHOTO && focusIndex === i;
+
+          const heartTarget = tmpVec.copy(card.heartPos);
+          heartTarget.y += Math.sin(t * 1.45 + card.phase) * 0.1;
+          const wanderTarget = tmpVecB.copy(card.wanderPos);
+          wanderTarget.x += Math.sin(t * 0.88 + card.phase) * 0.24;
+          wanderTarget.y += Math.cos(t * 1.02 + card.phase) * 0.26;
+          wanderTarget.z += Math.sin(t * 0.76 + card.phase * 1.4) * 0.2;
+
+          tmpVec.lerpVectors(heartTarget, wanderTarget, morph);
+          card.pos.lerp(tmpVec, lerp(0.08, 0.06, morph));
+          card.group.position.copy(card.pos);
+          card.group.lookAt(camera.position);
+
+          const baseScale = card.scale * lerp(0.98, 0.9, morph) * (0.96 + Math.sin(t * 1.4 + card.phase) * 0.04);
+          const scale = activePhotoFocus ? baseScale * 1.14 : baseScale;
+          card.group.scale.lerp(tmpVecB.set(scale, scale, scale), 0.1);
+
+          let targetOpacity = lerp(0.95, 0.74, morph);
+          if (currentState === APP_STATE.FOCUS) {
+            if (focusKind === FOCUS_KIND.PHOTO) {
+              targetOpacity = activePhotoFocus ? 1 : 0.16;
+            } else {
+              targetOpacity = 0.14;
+            }
+          }
+          card.photoMat.opacity = lerp(card.photoMat.opacity, targetOpacity, 0.12);
+          card.frame.material.opacity = lerp(card.frame.material.opacity, targetOpacity * 0.96, 0.12);
+          card.halo.material.opacity = lerp(card.halo.material.opacity, targetOpacity * 0.18, 0.12);
+        }
+      }
+
+      function updateTextCards() {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+
+        for (let i = 0; i < textCards.length; i += 1) {
+          const chip = textCards[i];
+          const activeTextFocus =
+            currentState === APP_STATE.FOCUS &&
+            focusKind === FOCUS_KIND.TEXT &&
+            focusIndex === chip.textIndex;
+
+          const heartTarget = tmpVec.copy(chip.heartPos);
+          heartTarget.y += Math.cos(t * 1.3 + chip.phase) * 0.08;
+          const wanderTarget = tmpVecB.copy(chip.wanderPos);
+          wanderTarget.x += Math.cos(t * 0.82 + chip.phase) * 0.2;
+          wanderTarget.y += Math.sin(t * 1.06 + chip.phase) * 0.2;
+          wanderTarget.z += Math.cos(t * 0.74 + chip.phase * 1.5) * 0.18;
+
+          tmpVec.lerpVectors(heartTarget, wanderTarget, morph);
+          chip.pos.lerp(tmpVec, lerp(0.08, 0.058, morph));
+          chip.group.position.copy(chip.pos);
+          chip.group.lookAt(camera.position);
+
+          const baseScale = chip.scale * lerp(1, 0.88, morph) * (0.96 + Math.sin(t * 1.4 + chip.phase) * 0.04);
+          const scale = activeTextFocus ? baseScale * 1.15 : baseScale;
+          chip.group.scale.lerp(tmpVecB.set(scale, scale, scale), 0.1);
+
+          let targetOpacity = lerp(0.92, 0.7, morph);
+          if (currentState === APP_STATE.FOCUS) {
+            if (focusKind === FOCUS_KIND.TEXT) {
+              targetOpacity = activeTextFocus ? 1 : 0.16;
+            } else {
+              targetOpacity = 0.12;
+            }
+          }
+
+          chip.mat.opacity = lerp(chip.mat.opacity, targetOpacity, 0.12);
+          chip.shell.material.opacity = lerp(chip.shell.material.opacity, targetOpacity * 0.8, 0.12);
+        }
+      }
+
+      function updateDustParticles() {
+        const t = clock.getElapsedTime();
+        const morph = getZoomMorph();
+        for (let i = 0; i < dustParticles.length; i += 1) {
+          const p = dustParticles[i];
+          const heartTarget = tmpVec.copy(p.heartPos);
+          heartTarget.y += Math.sin(t * 1.95 + p.phase) * 0.09;
+          const wanderTarget = tmpVecB.copy(p.wanderPos);
+          wanderTarget.x += Math.sin(t * 0.85 + p.phase) * 0.5;
+          wanderTarget.y += Math.cos(t * 1.15 + p.phase) * 0.4;
+          wanderTarget.z += Math.cos(t * 0.73 + p.phase * 1.3) * 0.38;
+
+          p.pos.lerpVectors(heartTarget, wanderTarget, morph);
+          dustPositions[i * 3] = p.pos.x;
+          dustPositions[i * 3 + 1] = p.pos.y;
+          dustPositions[i * 3 + 2] = p.pos.z;
+        }
+        dustGeometry.attributes.position.needsUpdate = true;
+      }
+
+      function updateBackground(dt) {
+        const t = clock.getElapsedTime();
+        auraUniforms.uTime.value = t;
+        dustMaterial.uniforms.uTime.value = t;
+        dustMaterial.uniforms.uOpacity.value = lerp(0.92, 0.62, getZoomMorph());
+        auraSphere.rotation.y += dt * 0.05;
+        auraSphere.rotation.x += dt * 0.018;
+
+        keyLight.position.x = Math.sin(t * 0.75) * 5;
+        keyLight.position.z = Math.cos(t * 0.75) * 5;
+        rimLight.position.y = Math.sin(t * 0.9) * 2.4;
+      }
+
+      function animate() {
+        const dt = Math.min(clock.getDelta(), 1 / 20);
+
+        updateCamera(dt);
+        updateHeartParticles(dt);
+        updatePhotoCards();
+        updateTextCards();
+        updateDustParticles();
+        updateBackground(dt);
+        if (currentState !== APP_STATE.FOCUS) {
+          updateStatus();
+        }
+
+        renderer.render(scene, camera);
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener("resize", () => {
+        const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+        renderer.setPixelRatio(pixelRatio);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        dustMaterial.uniforms.uPixelRatio.value = pixelRatio;
+      });
+
+      setState(APP_STATE.MAIN);
+      animate();
+    </script>
   </body>
 </html>
