@@ -38,4 +38,3 @@ key: page-about
   </div>
 </div>
 
-客官，您好。
