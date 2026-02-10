@@ -20,9 +20,9 @@ text_skin: default # "default" (default), "dark", "forest", "ocean", "chocolate"
 highlight_theme: default # "default" (default), "tomorrow", "tomorrow-night", "tomorrow-night-eighties", "tomorrow-night-blue", "tomorrow-night-bright"
 url     : # the base hostname & protocol for your site e.g. https://www.someone.com
 baseurl : # does not include hostname
-title   : Unhappy
+title   : Yingqiu's Home
 description: > # this means to ignore newlines until "Language & timezone"
-  An unhappy site is a site that is not happy. 
+  Personal website and diary.
 
 
 ## => Language and Timezone
@@ -35,11 +35,11 @@ timezone: # see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for
 ##############################
 author:
   type      : person # "person" (default), "organization"
-  name      : Unhappy
-  url       : banligo.github.io
-  avatar    : docs/assets/images/avatar.png # path or url of avatar image (square)
-  bio       : nothing special, just a person who is not happy.
-  email     : 
+  name      : Yingqiu He
+  url       : https://banligo.github.io
+  avatar    : /assets/images/avatar.png # path or url of avatar image (square)
+  bio       : Personal notes, diary, and life records.
+  email     : heyingqiu02@gmail.com
   facebook  : # "user_name" the last part of your profile url, e.g. https://www.facebook.com/user_name
   twitter   : # "user_name" the last part of your profile url, e.g. https://twitter.com/user_name
   weibo     : # "user_id"   the last part of your profile url, e.g. https://www.weibo.com/user_id/profile?...
@@ -56,7 +56,7 @@ author:
 ## => GitHub Repository (if the site is hosted by GitHub)
 ##############################
 repository: banligo/banligo.github.io
-repository_tree: master
+repository_tree: main
 
 
 ## => Paths
@@ -78,7 +78,7 @@ license: CC-BY-NC-4.0 # "CC-BY-4.0", "CC-BY-SA-4.0", "CC-BY-NC-4.0", "CC-BY-ND-4
 
 ## TOC
 toc:
-  selectors: h1,h2 # "h1,h2,h3" (default)
+  selectors: h1,h2,h3,h4,h5,h6 # "h1,h2,h3" (default)
 
 
 ## => Markdown Enhancements
@@ -214,6 +214,12 @@ defaults:
       show_edit_on_github: true
       show_subscribe: true
       pageview: true
+  - scope:
+      path: "diary"
+    values:
+      layout: article
+      aside:
+        toc: true
 
 
 ## => Plugins

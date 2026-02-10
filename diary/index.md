@@ -4,10 +4,13 @@ layout: article
 ---
 
 ---
+## diary 2026
+<a class="button button--primary button--rounded button--sm" href="y26-0103">01-03</a> 稳定之后，继续寻找方向。
 
-## dairy 2025
+## diary 2025
 
-<a class="button button--primary button--rounded button--sm" href="y25-0912-working">09-12</a> 我有被看到吗。
+<a class="button button--primary button--rounded button--sm" href="y25-0912-valued">09-12</a> 我有被看到吗。
+
 <a class="button button--primary button--rounded button--sm" href="y25-0708-working">07-08</a> 努力工作，暂时不考虑未来。
 
 <a class="button button--primary button--rounded button--sm" href="y25-0506-searching">05-06</a> 恋に堕ちた & 找到课题了？
@@ -17,7 +20,7 @@ layout: article
 <a class="button button--primary button--rounded button--sm" href="y25-0102-thinking">01-02</a> 享受，不完美，展现自我。
 
 
-## dairy 2024
+## diary 2024
 
 <a class="button button--primary button--rounded button--sm" href="y24-12-discouraged">12月</a> 不知所措，毫无目标，自我认同感归零。
 
@@ -49,7 +52,7 @@ layout: article
 [腿部复健日记](leg-rehabitation)，2021年4月运动受伤之后……<br>
 [2024-03-08](2024-03-08-dream1)，噩梦两则。<br>
 [2024-03-16](2024-03-16-chestnutbio)，我的小初高。<br>
-[2024-03-21](2024-03-21)，喜欢物理？。<br>
+[2024-03-21](2024-03-21-phythink)，喜欢物理？。<br>
 [2024-04-05](2024-04-05-womenyiqiyaotaiyang)，《我们一起摇太阳》。<br>
 [2024-04-19](2024-04-19-idealism)，理想主义和现实主义。<br>
 [2024-05-03](2024-05-03-bscproject)，重子声波振荡的理论研究。<br>

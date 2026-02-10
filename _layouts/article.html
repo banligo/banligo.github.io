@@ -7,8 +7,12 @@ type: article
   target = site.data.variables.default.page.sharing
   source0=layout.sharing source1=page.sharing -%}
 {%- assign _sharing = __return -%}
+{%- assign _is_diary = false -%}
+{%- if page.url and page.url contains '/diary/' -%}
+  {%- assign _is_diary = true -%}
+{%- endif -%}
 
-<div class="layout--article">
+<div class="layout--article{% if _is_diary %} layout--article--diary{% endif %}">
   {%- include article/top/custom.html -%}
 
   <div class="article__content" itemprop="articleBody">{{ content }}</div>

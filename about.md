@@ -1,13 +1,12 @@
 ---
 layout: article
 titles:
-  # @start locale config
-  en      : &EN       CV
+  en      : &EN       About
   en-GB   : *EN
   en-US   : *EN
   en-CA   : *EN
   en-AU   : *EN
-  zh-Hans : &ZH_HANS  CV
+  zh-Hans : &ZH_HANS  关于
   zh      : *ZH_HANS
   zh-CN   : *ZH_HANS
   zh-SG   : *ZH_HANS
@@ -22,11 +21,8 @@ titles:
   fr-CH   : *FR
   fr-FR   : *FR
   fr-LU   : *FR
-  # @end locale config
 key: page-about
-mermaid: true
 ---
-
 
 <div class="item">
   <div class="item__image">
@@ -34,20 +30,12 @@ mermaid: true
   </div>
   <div class="item__content">
     <div class="item__header">
-      <h4>Yingqiu He</h4>
+      <h4>迎秋</h4>
     </div>
     <div class="item__description">
-      <p>Theory Center, IPNS, KEK, SOKENDAI</p>
-      <p>5-year PhD Student</p>
+      <p>客官，您好。</p>
     </div>
   </div>
 </div>
 
-Education:
-- 2024.10-present: SOKENDAI (PhD, Theoretical Cosmology)
-- 2020.10-2024.07: Zhejiang University of Technology (BSc, Optical Engineering)
-
-Research Experience:
-- 2025.06-present: Fourier mode of N-body simulation (lab)
-- 2024.02-2024.06: Simulation of matter power spectrum (individual) <a href="/assets/documents/BScThesis-heyingqiu.pdf">thesis</a>
-- 2022.11-2023.07: Optical frequency comb experiment (lab) <a href="/assets/documents/he-uec-paper.pdf">report</a>
+随心搞点。

@@ -1,34 +1,51 @@
 ---
 layout: home
-# articles:
-#   excerpt_type: html
 ---
-<!DOCTYPE html>
-<div style="text-align: center;">
-    <div style="padding: 20px 0; text-align: center; color: white;">
-      <h2 style="font-size: 2em">Yingqiu He</h2>
-    </div>
-
-    <div class="home__intro" style="color: inherit;">
-    <a href="https://www.kek.jp/en/" target="_blank" rel="noopener" style=" text-decoration: underline;">KEK</a>,
-    <a href="https://www.soken.ac.jp/en/" target="_blank" rel="noopener" style=" text-decoration: underline;">SOKENDAI</a> (Tsukuba, Japan)
-    Master Student ➡️ <a href="/about">CV</a>
-    </div>
+<div class="personal-home">
+  <div class="text-center roll-in" data-delay="0s">
+    <h2>Yingqiu He</h2>
+    <p>A personal website for diary, life notes, and small moments.</p>
   </div>
-  <div style="text-align: left;">
-    <p>Recently, I'm interested in computational topology for cosmology data analysis. </p>
 
-    <p>Research work <a href="/research/">here</a> </p>
+  <div class="roll-in" data-delay="0.08s">
+    <h3>About this site</h3>
+    <p>I use this space to record everyday thoughts, reading snippets, and things I want to remember.</p>
+  </div>
 
-    <p>Contact: heyingqiu02@gmail.com</p>
-
-    Notes:
+  <div class="roll-in" data-delay="0.16s">
     <ul>
-      <li> <a href="/assets/documents/Theoretical-Mechanics-heyingqiu.pdf">Analytical Mechanics</a></li>
-      <li> <a href="/assets/documents/EMfield_Yingqiu.pdf">Electromagnetic Field Theory</a></li>
-      <li> <a href="/assets/documents/QuantumMechanics-heyingqiu.pdf">Quantum Mechanics</a></li>
-      <li> <a href="/assets/documents/Statistical-Mechanics-heyingqiu.pdf">Statistical Physics</a></li>
+      <li>Diary: <a href="/diary/">/diary/</a></li>
+      <li>About me: <a href="/about">/about</a></li>
+      <li>Valentine mini app: <a href="/valentine/">/valentine/</a></li>
     </ul>
-
-    <a href="/diary/" style="color: cornflowerblue; font-size: xx-small;">#</a>
   </div>
+
+  <div class="roll-in" data-delay="0.24s">
+    <p>
+      If you want to contact me:
+      <a href="mailto:heyingqiu02@gmail.com">heyingqiu02@gmail.com</a>
+    </p>
+  </div>
+</div>
+
+<script>
+  (() => {
+    const items = document.querySelectorAll('.roll-in');
+    if (!items.length) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced || !('IntersectionObserver' in window)) {
+      items.forEach((el) => el.classList.add('is-visible'));
+      return;
+    }
+    const observer = new IntersectionObserver((entries, obs) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const delay = entry.target.getAttribute('data-delay');
+        if (delay) entry.target.style.transitionDelay = delay;
+        entry.target.classList.add('is-visible');
+        obs.unobserve(entry.target);
+      });
+    }, { threshold: 0.18 });
+    items.forEach((el) => observer.observe(el));
+  })();
+</script>

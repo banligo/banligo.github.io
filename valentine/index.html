@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Valentine Mini App</title>
+    <style>
+      :root {
+        color-scheme: light;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        font-family: "PingFang SC", "Microsoft YaHei", sans-serif;
+        background: radial-gradient(circle at top, #fff0f5 0%, #ffe6ea 40%, #ffd7df 100%);
+        color: #5d2333;
+      }
+
+      .card {
+        width: min(680px, calc(100vw - 32px));
+        padding: 28px 24px;
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.78);
+        border: 1px solid rgba(255, 255, 255, 0.9);
+        box-shadow: 0 12px 32px rgba(124, 26, 57, 0.14);
+        backdrop-filter: blur(3px);
+      }
+
+      h1 {
+        margin: 0 0 12px;
+        font-size: 1.6rem;
+      }
+
+      p {
+        margin: 0 0 12px;
+        line-height: 1.65;
+      }
+
+      a {
+        color: #a0193f;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="card">
+      <h1>情人节互动页已创建</h1>
+      <p>这个目录已经可以独立访问，后续你可以把 Three.js + MediaPipe Hands 的单文件应用直接放在这里。</p>
+      <p>当前路径：<code>/valentine/</code></p>
+      <p><a href="/">返回首页</a></p>
+    </main>
+  </body>
+</html>
