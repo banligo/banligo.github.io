@@ -1,0 +1,961 @@
+---
+layout: none
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Chestnut Cosmos</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
+
+      :root {
+        --accent-rgb: 216, 122, 58;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        width: 100%;
+        height: 100%;
+      }
+
+      body {
+        margin: 0;
+        overflow: hidden;
+        background: #000;
+        color: #f8f2ea;
+        font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+      }
+
+      #cosmos {
+        position: fixed;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+
+      .hud {
+        position: fixed;
+        z-index: 10;
+        top: max(14px, env(safe-area-inset-top));
+        left: max(14px, env(safe-area-inset-left));
+        right: max(14px, env(safe-area-inset-right));
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 12px;
+        pointer-events: none;
+      }
+
+      .info,
+      .home-link {
+        pointer-events: auto;
+        border-radius: 14px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(16, 16, 18, 0.62);
+        backdrop-filter: blur(7px);
+        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
+      }
+
+      .info {
+        max-width: min(720px, 80vw);
+        padding: 12px 14px;
+      }
+
+      .info h1 {
+        margin: 0;
+        font-family: "Playfair Display", "Times New Roman", serif;
+        font-size: clamp(1.08rem, 2.1vw, 1.7rem);
+        letter-spacing: 0.03em;
+        color: #fff4e6;
+      }
+
+      .info p {
+        margin: 5px 0 0;
+        font-size: 0.84rem;
+        color: #f3d9bf;
+      }
+
+      .home-link {
+        text-decoration: none;
+        color: #fff;
+        border: 0;
+        background: linear-gradient(136deg, #7d3f1e, #b76b3e);
+        padding: 8px 13px;
+        font-size: 0.84rem;
+      }
+
+      .hint {
+        position: fixed;
+        z-index: 10;
+        left: 50%;
+        bottom: max(14px, env(safe-area-inset-bottom));
+        transform: translateX(-50%);
+        padding: 9px 14px;
+        border-radius: 999px;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        background: rgba(16, 16, 18, 0.6);
+        color: #f7e6d2;
+        font-size: 0.79rem;
+        text-align: center;
+        pointer-events: none;
+      }
+
+      .viewer {
+        position: fixed;
+        inset: 0;
+        z-index: 30;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        background:
+          radial-gradient(circle at 20% 18%, rgba(var(--accent-rgb), 0.32), rgba(var(--accent-rgb), 0) 44%),
+          radial-gradient(circle at 84% 76%, rgba(142, 191, 255, 0.22), rgba(142, 191, 255, 0) 40%),
+          rgba(3, 3, 4, 0.76);
+        backdrop-filter: blur(8px);
+      }
+
+      .viewer.show {
+        display: flex;
+      }
+
+      .photo-card {
+        position: relative;
+        overflow: hidden;
+        width: min(620px, 92vw);
+        border-radius: 20px;
+        border: 2px solid rgba(var(--accent-rgb), 0.84);
+        background: linear-gradient(145deg, rgba(255, 250, 244, 0.96), rgba(246, 236, 224, 0.94));
+        box-shadow:
+          0 30px 62px rgba(0, 0, 0, 0.34),
+          0 0 0 1px rgba(255, 255, 255, 0.34) inset;
+      }
+
+      .photo-card::before {
+        content: "";
+        position: absolute;
+        top: -24%;
+        left: -10%;
+        width: 68%;
+        height: 56%;
+        background: radial-gradient(circle at 40% 50%, rgba(var(--accent-rgb), 0.34), rgba(var(--accent-rgb), 0) 68%);
+        filter: blur(10px);
+        pointer-events: none;
+      }
+
+      .photo-wrap {
+        padding: 14px;
+      }
+
+      .photo-wrap img {
+        width: 100%;
+        max-height: min(74vh, 650px);
+        object-fit: contain;
+        display: block;
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.82);
+        background: #f4ebde;
+        box-shadow:
+          0 16px 34px rgba(32, 25, 18, 0.2),
+          0 0 0 1px rgba(var(--accent-rgb), 0.28) inset;
+      }
+
+      .viewer-footer {
+        padding: 0 14px 12px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .viewer-title {
+        font-size: 0.88rem;
+        color: #65462f;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .viewer-btn {
+        border: 0;
+        border-radius: 999px;
+        color: #fff;
+        cursor: pointer;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+      }
+
+      .viewer-btn.next {
+        background: linear-gradient(136deg, #7c411f, #b77345);
+      }
+
+      .viewer-btn.close {
+        background: linear-gradient(136deg, #4c4742, #706a64);
+      }
+
+      @media (max-width: 780px) {
+        .info {
+          max-width: min(78vw, 360px);
+          padding: 10px 12px;
+        }
+
+        .info p {
+          font-size: 0.76rem;
+        }
+
+        .hint {
+          font-size: 0.73rem;
+          width: calc(100vw - 24px);
+          border-radius: 12px;
+        }
+
+        .viewer-btn {
+          font-size: 0.74rem;
+          padding: 7px 10px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="cosmos" aria-label="板栗宇宙"></canvas>
+
+    <div class="hint">点击任意查看图片</div>
+
+    <div id="viewer" class="viewer" aria-hidden="true">
+      <div id="photoCard" class="photo-card">
+        <div class="photo-wrap">
+          <img id="viewerImage" alt="板栗记忆图片" />
+        </div>
+        <div class="viewer-footer">
+          <div id="viewerTitle" class="viewer-title">Memory</div>
+          <div class="actions">
+            <button id="nextBtn" class="viewer-btn next" type="button">下一张</button>
+            <button id="closeBtn" class="viewer-btn close" type="button">关闭</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
+
+      const canvas = document.getElementById("cosmos");
+      const viewer = document.getElementById("viewer");
+      const viewerImage = document.getElementById("viewerImage");
+      const viewerTitle = document.getElementById("viewerTitle");
+      const photoCard = document.getElementById("photoCard");
+      const nextBtn = document.getElementById("nextBtn");
+      const closeBtn = document.getElementById("closeBtn");
+
+      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.06;
+
+      const scene = new THREE.Scene();
+      scene.fog = new THREE.FogExp2(0x000000, 0.032);
+
+      const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 120);
+      camera.position.set(0, 6.2, 12.1);
+
+      const raycaster = new THREE.Raycaster();
+      const pointerNdc = new THREE.Vector2();
+      const pointerLook = new THREE.Vector2();
+
+      const root = new THREE.Group();
+      scene.add(root);
+
+      const chestnutRoot = new THREE.Group();
+      root.add(chestnutRoot);
+
+      const clock = new THREE.Clock();
+
+      const chestnutMeshes = [];
+      const chestnutGroups = [];
+      const tmpScale = new THREE.Vector3();
+      const tmpWorldPos = new THREE.Vector3();
+      const tmpTargetPos = new THREE.Vector3();
+      let activeChestnutIndex = -1;
+      let lastOpenedIndex = -1;
+      let elapsed = 0;
+      let galaxyField = null;
+
+      const burstCount = 260;
+      const burstGeo = new THREE.BufferGeometry();
+      const burstPos = new Float32Array(burstCount * 3);
+      const burstCol = new Float32Array(burstCount * 3);
+      const burstVel = Array.from({ length: burstCount }, () => new THREE.Vector3());
+      const burstLife = new Float32Array(burstCount);
+      burstGeo.setAttribute("position", new THREE.BufferAttribute(burstPos, 3));
+      burstGeo.setAttribute("color", new THREE.BufferAttribute(burstCol, 3));
+      const burstMat = new THREE.PointsMaterial({
+        size: 0.09,
+        vertexColors: true,
+        transparent: true,
+        opacity: 0.95,
+        depthWrite: false,
+      });
+      const burstPoints = new THREE.Points(burstGeo, burstMat);
+      scene.add(burstPoints);
+
+      function clamp(v, min, max) {
+        return Math.min(max, Math.max(min, v));
+      }
+
+      function colorToRgb(hex) {
+        const c = new THREE.Color(hex);
+        return {
+          r: Math.round(c.r * 255),
+          g: Math.round(c.g * 255),
+          b: Math.round(c.b * 255),
+        };
+      }
+
+      function toAccent(rgb) {
+        document.documentElement.style.setProperty("--accent-rgb", `${rgb.r}, ${rgb.g}, ${rgb.b}`);
+        photoCard.style.borderColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.86)`;
+      }
+
+      function pickRandom(len, prev) {
+        if (len <= 1) return len === 1 ? 0 : -1;
+        let idx = Math.floor(Math.random() * len);
+        if (idx === prev) idx = (idx + 1 + Math.floor(Math.random() * (len - 1))) % len;
+        return idx;
+      }
+
+      const photoLoader = new THREE.TextureLoader();
+
+      function createPhotoMemory(src, i) {
+        const tex = photoLoader.load(src);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        const file = src.split("/").pop().split("?")[0];
+        const label = file.replace(/\.[^.]+$/, "");
+        const hue = (26 + i * 31) % 360;
+
+        return {
+          title: `家庭照片 ${label}`,
+          src,
+          texture: tex,
+          keyColor: `hsl(${hue}, 80%, 58%)`,
+        };
+      }
+
+      const PLANET_PALETTES = [
+        { name: "Mercury", core: "#9b9389", dark: "#5f5953", light: "#cfc8bd", band: "#7e786f", gas: false },
+        { name: "Venus", core: "#d6b07a", dark: "#9a6c43", light: "#f1d2a5", band: "#b88658", gas: false },
+        { name: "Earth", core: "#2f66a8", dark: "#1d3d62", light: "#72a9e2", band: "#2e8f55", gas: false },
+        { name: "Mars", core: "#c55c38", dark: "#77331f", light: "#e49473", band: "#a24a2c", gas: false },
+        { name: "Jupiter", core: "#c79a6a", dark: "#7f5a3e", light: "#efd2b0", band: "#ad7a51", gas: true },
+        { name: "Saturn", core: "#d6c089", dark: "#8d7752", light: "#f0dfb3", band: "#b89a69", gas: true },
+        { name: "Uranus", core: "#7db8cb", dark: "#447787", light: "#c3e2ea", band: "#95cfde", gas: true },
+        { name: "Neptune", core: "#3a63b8", dark: "#1f356a", light: "#87a8ef", band: "#5b82d4", gas: true },
+      ];
+
+      function createChestnutTexture(seed = 0) {
+        const c = document.createElement("canvas");
+        c.width = 512;
+        c.height = 512;
+        const ctx = c.getContext("2d");
+        const palette = PLANET_PALETTES[seed % PLANET_PALETTES.length];
+
+        const g = ctx.createRadialGradient(220, 180, 40, 380, 380, 520);
+        g.addColorStop(0, palette.light);
+        g.addColorStop(0.52, palette.core);
+        g.addColorStop(1, palette.dark);
+        ctx.fillStyle = g;
+        ctx.fillRect(0, 0, c.width, c.height);
+
+        ctx.globalAlpha = palette.gas ? 0.34 : 0.26;
+        const bandCount = palette.gas ? 180 : 90;
+        for (let i = 0; i < bandCount; i += 1) {
+          const y = (i / bandCount) * c.height;
+          ctx.strokeStyle = i % 2 === 0 ? palette.band : palette.dark;
+          ctx.lineWidth = palette.gas ? 2 + (i % 5 === 0 ? 1 : 0) : 1 + (i % 8 === 0 ? 1 : 0);
+          ctx.beginPath();
+          ctx.moveTo(0, y + Math.sin((i + seed) * 0.11) * 7);
+          ctx.bezierCurveTo(c.width * 0.28, y - 6, c.width * 0.6, y + 10, c.width, y + Math.cos((i + seed) * 0.1) * 7);
+          ctx.stroke();
+        }
+
+        ctx.globalAlpha = 0.24;
+        for (let i = 0; i < (palette.gas ? 10 : 16); i += 1) {
+          const x = Math.random() * c.width;
+          const y = Math.random() * c.height;
+          const r = 40 + Math.random() * 120;
+          const rg = ctx.createRadialGradient(x, y, r * 0.1, x, y, r);
+          rg.addColorStop(0, "rgba(255,255,255,0.32)");
+          rg.addColorStop(1, "rgba(255,255,255,0)");
+          ctx.fillStyle = rg;
+          ctx.beginPath();
+          ctx.arc(x, y, r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+
+        if (palette.gas) {
+          ctx.globalAlpha = 0.22;
+          for (let i = 0; i < 22; i += 1) {
+            const y = (i / 22) * c.height;
+            ctx.strokeStyle = i % 2 === 0 ? palette.light : palette.core;
+            ctx.lineWidth = 3 + Math.random() * 3;
+            ctx.beginPath();
+            ctx.moveTo(0, y + Math.sin(i * 0.5 + seed) * 4);
+            ctx.quadraticCurveTo(c.width * 0.5, y + Math.cos(i * 0.4) * 12, c.width, y + Math.sin(i * 0.6) * 4);
+            ctx.stroke();
+          }
+        }
+
+        ctx.globalAlpha = 1;
+        const img = ctx.getImageData(0, 0, c.width, c.height);
+        const d = img.data;
+        for (let i = 0; i < d.length; i += 4) {
+          const n = (Math.random() - 0.5) * 20;
+          d[i] = clamp(d[i] + n, 0, 255);
+          d[i + 1] = clamp(d[i + 1] + n, 0, 255);
+          d[i + 2] = clamp(d[i + 2] + n, 0, 255);
+        }
+        ctx.putImageData(img, 0, 0);
+
+        const tex = new THREE.CanvasTexture(c);
+        tex.colorSpace = THREE.SRGBColorSpace;
+        return tex;
+      }
+
+      function createStarField() {
+        const isMobile = window.matchMedia("(max-width: 860px)").matches;
+
+        const starCount = isMobile ? 2200 : 3600;
+        const starGeo = new THREE.BufferGeometry();
+        const starPos = new Float32Array(starCount * 3);
+        const starCol = new Float32Array(starCount * 3);
+
+        for (let i = 0; i < starCount; i += 1) {
+          const i3 = i * 3;
+          const r = 18 + Math.random() * 56;
+          const phi = Math.random() * Math.PI * 2;
+          const cost = Math.random() * 2 - 1;
+          const sint = Math.sqrt(1 - cost * cost);
+          starPos[i3] = r * sint * Math.cos(phi);
+          starPos[i3 + 1] = r * cost;
+          starPos[i3 + 2] = r * sint * Math.sin(phi);
+
+          const tint = Math.random();
+          const c = new THREE.Color(tint > 0.88 ? 0xffd7a4 : tint > 0.62 ? 0xa8d6ff : 0xffffff);
+          starCol[i3] = c.r;
+          starCol[i3 + 1] = c.g;
+          starCol[i3 + 2] = c.b;
+        }
+
+        starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
+        starGeo.setAttribute("color", new THREE.BufferAttribute(starCol, 3));
+        const starsMat = new THREE.PointsMaterial({
+          size: isMobile ? 0.07 : 0.082,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.88,
+          depthWrite: false,
+        });
+        const stars = new THREE.Points(starGeo, starsMat);
+        scene.add(stars);
+
+        const dustCount = isMobile ? 2400 : 4200;
+        const dustGeo = new THREE.BufferGeometry();
+        const dustPos = new Float32Array(dustCount * 3);
+        const dustCol = new Float32Array(dustCount * 3);
+        const radii = new Float32Array(dustCount);
+        const angles = new Float32Array(dustCount);
+        const speeds = new Float32Array(dustCount);
+        const heights = new Float32Array(dustCount);
+        const phases = new Float32Array(dustCount);
+
+        const maxR = 15.8;
+        for (let i = 0; i < dustCount; i += 1) {
+          const i3 = i * 3;
+          const r = 1.2 + Math.pow(Math.random(), 1.35) * maxR;
+          const a = Math.random() * Math.PI * 2;
+          const y = (Math.random() - 0.5) * (0.16 + (r / maxR) * 0.24);
+          const s = (0.24 / Math.sqrt(r + 0.5)) * (0.55 + Math.random() * 0.9);
+          const p = Math.random() * Math.PI * 2;
+
+          radii[i] = r;
+          angles[i] = a;
+          speeds[i] = s;
+          heights[i] = y;
+          phases[i] = p;
+
+          dustPos[i3] = Math.cos(a) * r;
+          dustPos[i3 + 1] = y;
+          dustPos[i3 + 2] = Math.sin(a) * r;
+
+          const c = new THREE.Color(Math.random() > 0.84 ? 0xffb774 : Math.random() > 0.55 ? 0xb0d6ff : 0xffffff);
+          c.offsetHSL(0, 0, 0.08);
+          dustCol[i3] = c.r;
+          dustCol[i3 + 1] = c.g;
+          dustCol[i3 + 2] = c.b;
+        }
+
+        dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
+        dustGeo.setAttribute("color", new THREE.BufferAttribute(dustCol, 3));
+        const dustMat = new THREE.PointsMaterial({
+          size: isMobile ? 0.034 : 0.04,
+          vertexColors: true,
+          transparent: true,
+          opacity: 0.36,
+          depthWrite: false,
+        });
+        const dust = new THREE.Points(dustGeo, dustMat);
+        scene.add(dust);
+
+        return {
+          starsMat,
+          dust,
+          dustPos,
+          dustGeo,
+          radii,
+          angles,
+          speeds,
+          heights,
+          phases,
+          maxR,
+        };
+      }
+
+      const FAMILY_PHOTO_PATHS = [
+        "{{ '/family-gallery/content/photos/IMG_0048.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0055.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0064.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0081.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0082.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0085.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0088.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_0099.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1213.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1376.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1379.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1393.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1424.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1535.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1539.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1550.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1558.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1559.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1560.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1563.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1640.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1667.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1932.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_1979.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_2000.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_2391.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_2463.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_2482.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_2546.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/IMG_3179.jpg' | relative_url }}",
+        "{{ '/family-gallery/content/photos/tempImageLRZ2ml.jpg' | relative_url }}",
+      ];
+      const MEMORIES = FAMILY_PHOTO_PATHS.map((src, i) => createPhotoMemory(src, i));
+      const GALAXY = {
+        radius: 9.4,
+        inner: 1.1,
+        arms: 4,
+        twist: 0.95,
+        thickness: 0.2,
+      };
+      const CHESTNUT_TEXTURE_POOL = Array.from({ length: PLANET_PALETTES.length }, (_, i) => createChestnutTexture(i));
+
+      function buildChestnuts() {
+        for (let i = 0; i < MEMORIES.length; i += 1) {
+          const group = new THREE.Group();
+          const palette = PLANET_PALETTES[i % PLANET_PALETTES.length];
+          const arm = i % GALAXY.arms;
+          const armPhase = (arm / GALAXY.arms) * Math.PI * 2;
+          // 中心更密、外围更稀：指数越大越偏向内侧
+          const radial = GALAXY.inner + Math.pow(Math.random(), 3.35) * (GALAXY.radius - GALAXY.inner);
+          const angleJitter = (Math.random() - 0.5) * (0.25 + (radial / GALAXY.radius) * 0.22);
+          const angle = armPhase + radial * GALAXY.twist + angleJitter;
+          const yOff = (Math.random() - 0.5) * (GALAXY.thickness + (radial / GALAXY.radius) * 0.14);
+          // 平均尺寸整体再减小，仍保留大/小变化
+          const baseScale = clamp(
+            0.145 + (1 - radial / GALAXY.radius) * 0.15 + Math.pow(Math.random(), 1.6) * 0.05,
+            0.13,
+            0.36
+          );
+          const sizeRatio = (baseScale - 0.13) / (0.36 - 0.13); // 0=小, 1=大
+          const sizeSpeedFactor = 1.34 - sizeRatio * 0.54; // 小快(≈1.34), 大慢(≈0.8)
+
+          const shell = new THREE.Mesh(
+            new THREE.SphereGeometry(0.38, 34, 28),
+            new THREE.MeshStandardMaterial({
+              map: CHESTNUT_TEXTURE_POOL[i % CHESTNUT_TEXTURE_POOL.length],
+              roughness: 0.76,
+              metalness: 0.02,
+              emissive: new THREE.Color(palette.core).multiplyScalar(0.38),
+              emissiveIntensity: 0.11,
+            })
+          );
+          shell.scale.set(1.12, 0.9, 1.04);
+          shell.userData.chestnutIndex = i;
+          group.add(shell);
+
+          const hitMesh = new THREE.Mesh(
+            new THREE.SphereGeometry(0.95, 12, 10),
+            new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
+          );
+          hitMesh.userData.chestnutIndex = i;
+          group.add(hitMesh);
+          chestnutMeshes.push(hitMesh);
+
+          const photoPlane = new THREE.Mesh(
+            new THREE.PlaneGeometry(0.76, 0.92),
+            new THREE.MeshBasicMaterial({
+              map: MEMORIES[i].texture,
+              transparent: true,
+              opacity: 0.98,
+              side: THREE.DoubleSide,
+              depthWrite: false,
+              depthTest: false,
+            })
+          );
+          photoPlane.position.set(0, 0.86 + baseScale * 0.42, 0);
+          photoPlane.rotation.x = -0.14;
+          photoPlane.renderOrder = 8;
+          group.add(photoPlane);
+
+          group.position.set(Math.cos(angle) * radial, yOff, Math.sin(angle) * radial);
+          group.scale.setScalar(baseScale);
+          group.rotation.y = Math.random() * Math.PI * 2;
+
+          const orbitSpeed =
+            (0.72 / Math.pow(radial + 0.45, 0.8)) *
+            sizeSpeedFactor *
+            (0.96 + Math.random() * 0.08);
+
+          group.userData = {
+            index: i,
+            baseAngle: angle,
+            radial,
+            yOff,
+            phase: i * 0.48 + Math.random() * 2.2,
+            orbitSpeed,
+            currentOrbitSpeed: orbitSpeed,
+            speedScale: 1,
+            slowNear: 1,
+            boostNear: 1,
+            orbitAngle: angle,
+            bobAmp: 0.03 + Math.random() * 0.035,
+            baseScale,
+            shellMat: shell.material,
+            glowBase: 0.12 + Math.random() * 0.07,
+            photoPlane,
+            photoBaseScale: 0.78 + baseScale * 0.26,
+            spinSpeed: 0.002 + Math.random() * 0.0015,
+            targetX: Math.cos(angle) * radial,
+            targetZ: Math.sin(angle) * radial,
+          };
+
+          chestnutGroups.push(group);
+          chestnutRoot.add(group);
+        }
+      }
+
+      const ambient = new THREE.AmbientLight(0x745f4a, 0.54);
+      scene.add(ambient);
+
+      const hemi = new THREE.HemisphereLight(0x6b738d, 0x210f07, 0.62);
+      scene.add(hemi);
+
+      const warmKey = new THREE.PointLight(0xffa14d, 26, 24, 2);
+      warmKey.position.set(3.4, 2.2, 4.1);
+      scene.add(warmKey);
+
+      const coolKey = new THREE.PointLight(0x7faeff, 14, 24, 2);
+      coolKey.position.set(-4.6, 2.4, -3.6);
+      scene.add(coolKey);
+
+      galaxyField = createStarField();
+      buildChestnuts();
+      chestnutRoot.rotation.x = -0.3;
+      chestnutRoot.rotation.z = -0.08;
+
+      function triggerBurst(position, colorHex) {
+        const c = new THREE.Color(colorHex);
+        for (let i = 0; i < burstCount; i += 1) {
+          const i3 = i * 3;
+          burstPos[i3] = position.x;
+          burstPos[i3 + 1] = position.y;
+          burstPos[i3 + 2] = position.z;
+
+          const dir = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
+          const speed = 0.04 + Math.random() * 0.12;
+          burstVel[i].copy(dir).multiplyScalar(speed);
+          burstLife[i] = 0.65 + Math.random() * 0.95;
+
+          const cc = c.clone().offsetHSL((Math.random() - 0.5) * 0.05, 0.15, 0.2);
+          burstCol[i3] = cc.r;
+          burstCol[i3 + 1] = cc.g;
+          burstCol[i3 + 2] = cc.b;
+        }
+        burstGeo.attributes.position.needsUpdate = true;
+        burstGeo.attributes.color.needsUpdate = true;
+      }
+
+      function openMemory(idx) {
+        if (idx < 0 || idx >= MEMORIES.length) return;
+        const memory = MEMORIES[idx];
+        const rgb = colorToRgb(memory.keyColor);
+
+        activeChestnutIndex = idx;
+        lastOpenedIndex = idx;
+        toAccent(rgb);
+
+        viewerImage.src = memory.src;
+        viewerTitle.textContent = memory.title;
+        viewer.classList.add("show");
+        viewer.setAttribute("aria-hidden", "false");
+
+        const wp = new THREE.Vector3();
+        chestnutGroups[idx].getWorldPosition(wp);
+        triggerBurst(wp, memory.keyColor);
+      }
+
+      function openNextMemory() {
+        const idx = pickRandom(MEMORIES.length, lastOpenedIndex);
+        if (idx >= 0) openMemory(idx);
+      }
+
+      function closeViewer() {
+        viewer.classList.remove("show");
+        viewer.setAttribute("aria-hidden", "true");
+      }
+
+      function pickChestnutFromPointer(clientX, clientY) {
+        pointerNdc.x = (clientX / window.innerWidth) * 2 - 1;
+        pointerNdc.y = -(clientY / window.innerHeight) * 2 + 1;
+        raycaster.setFromCamera(pointerNdc, camera);
+        const hits = raycaster.intersectObjects(chestnutMeshes, false);
+        if (!hits.length) return -1;
+        return hits[0].object.userData.chestnutIndex;
+      }
+
+      canvas.addEventListener("pointermove", (event) => {
+        pointerLook.x = (event.clientX / window.innerWidth - 0.5) * 2;
+        pointerLook.y = (event.clientY / window.innerHeight - 0.5) * 2;
+        const idx = pickChestnutFromPointer(event.clientX, event.clientY);
+        canvas.style.cursor = idx >= 0 ? "pointer" : "default";
+      });
+
+      canvas.addEventListener("pointerdown", (event) => {
+        const idx = pickChestnutFromPointer(event.clientX, event.clientY);
+        if (idx >= 0) openMemory(idx);
+      });
+
+      nextBtn.addEventListener("click", openNextMemory);
+      closeBtn.addEventListener("click", closeViewer);
+      viewer.addEventListener("click", (event) => {
+        if (event.target === viewer) closeViewer();
+      });
+
+      window.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+          closeViewer();
+          return;
+        }
+        if ((event.key === "Enter" || event.key === " ") && viewer.classList.contains("show")) {
+          event.preventDefault();
+          openNextMemory();
+        }
+      });
+
+      function onResize() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        renderer.setSize(window.innerWidth, window.innerHeight);
+      }
+      window.addEventListener("resize", onResize);
+
+      function updateBurst(dt) {
+        let anyAlive = false;
+        for (let i = 0; i < burstCount; i += 1) {
+          if (burstLife[i] <= 0) continue;
+          anyAlive = true;
+
+          const i3 = i * 3;
+          burstPos[i3] += burstVel[i].x;
+          burstPos[i3 + 1] += burstVel[i].y;
+          burstPos[i3 + 2] += burstVel[i].z;
+          burstVel[i].multiplyScalar(0.986);
+          burstLife[i] -= dt * 1.16;
+
+          if (burstLife[i] <= 0) {
+            burstPos[i3 + 1] = -1000;
+          }
+        }
+
+        burstPoints.visible = anyAlive;
+        burstGeo.attributes.position.needsUpdate = true;
+      }
+
+      function updateGalaxyField(t) {
+        if (!galaxyField) return;
+        const {
+          starsMat,
+          dustGeo,
+          dustPos,
+          radii,
+          angles,
+          speeds,
+          heights,
+          phases,
+          maxR,
+        } = galaxyField;
+
+        starsMat.opacity = 0.8 + Math.sin(t * 0.38) * 0.06;
+        for (let i = 0; i < radii.length; i += 1) {
+          const i3 = i * 3;
+          const a = angles[i] + t * speeds[i];
+          const r = radii[i] + Math.sin(t * 0.28 + phases[i]) * 0.08;
+          const diskCurve = a + r * 0.09;
+          dustPos[i3] = Math.cos(diskCurve) * r;
+          dustPos[i3 + 2] = Math.sin(diskCurve) * r;
+          dustPos[i3 + 1] = heights[i] + Math.sin(t * 1.2 + phases[i]) * (0.015 + (r / maxR) * 0.02);
+        }
+        dustGeo.attributes.position.needsUpdate = true;
+      }
+
+      function animate() {
+        const dt = clock.getDelta();
+        elapsed += dt;
+        const t = elapsed;
+
+        warmKey.position.set(Math.cos(t * 0.4) * 6.2, 3 + Math.sin(t * 0.8) * 0.3, Math.sin(t * 0.4) * 5.8);
+        coolKey.position.set(Math.cos(t * 0.3 + 1.5) * -6, 2.8 + Math.sin(t * 0.58) * 0.2, Math.sin(t * 0.3 + 1.5) * -5.6);
+
+        const camTargetX = pointerLook.x * 0.74;
+        const camTargetY = 6.2 - pointerLook.y * 0.48;
+        camera.position.x += (camTargetX - camera.position.x) * 0.05;
+        camera.position.y += (camTargetY - camera.position.y) * 0.05;
+        camera.lookAt(0, 0, 0);
+
+        root.rotation.y += dt * 0.03;
+        updateGalaxyField(t);
+
+        for (let i = 0; i < chestnutGroups.length; i += 1) {
+          const u = chestnutGroups[i].userData;
+          const radiusWave = u.radial + Math.sin(t * 0.5 + u.phase) * 0.16;
+          u.targetX = Math.cos(u.orbitAngle) * radiusWave;
+          u.targetZ = Math.sin(u.orbitAngle) * radiusWave;
+          u.slowNear = 1;
+          u.boostNear = 1;
+        }
+
+        for (let i = 0; i < chestnutGroups.length; i += 1) {
+          const ua = chestnutGroups[i].userData;
+          for (let j = i + 1; j < chestnutGroups.length; j += 1) {
+            const ub = chestnutGroups[j].userData;
+            const dx = ub.targetX - ua.targetX;
+            const dz = ub.targetZ - ua.targetZ;
+            const distSq = dx * dx + dz * dz;
+            const minDist =
+              0.4 +
+              (ua.baseScale + ub.baseScale) * 1.1 +
+              ((ua.radial + ub.radial) / (2 * GALAXY.radius)) * 0.2;
+            if (distSq >= minDist * minDist) continue;
+
+            const dist = Math.sqrt(Math.max(distSq, 0.0001));
+            const overlap = 1 - dist / minDist;
+            const diff = clamp(overlap * 0.12, 0, 0.09);
+            const speedA = Math.abs(ua.currentOrbitSpeed);
+            const speedB = Math.abs(ub.currentOrbitSpeed);
+            if (speedA >= speedB) {
+              ua.slowNear = Math.min(ua.slowNear, 1 - diff);
+              ub.boostNear = Math.max(ub.boostNear, 1 + diff * 0.78);
+            } else {
+              ub.slowNear = Math.min(ub.slowNear, 1 - diff);
+              ua.boostNear = Math.max(ua.boostNear, 1 + diff * 0.78);
+            }
+
+            // 仅做非常轻微的角度分离，避免长时间重叠观感
+            const angNudge = overlap * 0.0018;
+            if (dx >= 0) {
+              ua.orbitAngle -= angNudge;
+              ub.orbitAngle += angNudge;
+            } else {
+              ua.orbitAngle += angNudge;
+              ub.orbitAngle -= angNudge;
+            }
+          }
+        }
+
+        for (let i = 0; i < chestnutGroups.length; i += 1) {
+          const g = chestnutGroups[i];
+          const u = g.userData;
+          const pairSpeed = clamp(u.slowNear * u.boostNear, 0.86, 1.11);
+          u.speedScale += (pairSpeed - u.speedScale) * 0.038;
+          const desiredSpeed = u.orbitSpeed * u.speedScale;
+          u.currentOrbitSpeed += (desiredSpeed - u.currentOrbitSpeed) * 0.062;
+          u.orbitAngle += u.currentOrbitSpeed * dt;
+          const radiusWave = u.radial + Math.sin(t * 0.5 + u.phase) * 0.16;
+          const targetX = Math.cos(u.orbitAngle) * radiusWave;
+          const targetZ = Math.sin(u.orbitAngle) * radiusWave;
+          tmpTargetPos.set(targetX, u.yOff + Math.sin(t * 1.1 + u.phase) * u.bobAmp, targetZ);
+          g.position.lerp(tmpTargetPos, 0.19);
+          g.rotation.x = 0;
+          g.rotation.y = 0;
+
+          g.getWorldPosition(tmpWorldPos);
+          const dist = camera.position.distanceTo(tmpWorldPos);
+          const depthScale = clamp(24 / dist, 0.62, 2.62);
+          const targetScale = u.baseScale * depthScale * (i === activeChestnutIndex ? 1.32 : 1);
+          tmpScale.set(targetScale, targetScale, targetScale);
+          g.scale.lerp(tmpScale, 0.065);
+
+          const shellSpin = u.spinSpeed + (i % 4) * 0.00016;
+          const depthGlow = (depthScale - 0.72) * 0.052;
+          u.shellMat.emissiveIntensity =
+            u.glowBase +
+            Math.sin(t * 1.4 + u.phase) * 0.028 +
+            depthGlow +
+            (i === activeChestnutIndex ? 0.08 : 0);
+
+          // 星球轻微自转
+          const shell = g.children[0];
+          shell.rotation.y += shellSpin;
+          shell.rotation.x = Math.sin(t * 0.55 + u.phase) * 0.04;
+
+          // 相片悬浮并沿公转方向摆向，且按距离实现近大远小
+          const photo = u.photoPlane;
+          const hoverR = 0.04 + u.baseScale * 0.06;
+          photo.position.x = Math.cos(t * 0.95 + u.phase) * hoverR;
+          photo.position.z = Math.sin(t * 0.95 + u.phase) * hoverR;
+          photo.position.y = 0.9 + u.baseScale * 0.44 + Math.sin(t * 1.6 + u.phase) * 0.04;
+
+          const motionYaw = u.orbitAngle + Math.PI * 0.5;
+          photo.rotation.y = motionYaw;
+          photo.rotation.x = -0.14 + Math.sin(t * 0.8 + u.phase) * 0.04;
+
+          const nearFar = clamp(17.8 / dist, 0.58, 2.36);
+          const photoScale = u.photoBaseScale * nearFar * (i === activeChestnutIndex ? 1.08 : 1);
+          photo.scale.setScalar(photoScale);
+
+        }
+
+        updateBurst(dt);
+        renderer.render(scene, camera);
+      }
+
+      renderer.setAnimationLoop(animate);
+    </script>
+  </body>
+</html>

@@ -18,8 +18,12 @@
       {%- if _site_author.bio -%}
         <meta itemprop="description" content="{{ _site_author.bio }}">
       {%- endif -%}
-      <div class="footer__author-links">
-        {%- include author-links.html author=_site_author -%}
+      <div class="site-info site-time mt-2" aria-live="polite">
+        <span>今日 <strong id="today-date">----/--/--</strong></span>
+        <span style="padding: 0 0.35rem;">|</span>
+        <span>JST <strong id="tokyo-time">--:--</strong></span>
+        <span style="padding: 0 0.35rem;">|</span>
+        <span>CST <strong id="beijing-time">--:--</strong></span>
       </div>
     </div>
     {%- include snippets/get-locale-string.html key='COPYRIGHT_DATES' -%}
@@ -35,3 +39,45 @@
     </div>
   </div>
 </footer>
+<script>
+  (() => {
+    const todayDateNode = document.getElementById('today-date');
+    const tokyoNode = document.getElementById('tokyo-time');
+    const beijingNode = document.getElementById('beijing-time');
+    if (!todayDateNode || !tokyoNode || !beijingNode || !('Intl' in window)) return;
+
+    const dateFormatter = new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    });
+    const tokyoFormatter = new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Tokyo',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+    const beijingFormatter = new Intl.DateTimeFormat('zh-CN', {
+      timeZone: 'Asia/Shanghai',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    const render = () => {
+      const now = new Date();
+      todayDateNode.textContent = dateFormatter.format(now);
+      tokyoNode.textContent = tokyoFormatter.format(now);
+      beijingNode.textContent = beijingFormatter.format(now);
+    };
+
+    render();
+    const now = new Date();
+    const msToNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+    window.setTimeout(() => {
+      render();
+      window.setInterval(render, 60 * 1000);
+    }, Math.max(250, msToNextMinute));
+  })();
+</script>

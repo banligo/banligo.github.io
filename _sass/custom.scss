@@ -35,6 +35,80 @@
   margin: 0 auto;
 }
 
+.home-family-panel {
+  margin-top: map-get($spacers, 4);
+  padding: map-get($spacers, 4);
+  border-radius: 16px;
+  border: 1px solid rgba(133, 90, 63, 0.2);
+  background:
+    radial-gradient(circle at 8% 12%, rgba(219, 127, 66, 0.16), rgba(219, 127, 66, 0) 34%),
+    radial-gradient(circle at 88% 22%, rgba(58, 119, 122, 0.18), rgba(58, 119, 122, 0) 38%),
+    linear-gradient(145deg, rgba(251, 247, 239, 0.96), rgba(246, 240, 229, 0.9));
+  box-shadow: 0 14px 30px rgba(55, 41, 28, 0.1);
+
+  h4 {
+    margin: 0 0 map-get($spacers, 2);
+  }
+
+  p {
+    margin-top: 0;
+    margin-bottom: map-get($spacers, 2);
+  }
+}
+
+.home-family-palette {
+  display: flex;
+  flex-wrap: wrap;
+  gap: map-get($spacers, 2);
+  margin-bottom: map-get($spacers, 3);
+}
+
+.home-family-chip {
+  display: inline-block;
+  color: #fff;
+  border-radius: 999px;
+  padding: 4px 11px;
+  font-size: 0.8rem;
+  line-height: 1.2;
+}
+
+.home-family-chip.chip-umber { background: #8a5a44; }
+.home-family-chip.chip-olive { background: #6f7b45; }
+.home-family-chip.chip-teal { background: #2d6f73; }
+.home-family-chip.chip-cadmium { background: #d86a1d; }
+
+.home-family-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: map-get($spacers, 2);
+}
+
+.home-family-thumb {
+  display: block;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(46, 38, 29, 0.15);
+  transition: transform 180ms ease, box-shadow 180ms ease;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(46, 38, 29, 0.2);
+  }
+
+  img {
+    display: block;
+    width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+}
+
+.home-family-empty {
+  margin-top: map-get($spacers, 2);
+  color: $text-color-l;
+}
+
 .layout--article--diary {
   .article__header,
   .article__info,
@@ -68,6 +142,14 @@
 }
 
 @include media-breakpoint-down(lg) {
+  .home-family-panel {
+    padding: map-get($spacers, 3);
+  }
+
+  .home-family-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .toc-fab {
     position: fixed;
     right: map-get($spacers, 4);

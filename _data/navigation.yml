@@ -1,16 +1,1 @@
-header:
-  - titles:
-      en: Home
-      zh-Hans: 主页
-      zh: 主页
-    url: /
-  - titles:
-      en: About
-      zh-Hans: 关于
-      zh: 关于
-    url: /about
-  - titles:
-      en: Diary
-      zh-Hans: 日记
-      zh: 日记
-    url: /diary/
+header: false

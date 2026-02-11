@@ -14,8 +14,8 @@ layout: none
       @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
 
       :root {
-        --rose: #ff739f;
-        --gold: #ffd39a;
+        --rose: #ff5fa6;
+        --gold: #ffbf2e;
         --cream: #f6fbff;
         --wine: #24496f;
         --bg-deep: #0a2e53;
@@ -40,10 +40,7 @@ layout: none
         touch-action: none;
         color: var(--cream);
         font-family: "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-        background:
-          radial-gradient(120% 85% at 12% 5%, rgba(189, 231, 255, 0.72) 0%, rgba(189, 231, 255, 0) 66%),
-          radial-gradient(120% 95% at 88% 100%, rgba(123, 189, 242, 0.62) 0%, rgba(123, 189, 242, 0) 70%),
-          linear-gradient(140deg, #bfe9ff 0%, #8fd0fb 56%, #6cb4ea 100%);
+        background: #000;
       }
 
       #scene {
@@ -123,8 +120,12 @@ layout: none
         z-index: 20;
         opacity: 0;
         pointer-events: none;
-        transition: opacity 260ms ease;
-        background: radial-gradient(circle at center, rgba(102, 165, 228, 0.32), rgba(20, 54, 94, 0.52));
+        transition: opacity 320ms cubic-bezier(0.22, 1, 0.36, 1);
+        background:
+          radial-gradient(circle at 18% 20%, rgba(255, 193, 216, 0.22), rgba(255, 193, 216, 0) 45%),
+          radial-gradient(circle at 82% 72%, rgba(181, 228, 255, 0.28), rgba(181, 228, 255, 0) 50%),
+          linear-gradient(145deg, rgba(18, 38, 68, 0.52), rgba(8, 24, 48, 0.64));
+        backdrop-filter: blur(10px) saturate(112%);
       }
 
       .focus-overlay.show {
@@ -136,70 +137,140 @@ layout: none
         position: absolute;
         top: 50%;
         left: 50%;
-        transform: translate(-50%, -50%) translateY(10px);
-        width: min(430px, calc(100vw - 26px));
-        background: rgba(255, 246, 236, 0.92);
-        border: 1px solid rgba(255, 255, 255, 0.88);
-        border-radius: 14px;
-        color: #761f3f;
-        box-shadow: 0 22px 52px rgba(0, 0, 0, 0.34);
-        padding: 12px;
-        transition: transform 260ms ease;
+        transform: translate(-50%, -50%) translateY(16px) scale(0.962);
+        width: min(500px, calc(100vw - 26px));
+        background: linear-gradient(154deg, rgba(255, 248, 242, 0.94), rgba(239, 248, 255, 0.9));
+        border: 1px solid rgba(255, 255, 255, 0.7);
+        border-radius: 18px;
+        color: #6e2442;
+        box-shadow:
+          0 34px 68px rgba(8, 22, 42, 0.42),
+          0 8px 26px rgba(114, 40, 74, 0.18);
+        padding: 14px;
+        transition:
+          transform 360ms cubic-bezier(0.22, 1, 0.36, 1),
+          box-shadow 360ms ease,
+          opacity 260ms ease;
+        overflow: hidden;
+        isolation: isolate;
+      }
+
+      .focus-card::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        padding: 1px;
+        background: linear-gradient(
+          130deg,
+          rgba(255, 255, 255, 0.85),
+          rgba(255, 199, 219, 0.58),
+          rgba(171, 221, 252, 0.6)
+        );
+        -webkit-mask:
+          linear-gradient(#000 0 0) content-box,
+          linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+        pointer-events: none;
+      }
+
+      .focus-card::after {
+        content: "";
+        position: absolute;
+        left: -40%;
+        top: -28%;
+        width: 80%;
+        height: 68%;
+        background: linear-gradient(
+          128deg,
+          rgba(255, 255, 255, 0) 16%,
+          rgba(255, 255, 255, 0.34) 48%,
+          rgba(255, 255, 255, 0) 82%
+        );
+        transform: rotate(-11deg);
+        opacity: 0.68;
+        pointer-events: none;
+        animation: focusSheen 6.6s ease-in-out infinite;
       }
 
       .focus-overlay.show .focus-card {
-        transform: translate(-50%, -50%);
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow:
+          0 40px 78px rgba(8, 22, 42, 0.46),
+          0 10px 30px rgba(114, 40, 74, 0.2);
+      }
+
+      .focus-card.switching .focus-photo,
+      .focus-card.switching .focus-text-wrap,
+      .focus-card.switching .focus-hint {
+        opacity: 0.15;
+        transform: translateY(5px) scale(0.99);
       }
 
       .focus-photo {
         width: 100%;
         height: auto;
-        max-height: min(72vh, 520px);
+        max-height: min(74vh, 560px);
         object-fit: contain;
-        background: rgba(255, 255, 255, 0.35);
-        border-radius: 10px;
-        border: 1px solid rgba(255, 255, 255, 0.8);
+        background: linear-gradient(145deg, rgba(255, 255, 255, 0.54), rgba(253, 243, 248, 0.42));
+        border-radius: 13px;
+        border: 1px solid rgba(255, 255, 255, 0.86);
+        box-shadow:
+          inset 0 0 0 1px rgba(255, 255, 255, 0.25),
+          0 16px 32px rgba(12, 38, 71, 0.24);
         display: none;
+        transition: opacity 240ms ease, transform 240ms ease;
       }
 
       .focus-text-wrap {
         display: none;
-        background: linear-gradient(140deg, rgba(255, 230, 240, 0.9), rgba(255, 234, 205, 0.86));
-        border-radius: 10px;
+        background: linear-gradient(140deg, rgba(255, 232, 242, 0.9), rgba(255, 241, 220, 0.84));
+        border-radius: 13px;
         border: 1px solid rgba(255, 255, 255, 0.86);
-        padding: 12px;
+        box-shadow:
+          inset 0 1px 0 rgba(255, 255, 255, 0.55),
+          0 12px 28px rgba(12, 38, 71, 0.14);
+        padding: 15px 16px 14px;
+        transition: opacity 240ms ease, transform 240ms ease;
       }
 
       .focus-text-wrap h2 {
-        margin: 0 0 8px;
+        margin: 0 0 10px;
         font-family: "Cormorant Garamond", serif;
-        font-size: 1.3rem;
+        font-size: 1.42rem;
+        letter-spacing: 0.02em;
         color: #8f1f46;
       }
 
       .focus-text-wrap p {
         margin: 0;
-        line-height: 1.62;
-        font-size: 0.92rem;
+        line-height: 1.8;
+        font-size: 1rem;
+        color: #5f3047;
       }
 
-      .focus-actions {
-        margin-top: 10px;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
+      .focus-hint {
+        margin: 10px 2px 0;
+        text-align: center;
+        font-size: 0.72rem;
+        letter-spacing: 0.06em;
+        color: rgba(96, 62, 79, 0.78);
+        transition: opacity 240ms ease, transform 240ms ease;
       }
 
-      .focus-actions button {
-        border: 0;
-        border-radius: 999px;
-        padding: 6px 10px;
-        font: inherit;
-        font-weight: 700;
-        font-size: 0.82rem;
-        background: linear-gradient(135deg, #cc567f 0%, #af2757 100%);
-        color: #fff8ef;
-        cursor: pointer;
+      @keyframes focusSheen {
+        0% {
+          transform: translateX(-22%) rotate(-11deg);
+          opacity: 0.18;
+        }
+        45% {
+          opacity: 0.68;
+        }
+        100% {
+          transform: translateX(74%) rotate(-11deg);
+          opacity: 0.12;
+        }
       }
 
       @media (max-width: 900px) {
@@ -211,6 +282,21 @@ layout: none
         .title-box,
         .control-box {
           max-width: 100%;
+        }
+
+        .focus-card {
+          width: min(460px, calc(100vw - 18px));
+          border-radius: 16px;
+          padding: 12px;
+        }
+
+        .focus-text-wrap h2 {
+          font-size: 1.3rem;
+        }
+
+        .focus-text-wrap p {
+          font-size: 0.95rem;
+          line-height: 1.72;
         }
 
       }
@@ -229,17 +315,13 @@ layout: none
     </div>
 
     <div id="focusOverlay" class="focus-overlay">
-      <div class="focus-card">
+      <div class="focus-card" id="focusCard">
         <img id="focusPhoto" class="focus-photo" alt="selected photo" />
         <div id="focusTextWrap" class="focus-text-wrap">
           <h2>悄悄话</h2>
           <p id="focusText"></p>
         </div>
-        <div class="focus-actions">
-          <button id="prevItem">上一项</button>
-          <button id="nextItem">下一项</button>
-          <button id="closeFocus">关闭</button>
-        </div>
+        <!-- <p class="focus-hint">点击卡片切换随机回忆 · 点击空白关闭</p> -->
       </div>
     </div>
 
@@ -264,13 +346,13 @@ layout: none
        * 可配置区
        * --------------------------- */
       const THEME_COLORS = {
-        rose: "#ff739f",
-        gold: "#ffd39a",
+        rose: "#ff5fa6",
+        gold: "#ffbf2e",
         cream: "#f6fbff",
         wine: "#24496f",
-        glow: "#d5f1ff",
-        sky: "#69c8ff",
-        azure: "#3f8fd6",
+        glow: "#89d7ff",
+        sky: "#4ab0ff",
+        azure: "#2b86da",
       };
 
       const APP_STATE = {
@@ -292,6 +374,7 @@ layout: none
       const SPARK_COUNT = isMobile ? 240 : 420;
       const DUST_COUNT = isMobile ? 900 : 1600;
       const GLINT_COUNT = isMobile ? 220 : 360;
+      const DRAG_GLITTER_COUNT = isMobile ? 420 : 760;
       const MAX_PHOTO_CARDS = PHOTO_URLS.length;
       const MAX_TEXT_CHIPS = isMobile ? 8 : 10;
 
@@ -299,12 +382,10 @@ layout: none
       const statusLine = document.getElementById("statusLine");
 
       const focusOverlay = document.getElementById("focusOverlay");
+      const focusCard = document.getElementById("focusCard");
       const focusPhotoEl = document.getElementById("focusPhoto");
       const focusTextWrap = document.getElementById("focusTextWrap");
       const focusTextEl = document.getElementById("focusText");
-      const prevItemBtn = document.getElementById("prevItem");
-      const nextItemBtn = document.getElementById("nextItem");
-      const closeFocusBtn = document.getElementById("closeFocus");
 
       const renderer = new THREE.WebGLRenderer({
         canvas,
@@ -319,7 +400,7 @@ layout: none
       renderer.toneMappingExposure = 1.08;
 
       const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x9cd2f5, 0.038);
+      scene.fog = new THREE.FogExp2(0x040404, 0.018);
 
       const camera = new THREE.PerspectiveCamera(48, window.innerWidth / window.innerHeight, 0.1, 120);
       const cameraRig = {
@@ -433,49 +514,7 @@ layout: none
         return g;
       }
 
-      /* ---------------------------
-       * GLSL 背景光晕
-       * --------------------------- */
-      const auraUniforms = {
-        uTime: { value: 0 },
-        uRose: { value: new THREE.Color(THEME_COLORS.rose) },
-        uSky: { value: new THREE.Color(THEME_COLORS.sky) },
-      };
-
-      const auraMat = new THREE.ShaderMaterial({
-        uniforms: auraUniforms,
-        transparent: true,
-        depthWrite: false,
-        side: THREE.BackSide,
-        vertexShader: `
-          varying vec3 vNormal;
-          varying vec3 vWorldPos;
-          void main() {
-            vec4 worldPos = modelMatrix * vec4(position, 1.0);
-            vWorldPos = worldPos.xyz;
-            vNormal = normalize(mat3(modelMatrix) * normal);
-            gl_Position = projectionMatrix * viewMatrix * worldPos;
-          }
-        `,
-        fragmentShader: `
-          uniform float uTime;
-          uniform vec3 uRose;
-          uniform vec3 uSky;
-          varying vec3 vNormal;
-          varying vec3 vWorldPos;
-          void main() {
-            vec3 viewDir = normalize(cameraPosition - vWorldPos);
-            float fresnel = pow(1.0 - max(dot(viewDir, normalize(vNormal)), 0.0), 2.1);
-            float wave = 0.5 + 0.5 * sin(uTime * 0.78 + vWorldPos.y * 0.46 + vWorldPos.x * 0.35);
-            vec3 col = mix(uSky * 0.62, uRose, clamp(fresnel + wave * 0.28, 0.0, 1.0));
-            float alpha = (0.12 + fresnel * 0.52) * (0.58 + wave * 0.42);
-            gl_FragColor = vec4(col, alpha * 0.34);
-          }
-        `,
-      });
-
-      const auraSphere = new THREE.Mesh(new THREE.SphereGeometry(24, 42, 28), auraMat);
-      scene.add(auraSphere);
+      // 背景使用 CSS 渐变，不再添加随视角转动的 3D 背景层。
 
       /* ---------------------------
        * 立体心形粒子
@@ -484,7 +523,7 @@ layout: none
       const heartMat = new THREE.MeshPhysicalMaterial({
         color: new THREE.Color(THEME_COLORS.gold),
         emissive: new THREE.Color(THEME_COLORS.rose),
-        emissiveIntensity: 0.46,
+        emissiveIntensity: 0.62,
         roughness: 0.18,
         metalness: 0.7,
         clearcoat: 0.68,
@@ -499,16 +538,16 @@ layout: none
 
       const sparkGeom = new THREE.SphereGeometry(0.046, 8, 8);
       const sparkMat = new THREE.MeshStandardMaterial({
-        color: new THREE.Color(THEME_COLORS.cream),
-        emissive: new THREE.Color(THEME_COLORS.glow),
-        emissiveIntensity: 1.06,
+        color: new THREE.Color(THEME_COLORS.sky),
+        emissive: new THREE.Color(THEME_COLORS.azure),
+        emissiveIntensity: 1.38,
         roughness: 0.22,
         metalness: 0.02,
         blending: THREE.AdditiveBlending,
         depthWrite: false,
         vertexColors: true,
         transparent: true,
-        opacity: 0.88,
+        opacity: 0.95,
       });
       const sparkMesh = new THREE.InstancedMesh(sparkGeom, sparkMat, SPARK_COUNT);
       sparkMesh.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
@@ -695,6 +734,152 @@ layout: none
       const glintPoints = new THREE.Points(glintGeometry, glintMaterial);
       scene.add(glintPoints);
 
+      const dragGlitterGeometry = new THREE.BufferGeometry();
+      const dragGlitterPositions = new Float32Array(DRAG_GLITTER_COUNT * 3);
+      const dragGlitterColors = new Float32Array(DRAG_GLITTER_COUNT * 3);
+      const dragGlitterSizes = new Float32Array(DRAG_GLITTER_COUNT);
+      const dragGlitterAlphas = new Float32Array(DRAG_GLITTER_COUNT);
+      const dragGlitterParticles = [];
+      let dragGlitterCursor = 0;
+      const dragEmitDir = new THREE.Vector3();
+      const dragEmitFacing = new THREE.Vector3();
+      const dragColorA = new THREE.Color(THEME_COLORS.cream);
+      const dragColorB = new THREE.Color(THEME_COLORS.gold);
+      const dragColorMix = new THREE.Color();
+      const AMBIENT_GLITTER_RATE = isMobile ? 14 : 22;
+      let ambientGlitterCarry = 0;
+      let ambientGlitterSeeded = false;
+
+      for (let i = 0; i < DRAG_GLITTER_COUNT; i += 1) {
+        dragGlitterParticles.push({
+          pos: new THREE.Vector3(0, 0, 0),
+          vel: new THREE.Vector3(0, 0, 0),
+          life: 0,
+          maxLife: 1,
+          size: 0.12,
+          twinkle: Math.random() * Math.PI * 2,
+          intensity: 0,
+          r: dragColorA.r,
+          g: dragColorA.g,
+          b: dragColorA.b,
+        });
+        dragGlitterPositions[i * 3] = 0;
+        dragGlitterPositions[i * 3 + 1] = 0;
+        dragGlitterPositions[i * 3 + 2] = 0;
+        dragGlitterSizes[i] = 0.12;
+        dragGlitterAlphas[i] = 0;
+        dragGlitterColors[i * 3] = dragColorA.r;
+        dragGlitterColors[i * 3 + 1] = dragColorA.g;
+        dragGlitterColors[i * 3 + 2] = dragColorA.b;
+      }
+
+      dragGlitterGeometry.setAttribute("position", new THREE.BufferAttribute(dragGlitterPositions, 3));
+      dragGlitterGeometry.setAttribute("color", new THREE.BufferAttribute(dragGlitterColors, 3));
+      dragGlitterGeometry.setAttribute("size", new THREE.BufferAttribute(dragGlitterSizes, 1));
+      dragGlitterGeometry.setAttribute("alpha", new THREE.BufferAttribute(dragGlitterAlphas, 1));
+
+      const dragGlitterMaterial = new THREE.ShaderMaterial({
+        transparent: true,
+        depthWrite: false,
+        blending: THREE.AdditiveBlending,
+        uniforms: {
+          uTime: { value: 0 },
+          uPixelRatio: { value: Math.min(window.devicePixelRatio || 1, 2) },
+          uMap: { value: createSoftDotTexture() },
+        },
+        vertexShader: `
+          attribute float size;
+          attribute float alpha;
+          varying vec3 vColor;
+          varying float vAlpha;
+          uniform float uTime;
+          uniform float uPixelRatio;
+          void main() {
+            vColor = color;
+            float sparkle = 0.75 + 0.25 * sin(uTime * 9.2 + position.x * 4.1 + position.y * 2.7);
+            vAlpha = alpha * sparkle;
+            vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
+            gl_Position = projectionMatrix * mvPosition;
+            gl_PointSize = size * (122.0 / -mvPosition.z) * uPixelRatio;
+          }
+        `,
+        fragmentShader: `
+          uniform sampler2D uMap;
+          varying vec3 vColor;
+          varying float vAlpha;
+          void main() {
+            vec2 uv = gl_PointCoord - vec2(0.5);
+            float cross = pow(max(1.0 - abs(uv.x) * 2.8, 0.0), 5.0)
+                        + pow(max(1.0 - abs(uv.y) * 2.8, 0.0), 5.0);
+            vec4 tex = texture2D(uMap, gl_PointCoord);
+            float alpha = tex.a * vAlpha * (0.72 + cross * 0.45);
+            gl_FragColor = vec4(vColor, alpha);
+          }
+        `,
+        vertexColors: true,
+      });
+      const dragGlitterPoints = new THREE.Points(dragGlitterGeometry, dragGlitterMaterial);
+      scene.add(dragGlitterPoints);
+
+      function emitAmbientDragGlitter(count) {
+        for (let i = 0; i < count; i += 1) {
+          const particle = dragGlitterParticles[dragGlitterCursor];
+          dragEmitDir
+            .set((Math.random() - 0.5) * 1.45, (Math.random() - 0.34) * 1.25, (Math.random() - 0.5) * 1.45)
+            .normalize();
+
+          const spawnRadius = 1.95 + Math.random() * 1.08;
+          particle.pos.copy(dragEmitDir).multiplyScalar(spawnRadius);
+          particle.vel.copy(dragEmitDir).multiplyScalar(0.5 + Math.random() * 0.9);
+          particle.vel.x += (Math.random() - 0.5) * 0.25;
+          particle.vel.y += (Math.random() - 0.32) * 0.22;
+          particle.vel.z += (Math.random() - 0.5) * 0.25;
+          particle.life = 1.35 + Math.random() * 1.95;
+          particle.maxLife = particle.life;
+          particle.size = 0.08 + Math.random() * 0.11;
+          particle.twinkle = Math.random() * Math.PI * 2;
+          particle.intensity = (5 + Math.random() * 3);
+          dragColorMix.copy(dragColorA).lerp(dragColorB, 0.08 + Math.random() * 0.42);
+          particle.r = dragColorMix.r;
+          particle.g = dragColorMix.g;
+          particle.b = dragColorMix.b;
+
+          dragGlitterCursor = (dragGlitterCursor + 1) % dragGlitterParticles.length;
+        }
+      }
+
+      function emitDragGlitterBurst(speedPx) {
+        const burstCount = clamp(Math.floor(speedPx * 0.42) + 5, 7, isMobile ? 24 : 36);
+        const burstStrength = clamp(speedPx * 0.028, 0.26, 2.4);
+        dragEmitFacing.copy(camera.position).normalize();
+        for (let i = 0; i < burstCount; i += 1) {
+          const particle = dragGlitterParticles[dragGlitterCursor];
+          dragEmitDir
+            .set((Math.random() - 0.5) * 1.45, (Math.random() - 0.38) * 1.35, (Math.random() - 0.5) * 1.45)
+            .normalize()
+            .lerp(dragEmitFacing, 0.22)
+            .normalize();
+
+          const spawnRadius = 2.05 + Math.random() * 0.62;
+          particle.pos.copy(dragEmitDir).multiplyScalar(spawnRadius);
+          particle.vel.copy(dragEmitDir).multiplyScalar(2.8 + Math.random() * 3.3 + burstStrength * 2.3);
+          particle.vel.x += (Math.random() - 0.5) * 0.9;
+          particle.vel.y += (Math.random() - 0.45) * 0.85;
+          particle.vel.z += (Math.random() - 0.5) * 0.9;
+          particle.life = 0.74 + Math.random() * 0.72;
+          particle.maxLife = particle.life;
+          particle.size = 0.14 + Math.random() * 0.2 + burstStrength * 0.055;
+          particle.twinkle = Math.random() * Math.PI * 2;
+          particle.intensity = 0.9 + Math.random() * 0.42;
+          dragColorMix.copy(dragColorA).lerp(dragColorB, 0.25 + Math.random() * 0.75);
+          particle.r = dragColorMix.r;
+          particle.g = dragColorMix.g;
+          particle.b = dragColorMix.b;
+
+          dragGlitterCursor = (dragGlitterCursor + 1) % dragGlitterParticles.length;
+        }
+      }
+
       const heartColorA = new THREE.Color(THEME_COLORS.rose);
       const heartColorB = new THREE.Color(THEME_COLORS.gold);
       const heartColorMix = new THREE.Color();
@@ -708,12 +893,12 @@ layout: none
         heartMesh.instanceColor.needsUpdate = true;
       }
 
-      const sparkColorA = new THREE.Color(THEME_COLORS.cream);
-      const sparkColorB = new THREE.Color(THEME_COLORS.sky);
+      const sparkColorA = new THREE.Color(THEME_COLORS.azure);
+      const sparkColorB = new THREE.Color(THEME_COLORS.glow);
       const sparkColorMix = new THREE.Color();
       for (let i = 0; i < SPARK_COUNT; i += 1) {
         const p = sparks[i];
-        const mixT = 0.2 + Math.abs(Math.cos(p.phase * 1.4)) * 0.75;
+        const mixT = 0.34 + Math.abs(Math.cos(p.phase * 1.4)) * 0.62;
         sparkColorMix.copy(sparkColorA).lerp(sparkColorB, mixT);
         sparkMesh.setColorAt(i, sparkColorMix);
       }
@@ -969,6 +1154,7 @@ layout: none
       let currentState = APP_STATE.MAIN;
       let focusKind = FOCUS_KIND.NONE;
       let focusIndex = 0;
+      let focusSwapTimer = 0;
 
       function updateStatus() {
         if (currentState === APP_STATE.FOCUS) {
@@ -995,20 +1181,37 @@ layout: none
       }
 
       function applyFocusView() {
-        if (focusKind === FOCUS_KIND.PHOTO) {
-          focusPhotoEl.style.display = "block";
-          focusTextWrap.style.display = "none";
-          const src = photoOverlaySources[focusIndex];
-          if (!src) {
-            closeFocus();
-            return;
+        const renderFocusContent = () => {
+          if (focusKind === FOCUS_KIND.PHOTO) {
+            focusPhotoEl.style.display = "block";
+            focusTextWrap.style.display = "none";
+            const src = photoOverlaySources[focusIndex];
+            if (!src) {
+              closeFocus();
+              return;
+            }
+            focusPhotoEl.src = src;
+          } else {
+            focusPhotoEl.style.display = "none";
+            focusTextWrap.style.display = "block";
+            focusTextEl.textContent = LOVE_MESSAGES[focusIndex % LOVE_MESSAGES.length] || "想把这句话送给你。";
           }
-          focusPhotoEl.src = src;
-        } else {
-          focusPhotoEl.style.display = "none";
-          focusTextWrap.style.display = "block";
-          focusTextEl.textContent = LOVE_MESSAGES[focusIndex % LOVE_MESSAGES.length] || "想把这句话送给你。";
+        };
+
+        if (!focusOverlay.classList.contains("show")) {
+          renderFocusContent();
+          return;
         }
+
+        focusCard.classList.add("switching");
+        if (focusSwapTimer) {
+          window.clearTimeout(focusSwapTimer);
+        }
+        focusSwapTimer = window.setTimeout(() => {
+          renderFocusContent();
+          requestAnimationFrame(() => focusCard.classList.remove("switching"));
+          focusSwapTimer = 0;
+        }, 120);
       }
 
       function openFocus(kind, index) {
@@ -1038,6 +1241,11 @@ layout: none
       }
 
       function closeFocus() {
+        if (focusSwapTimer) {
+          window.clearTimeout(focusSwapTimer);
+          focusSwapTimer = 0;
+        }
+        focusCard.classList.remove("switching");
         focusOverlay.classList.remove("show");
         currentState = APP_STATE.MAIN;
         focusKind = FOCUS_KIND.NONE;
@@ -1084,9 +1292,12 @@ layout: none
         updateStatus();
       }
 
-      prevItemBtn.addEventListener("click", () => stepFocus(-1));
-      nextItemBtn.addEventListener("click", () => stepFocus(1));
-      closeFocusBtn.addEventListener("click", () => closeFocus());
+      focusCard.addEventListener("click", (ev) => {
+        ev.stopPropagation();
+        if (currentState === APP_STATE.FOCUS) {
+          stepFocus(1);
+        }
+      });
       focusOverlay.addEventListener("click", (ev) => {
         if (ev.target === focusOverlay) closeFocus();
       });
@@ -1105,6 +1316,7 @@ layout: none
       const controls = {
         pointers: new Map(),
         dragMoved: 0,
+        dragFlash: 0,
         clickThreshold: 8,
         pinchDistance: 0,
       };
@@ -1157,11 +1369,16 @@ layout: none
         const p = controls.pointers.get(ev.pointerId);
         const dx = ev.clientX - p.x;
         const dy = ev.clientY - p.y;
+        const dragDistance = Math.hypot(dx, dy);
         p.x = ev.clientX;
         p.y = ev.clientY;
         controls.pointers.set(ev.pointerId, p);
 
-        controls.dragMoved += Math.hypot(dx, dy);
+        controls.dragMoved += dragDistance;
+        if (controls.pointers.size === 1 && dragDistance > 0.08) {
+          emitDragGlitterBurst(dragDistance);
+          controls.dragFlash = clamp(controls.dragFlash + 0.07 + dragDistance * 0.0068, 0, 2.2);
+        }
 
         if (controls.pointers.size === 1) {
           cameraRig.targetYaw -= dx * 0.006;
@@ -1244,13 +1461,14 @@ layout: none
       function updateHeartParticles(dt) {
         const t = clock.getElapsedTime();
         const morph = getZoomMorph();
+        const dragGlowBoost = 1 + controls.dragFlash * 1.2;
         const breath = 1 + Math.sin(t * 2) * (0.02 + (1 - morph) * 0.03);
         const heartCompact = lerp(0.76, 1, morph);
         const sparkCompact = lerp(0.8, 1, morph);
 
-        heartMat.emissiveIntensity = lerp(0.58, 0.32, morph) + Math.sin(t * 1.8) * 0.02;
-        sparkMat.emissiveIntensity = lerp(1.2, 0.74, morph);
-        sparkMat.opacity = lerp(0.94, 0.66, morph);
+        heartMat.emissiveIntensity = (lerp(0.72, 0.42, morph) + Math.sin(t * 1.8) * 0.03) * dragGlowBoost;
+        sparkMat.emissiveIntensity = lerp(1.92, 1.15, morph) + controls.dragFlash * 1.25;
+        sparkMat.opacity = clamp(lerp(0.99, 0.78, morph) + controls.dragFlash * 0.18, 0.4, 1);
 
         for (let i = 0; i < hearts.length; i += 1) {
           const item = hearts[i];
@@ -1294,7 +1512,7 @@ layout: none
 
           tmpObject.position.copy(s.pos);
           tmpObject.rotation.set(0, 0, 0);
-          tmpObject.scale.setScalar(s.scale * (0.72 + Math.sin(t * 3.4 + s.phase) * 0.2));
+          tmpObject.scale.setScalar(s.scale * 1.24 * (0.72 + Math.sin(t * 3.4 + s.phase) * 0.2));
           tmpObject.updateMatrix();
           sparkMesh.setMatrixAt(i, tmpObject.matrix);
         }
@@ -1365,7 +1583,7 @@ layout: none
           chip.group.position.copy(chip.pos);
           chip.group.lookAt(camera.position);
 
-          const textSizeByMorph = lerp(1.0, 2.5, morph);
+          const textSizeByMorph = lerp(1.0, 4.0, morph);
           const baseScale = chip.scale * textSizeByMorph * (0.96 + Math.sin(t * 1.4 + chip.phase) * 0.04);
           const scale = activeTextFocus ? baseScale * 1.15 : baseScale;
           chip.group.scale.lerp(tmpVecB.set(scale, scale, scale), 0.1);
@@ -1428,17 +1646,61 @@ layout: none
 
       function updateBackground(dt) {
         const t = clock.getElapsedTime();
-        auraUniforms.uTime.value = t;
         dustMaterial.uniforms.uTime.value = t;
         dustMaterial.uniforms.uOpacity.value = lerp(0.92, 0.62, getZoomMorph());
         glintMaterial.uniforms.uTime.value = t;
         glintMaterial.uniforms.uOpacity.value = lerp(0.72, 0.44, getZoomMorph());
-        auraSphere.rotation.y += dt * 0.05;
-        auraSphere.rotation.x += dt * 0.018;
+      }
 
-        keyLight.position.x = Math.sin(t * 0.75) * 5;
-        keyLight.position.z = Math.cos(t * 0.75) * 5;
-        rimLight.position.y = Math.sin(t * 0.9) * 2.4;
+      function updateDragGlitter(dt) {
+        const t = clock.getElapsedTime();
+        dragGlitterMaterial.uniforms.uTime.value = t;
+        controls.dragFlash = Math.max(0, controls.dragFlash - dt * 1.35);
+        if (!ambientGlitterSeeded) {
+          emitAmbientDragGlitter(isMobile ? 90 : 150);
+          ambientGlitterSeeded = true;
+        }
+        ambientGlitterCarry += dt * AMBIENT_GLITTER_RATE;
+        const ambientEmitCount = Math.floor(ambientGlitterCarry);
+        if (ambientEmitCount > 0) {
+          emitAmbientDragGlitter(ambientEmitCount);
+          ambientGlitterCarry -= ambientEmitCount;
+        }
+
+        for (let i = 0; i < dragGlitterParticles.length; i += 1) {
+          const particle = dragGlitterParticles[i];
+          if (particle.life <= 0) {
+            dragGlitterAlphas[i] = 0;
+            continue;
+          }
+
+          particle.life -= dt;
+          if (particle.life <= 0) {
+            dragGlitterAlphas[i] = 0;
+            continue;
+          }
+
+          particle.pos.addScaledVector(particle.vel, dt);
+          particle.vel.multiplyScalar(Math.exp(-1.6 * dt));
+          particle.vel.y += dt * 0.25;
+
+          const lifeT = clamp(particle.life / particle.maxLife, 0, 1);
+          const twinkle = 0.8 + 0.32 * Math.sin(t * 14 + particle.twinkle);
+          dragGlitterPositions[i * 3] = particle.pos.x;
+          dragGlitterPositions[i * 3 + 1] = particle.pos.y;
+          dragGlitterPositions[i * 3 + 2] = particle.pos.z;
+          dragGlitterSizes[i] = particle.size * (0.64 + (1 - lifeT) * 0.48 + twinkle * 0.18);
+          dragGlitterAlphas[i] = (lifeT * lifeT * twinkle) * 1.15 * particle.intensity;
+          const colorPulse = 0.88 + 0.12 * Math.sin(t * 9.6 + particle.twinkle * 1.3);
+          dragGlitterColors[i * 3] = particle.r * colorPulse;
+          dragGlitterColors[i * 3 + 1] = particle.g * colorPulse;
+          dragGlitterColors[i * 3 + 2] = particle.b * colorPulse;
+        }
+
+        dragGlitterGeometry.attributes.position.needsUpdate = true;
+        dragGlitterGeometry.attributes.size.needsUpdate = true;
+        dragGlitterGeometry.attributes.alpha.needsUpdate = true;
+        dragGlitterGeometry.attributes.color.needsUpdate = true;
       }
 
       function animate() {
@@ -1450,6 +1712,7 @@ layout: none
         updateTextCards();
         updateDustParticles();
         updateGlintParticles();
+        updateDragGlitter(dt);
         updateBackground(dt);
         if (currentState !== APP_STATE.FOCUS) {
           updateStatus();
@@ -1467,6 +1730,7 @@ layout: none
         camera.updateProjectionMatrix();
         dustMaterial.uniforms.uPixelRatio.value = pixelRatio;
         glintMaterial.uniforms.uPixelRatio.value = pixelRatio;
+        dragGlitterMaterial.uniforms.uPixelRatio.value = pixelRatio;
       });
 
       setState(APP_STATE.MAIN);
