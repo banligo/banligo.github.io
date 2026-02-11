@@ -234,7 +234,7 @@ layout: none
         {% for f in gallery_files %}
           {% assign ext = f.extname | downcase %}
           {% if ext == ".jpg" or ext == ".jpeg" or ext == ".png" or ext == ".webp" %}
-            "{{ f.path | relative_url }}",
+            "{{ f.path | replace_first: '/family-gallery/', '' }}",
           {% endif %}
         {% endfor %}
       ];
@@ -441,7 +441,7 @@ layout: none
 
       async function pickByColor(colorId) {
         const shuffled = shuffle(PHOTO_POOL);
-        const maxScan = Math.min(shuffled.length, 420);
+        const maxScan = Math.min(shuffled.length, 160);
 
         const scanned = [];
 
@@ -450,9 +450,9 @@ layout: none
           const scores = await analyzePhoto(path);
           const fit = evaluateColorFit(scores, colorId);
           scanned.push({ path, score: fit.target, strength: fit.strength, qualifies: fit.qualifies });
-          if (scanned.length >= 220 && i >= 120) {
+          if (scanned.length >= 90 && i >= 60) {
             const hitCount = scanned.reduce((n, x) => n + (x.qualifies ? 1 : 0), 0);
-            if (hitCount >= 96) break;
+            if (hitCount >= 36) break;
           }
         }
 
