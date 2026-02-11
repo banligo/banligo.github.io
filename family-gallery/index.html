@@ -214,7 +214,7 @@ layout: none
       <header class="head">
         <div>
           <h1 class="title">照片颜色选择器（AI生成代码）</h1>
-          <p class="sub">温馨提示：由于系统初始化，第一次选择的时候加载照片需要时间，请耐心等待。</p>
+          <p class="sub">温馨提示：前几次选择的时候分析照片需要时间，请耐心等待。</p>
         </div>
         <!-- <a class="home-link" href="{{ '/' | relative_url }}">返回 Home</a> -->
       </header>
@@ -259,6 +259,7 @@ layout: none
       let currentColor = null;
       let busy = false;
       let topZ = 40;
+      let hasFirstScan = false;
 
       const analyzerCanvas = document.createElement("canvas");
       analyzerCanvas.width = 56;
@@ -441,7 +442,10 @@ layout: none
 
       async function pickByColor(colorId) {
         const shuffled = shuffle(PHOTO_POOL);
-        const maxScan = Math.min(shuffled.length, 160);
+        const scanBudget = hasFirstScan ? 50 : 35;
+        const maxScan = Math.min(shuffled.length, scanBudget);
+        const earlyCheckAt = hasFirstScan ? 30 : 20;
+        const enoughHits = hasFirstScan ? 10 : 6;
 
         const scanned = [];
 
@@ -450,11 +454,12 @@ layout: none
           const scores = await analyzePhoto(path);
           const fit = evaluateColorFit(scores, colorId);
           scanned.push({ path, score: fit.target, strength: fit.strength, qualifies: fit.qualifies });
-          if (scanned.length >= 90 && i >= 60) {
+          if (scanned.length >= earlyCheckAt && i >= Math.floor(earlyCheckAt * 0.7)) {
             const hitCount = scanned.reduce((n, x) => n + (x.qualifies ? 1 : 0), 0);
-            if (hitCount >= 36) break;
+            if (hitCount >= enoughHits) break;
           }
         }
+        hasFirstScan = true;
 
         const pool = scanned
           .filter((x) => x.qualifies)
