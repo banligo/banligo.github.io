@@ -6,12 +6,17 @@ layout: none
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Chestnut Cosmos</title>
+    <title>Family Color Gallery</title>
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
+      @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Noto+Sans+SC:wght@400;500;700&display=swap");
 
       :root {
-        --accent-rgb: 216, 122, 58;
+        --bg-0: #080b10;
+        --bg-1: #111824;
+        --card: rgba(16, 22, 34, 0.82);
+        --line: rgba(255, 255, 255, 0.15);
+        --text: #eef4ff;
+        --sub: #b8c1d0;
       }
 
       * {
@@ -27,935 +32,717 @@ layout: none
       body {
         margin: 0;
         overflow: hidden;
-        background: #000;
-        color: #f8f2ea;
-        font-family: "Noto Sans SC", "PingFang SC", sans-serif;
+        color: var(--text);
+        font-family: "Noto Sans SC", sans-serif;
+        background:
+          radial-gradient(900px 420px at -5% 0%, rgba(255, 119, 119, 0.2), rgba(255, 119, 119, 0) 60%),
+          radial-gradient(980px 460px at 110% 100%, rgba(106, 162, 255, 0.23), rgba(106, 162, 255, 0) 56%),
+          linear-gradient(155deg, var(--bg-0), var(--bg-1));
       }
 
-      #cosmos {
+      body::before {
+        content: "";
         position: fixed;
         inset: 0;
-        width: 100%;
-        height: 100%;
-        display: block;
+        pointer-events: none;
+        background-image: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+        background-size: 3px 3px;
+        mix-blend-mode: soft-light;
       }
 
-      .hud {
-        position: fixed;
-        z-index: 10;
-        top: max(14px, env(safe-area-inset-top));
-        left: max(14px, env(safe-area-inset-left));
-        right: max(14px, env(safe-area-inset-right));
+      .app {
+        width: min(1120px, 95vw);
+        height: 100vh;
+        margin: 0 auto;
+        padding: 14px 0 16px;
+        display: grid;
+        grid-template-rows: auto auto 1fr;
+        gap: 10px;
+      }
+
+      .head {
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
         gap: 12px;
-        pointer-events: none;
       }
 
-      .info,
-      .home-link {
-        pointer-events: auto;
-        border-radius: 14px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(16, 16, 18, 0.62);
-        backdrop-filter: blur(7px);
-        box-shadow: 0 12px 26px rgba(0, 0, 0, 0.4);
-      }
-
-      .info {
-        max-width: min(720px, 80vw);
-        padding: 12px 14px;
-      }
-
-      .info h1 {
+      .title {
         margin: 0;
-        font-family: "Playfair Display", "Times New Roman", serif;
-        font-size: clamp(1.08rem, 2.1vw, 1.7rem);
-        letter-spacing: 0.03em;
-        color: #fff4e6;
+        font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+        font-size: clamp(1.15rem, 2.2vw, 1.8rem);
+        letter-spacing: 0.02em;
       }
 
-      .info p {
+      .sub {
         margin: 5px 0 0;
-        font-size: 0.84rem;
-        color: #f3d9bf;
+        font-size: 0.82rem;
+        color: var(--sub);
       }
 
       .home-link {
         text-decoration: none;
         color: #fff;
-        border: 0;
-        background: linear-gradient(136deg, #7d3f1e, #b76b3e);
-        padding: 8px 13px;
-        font-size: 0.84rem;
-      }
-
-      .hint {
-        position: fixed;
-        z-index: 10;
-        left: 50%;
-        bottom: max(14px, env(safe-area-inset-bottom));
-        transform: translateX(-50%);
-        padding: 9px 14px;
         border-radius: 999px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        background: rgba(16, 16, 18, 0.6);
-        color: #f7e6d2;
-        font-size: 0.79rem;
-        text-align: center;
-        pointer-events: none;
+        padding: 8px 13px;
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        background: rgba(255, 255, 255, 0.08);
+        font-size: 0.82rem;
+        white-space: nowrap;
       }
 
-      .viewer {
-        position: fixed;
-        inset: 0;
-        z-index: 30;
-        display: none;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-        background:
-          radial-gradient(circle at 20% 18%, rgba(var(--accent-rgb), 0.32), rgba(var(--accent-rgb), 0) 44%),
-          radial-gradient(circle at 84% 76%, rgba(142, 191, 255, 0.22), rgba(142, 191, 255, 0) 40%),
-          rgba(3, 3, 4, 0.76);
+      .palette {
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        background: rgba(15, 21, 31, 0.52);
         backdrop-filter: blur(8px);
-      }
-
-      .viewer.show {
+        padding: 10px 12px;
         display: flex;
-      }
-
-      .photo-card {
-        position: relative;
-        overflow: hidden;
-        width: min(620px, 92vw);
-        border-radius: 20px;
-        border: 2px solid rgba(var(--accent-rgb), 0.84);
-        background: linear-gradient(145deg, rgba(255, 250, 244, 0.96), rgba(246, 236, 224, 0.94));
-        box-shadow:
-          0 30px 62px rgba(0, 0, 0, 0.34),
-          0 0 0 1px rgba(255, 255, 255, 0.34) inset;
-      }
-
-      .photo-card::before {
-        content: "";
-        position: absolute;
-        top: -24%;
-        left: -10%;
-        width: 68%;
-        height: 56%;
-        background: radial-gradient(circle at 40% 50%, rgba(var(--accent-rgb), 0.34), rgba(var(--accent-rgb), 0) 68%);
-        filter: blur(10px);
-        pointer-events: none;
-      }
-
-      .photo-wrap {
-        padding: 14px;
-      }
-
-      .photo-wrap img {
-        width: 100%;
-        max-height: min(74vh, 650px);
-        object-fit: contain;
-        display: block;
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.82);
-        background: #f4ebde;
-        box-shadow:
-          0 16px 34px rgba(32, 25, 18, 0.2),
-          0 0 0 1px rgba(var(--accent-rgb), 0.28) inset;
-      }
-
-      .viewer-footer {
-        padding: 0 14px 12px;
-        display: flex;
+        justify-content: center;
         align-items: center;
-        justify-content: space-between;
-        gap: 10px;
+        flex-wrap: nowrap;
+        gap: clamp(6px, 1.5vw, 10px);
+        overflow-x: auto;
+        overflow-y: hidden;
+        scrollbar-width: none;
       }
 
-      .viewer-title {
-        font-size: 0.88rem;
-        color: #65462f;
+      .palette::-webkit-scrollbar {
+        display: none;
       }
 
-      .actions {
-        display: flex;
-        gap: 8px;
-      }
-
-      .viewer-btn {
-        border: 0;
+      .color-btn {
+        border: 1px solid rgba(255, 255, 255, 0.2);
         border-radius: 999px;
         color: #fff;
+        font-size: clamp(0.74rem, 2.4vw, 0.86rem);
+        font-weight: 700;
+        width: clamp(34px, 6.6vw, 46px);
+        height: clamp(34px, 6.6vw, 46px);
+        min-width: clamp(34px, 6.6vw, 46px);
+        padding: 0;
+        display: grid;
+        place-items: center;
+        line-height: 1;
         cursor: pointer;
-        padding: 8px 12px;
-        font-size: 0.8rem;
-        box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+        background: #2a3445;
+        transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
       }
 
-      .viewer-btn.next {
-        background: linear-gradient(136deg, #7c411f, #b77345);
+      .color-btn:hover {
+        transform: translateY(-1px);
       }
 
-      .viewer-btn.close {
-        background: linear-gradient(136deg, #4c4742, #706a64);
+      .color-btn.active {
+        border-color: rgba(255, 255, 255, 0.92);
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.44) inset;
       }
 
-      @media (max-width: 780px) {
-        .info {
-          max-width: min(78vw, 360px);
-          padding: 10px 12px;
-        }
-
-        .info p {
-          font-size: 0.76rem;
-        }
-
-        .hint {
-          font-size: 0.73rem;
-          width: calc(100vw - 24px);
-          border-radius: 12px;
-        }
-
-        .viewer-btn {
-          font-size: 0.74rem;
-          padding: 7px 10px;
-        }
+      .color-btn.red { background: linear-gradient(135deg, #ff4f5a, #d12843); }
+      .color-btn.orange { background: linear-gradient(135deg, #ff9a3d, #dc6b11); }
+      .color-btn.yellow { background: linear-gradient(135deg, #ffd851, #d89f1d); color: #2a1a00; font-weight: 700; }
+      .color-btn.green { background: linear-gradient(135deg, #65d66f, #2e8f47); }
+      .color-btn.cyan { background: linear-gradient(135deg, #56d5df, #149db1); }
+      .color-btn.blue { background: linear-gradient(135deg, #65a4ff, #2f64d9); }
+      .color-btn.purple { background: linear-gradient(135deg, #c580ff, #8b49d8); }
+      .color-btn.white {
+        background: linear-gradient(135deg, #ffffff, #d9dee8);
+        color: #1f2a3d;
+        border-color: rgba(18, 26, 42, 0.25);
       }
+      .color-btn.black {
+        background: linear-gradient(135deg, #2d3442, #05070a);
+        color: #f4f7ff;
+      }
+
+      .stage {
+        border: 0;
+        border-radius: 0;
+        background: transparent;
+        backdrop-filter: none;
+        padding: 0;
+        min-height: 0;
+      }
+
+      .cards {
+        position: relative;
+        min-height: 0;
+        height: 100%;
+        overflow: hidden;
+        border-radius: 16px;
+      }
+
+      .card {
+        position: absolute;
+        border-radius: 14px;
+        overflow: hidden;
+        border: 0;
+        background: transparent;
+        box-shadow: 0 16px 30px rgba(0, 0, 0, 0.25);
+        transform: rotate(var(--rot, 0deg)) scale(var(--zoom, 1));
+        transition: transform 180ms ease, box-shadow 180ms ease;
+        cursor: pointer;
+      }
+
+      .card img {
+        width: 100%;
+        height: auto;
+        object-fit: initial;
+        display: block;
+        background: transparent;
+      }
+
+      .card.front {
+        box-shadow: 0 20px 44px rgba(0, 0, 0, 0.35);
+      }
+
+      .empty {
+        border-radius: 14px;
+        border: 1px dashed rgba(255, 255, 255, 0.2);
+        display: grid;
+        place-items: center;
+        color: var(--sub);
+        font-size: 0.88rem;
+        text-align: center;
+        padding: 10px;
+      }
+
     </style>
   </head>
   <body>
-    <canvas id="cosmos" aria-label="板栗宇宙"></canvas>
-
-    <div class="hint">点击任意查看图片</div>
-
-    <div id="viewer" class="viewer" aria-hidden="true">
-      <div id="photoCard" class="photo-card">
-        <div class="photo-wrap">
-          <img id="viewerImage" alt="板栗记忆图片" />
+    <main class="app">
+      <header class="head">
+        <div>
+          <h1 class="title">照片颜色选择器（AI生成代码）</h1>
+          <p class="sub">温馨提示：由于系统初始化，第一次选择的时候加载照片需要时间，请耐心等待。</p>
         </div>
-        <div class="viewer-footer">
-          <div id="viewerTitle" class="viewer-title">Memory</div>
-          <div class="actions">
-            <button id="nextBtn" class="viewer-btn next" type="button">下一张</button>
-            <button id="closeBtn" class="viewer-btn close" type="button">关闭</button>
-          </div>
+        <!-- <a class="home-link" href="{{ '/' | relative_url }}">返回 Home</a> -->
+      </header>
+
+      <section id="palette" class="palette"></section>
+
+      <section class="stage">
+        <div id="cards" class="cards">
+          <div class="empty">等待颜色选择</div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
 
-    <script type="module">
-      import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.160.1/build/three.module.js";
+    {% assign gallery_files = site.static_files | where_exp: "f", "f.path contains '/family-gallery/content/photos/'" | sort: "path" %}
+    <script>
+      const PHOTO_POOL = [
+        {% for f in gallery_files %}
+          {% assign ext = f.extname | downcase %}
+          {% if ext == ".jpg" or ext == ".jpeg" or ext == ".png" or ext == ".webp" %}
+            "{{ f.path | relative_url }}",
+          {% endif %}
+        {% endfor %}
+      ];
 
-      const canvas = document.getElementById("cosmos");
-      const viewer = document.getElementById("viewer");
-      const viewerImage = document.getElementById("viewerImage");
-      const viewerTitle = document.getElementById("viewerTitle");
-      const photoCard = document.getElementById("photoCard");
-      const nextBtn = document.getElementById("nextBtn");
-      const closeBtn = document.getElementById("closeBtn");
+      const COLORS = [
+        { id: "red", label: "红", className: "red", hue: 0, mode: "hue" },
+        { id: "orange", label: "橙", className: "orange", hue: 28, mode: "hue" },
+        { id: "yellow", label: "黄", className: "yellow", hue: 52, mode: "hue" },
+        { id: "green", label: "绿", className: "green", hue: 118, mode: "hue" },
+        { id: "cyan", label: "青", className: "cyan", hue: 182, mode: "hue" },
+        { id: "blue", label: "蓝", className: "blue", hue: 222, mode: "hue" },
+        { id: "purple", label: "紫", className: "purple", hue: 286, mode: "hue" },
+        { id: "white", label: "白", className: "white", mode: "neutral" },
+        { id: "black", label: "黑", className: "black", mode: "neutral" },
+      ];
+      const HUE_COLORS = COLORS.filter((c) => c.mode === "hue");
 
-      const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.toneMapping = THREE.ACESFilmicToneMapping;
-      renderer.toneMappingExposure = 1.06;
+      const paletteEl = document.getElementById("palette");
+      const cardsEl = document.getElementById("cards");
 
-      const scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0x000000, 0.032);
+      const analysisCache = new Map();
+      let currentColor = null;
+      let busy = false;
+      let topZ = 40;
 
-      const camera = new THREE.PerspectiveCamera(54, window.innerWidth / window.innerHeight, 0.1, 120);
-      camera.position.set(0, 6.2, 12.1);
+      const analyzerCanvas = document.createElement("canvas");
+      analyzerCanvas.width = 56;
+      analyzerCanvas.height = 56;
+      const analyzerCtx = analyzerCanvas.getContext("2d", { willReadFrequently: true });
 
-      const raycaster = new THREE.Raycaster();
-      const pointerNdc = new THREE.Vector2();
-      const pointerLook = new THREE.Vector2();
+      function randInt(min, max) {
+        return min + Math.floor(Math.random() * (max - min + 1));
+      }
 
-      const root = new THREE.Group();
-      scene.add(root);
+      function shuffle(arr) {
+        const a = arr.slice();
+        for (let i = a.length - 1; i > 0; i -= 1) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
 
-      const chestnutRoot = new THREE.Group();
-      root.add(chestnutRoot);
+      function fileLabel(path) {
+        const file = path.split("/").pop() || "";
+        return decodeURIComponent(file).replace(/\.[^.]+$/, "");
+      }
 
-      const clock = new THREE.Clock();
+      function hueDistance(a, b) {
+        const d = Math.abs(a - b) % 360;
+        return Math.min(d, 360 - d);
+      }
 
-      const chestnutMeshes = [];
-      const chestnutGroups = [];
-      const tmpScale = new THREE.Vector3();
-      const tmpWorldPos = new THREE.Vector3();
-      const tmpTargetPos = new THREE.Vector3();
-      let activeChestnutIndex = -1;
-      let lastOpenedIndex = -1;
-      let elapsed = 0;
-      let galaxyField = null;
+      function hueDistanceForColor(h, colorId, hue) {
+        if (colorId !== "purple") return hueDistance(h, hue);
+        // Purple uses multiple anchors to cover violet + magenta-leaning purple.
+        const anchors = [272, 292, 312];
+        let best = Infinity;
+        for (const a of anchors) {
+          const d = hueDistance(h, a);
+          if (d < best) best = d;
+        }
+        return best;
+      }
 
-      const burstCount = 260;
-      const burstGeo = new THREE.BufferGeometry();
-      const burstPos = new Float32Array(burstCount * 3);
-      const burstCol = new Float32Array(burstCount * 3);
-      const burstVel = Array.from({ length: burstCount }, () => new THREE.Vector3());
-      const burstLife = new Float32Array(burstCount);
-      burstGeo.setAttribute("position", new THREE.BufferAttribute(burstPos, 3));
-      burstGeo.setAttribute("color", new THREE.BufferAttribute(burstCol, 3));
-      const burstMat = new THREE.PointsMaterial({
-        size: 0.09,
-        vertexColors: true,
-        transparent: true,
-        opacity: 0.95,
-        depthWrite: false,
-      });
-      const burstPoints = new THREE.Points(burstGeo, burstMat);
-      scene.add(burstPoints);
+      function rgbToHsv(r, g, b) {
+        const rn = r / 255;
+        const gn = g / 255;
+        const bn = b / 255;
+        const max = Math.max(rn, gn, bn);
+        const min = Math.min(rn, gn, bn);
+        const d = max - min;
+
+        let h = 0;
+        if (d !== 0) {
+          if (max === rn) h = ((gn - bn) / d) % 6;
+          else if (max === gn) h = (bn - rn) / d + 2;
+          else h = (rn - gn) / d + 4;
+          h = Math.round(h * 60);
+          if (h < 0) h += 360;
+        }
+
+        const s = max === 0 ? 0 : d / max;
+        const v = max;
+        return { h, s, v };
+      }
 
       function clamp(v, min, max) {
         return Math.min(max, Math.max(min, v));
       }
 
-      function colorToRgb(hex) {
-        const c = new THREE.Color(hex);
-        return {
-          r: Math.round(c.r * 255),
-          g: Math.round(c.g * 255),
-          b: Math.round(c.b * 255),
-        };
-      }
-
-      function toAccent(rgb) {
-        document.documentElement.style.setProperty("--accent-rgb", `${rgb.r}, ${rgb.g}, ${rgb.b}`);
-        photoCard.style.borderColor = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.86)`;
-      }
-
-      function pickRandom(len, prev) {
-        if (len <= 1) return len === 1 ? 0 : -1;
-        let idx = Math.floor(Math.random() * len);
-        if (idx === prev) idx = (idx + 1 + Math.floor(Math.random() * (len - 1))) % len;
-        return idx;
-      }
-
-      const photoLoader = new THREE.TextureLoader();
-
-      function createPhotoMemory(src, i) {
-        const tex = photoLoader.load(src);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        const file = src.split("/").pop().split("?")[0];
-        const label = file.replace(/\.[^.]+$/, "");
-        const hue = (26 + i * 31) % 360;
-
-        return {
-          title: `家庭照片 ${label}`,
-          src,
-          texture: tex,
-          keyColor: `hsl(${hue}, 80%, 58%)`,
-        };
-      }
-
-      const PLANET_PALETTES = [
-        { name: "Mercury", core: "#9b9389", dark: "#5f5953", light: "#cfc8bd", band: "#7e786f", gas: false },
-        { name: "Venus", core: "#d6b07a", dark: "#9a6c43", light: "#f1d2a5", band: "#b88658", gas: false },
-        { name: "Earth", core: "#2f66a8", dark: "#1d3d62", light: "#72a9e2", band: "#2e8f55", gas: false },
-        { name: "Mars", core: "#c55c38", dark: "#77331f", light: "#e49473", band: "#a24a2c", gas: false },
-        { name: "Jupiter", core: "#c79a6a", dark: "#7f5a3e", light: "#efd2b0", band: "#ad7a51", gas: true },
-        { name: "Saturn", core: "#d6c089", dark: "#8d7752", light: "#f0dfb3", band: "#b89a69", gas: true },
-        { name: "Uranus", core: "#7db8cb", dark: "#447787", light: "#c3e2ea", band: "#95cfde", gas: true },
-        { name: "Neptune", core: "#3a63b8", dark: "#1f356a", light: "#87a8ef", band: "#5b82d4", gas: true },
-      ];
-
-      function createChestnutTexture(seed = 0) {
-        const c = document.createElement("canvas");
-        c.width = 512;
-        c.height = 512;
-        const ctx = c.getContext("2d");
-        const palette = PLANET_PALETTES[seed % PLANET_PALETTES.length];
-
-        const g = ctx.createRadialGradient(220, 180, 40, 380, 380, 520);
-        g.addColorStop(0, palette.light);
-        g.addColorStop(0.52, palette.core);
-        g.addColorStop(1, palette.dark);
-        ctx.fillStyle = g;
-        ctx.fillRect(0, 0, c.width, c.height);
-
-        ctx.globalAlpha = palette.gas ? 0.34 : 0.26;
-        const bandCount = palette.gas ? 180 : 90;
-        for (let i = 0; i < bandCount; i += 1) {
-          const y = (i / bandCount) * c.height;
-          ctx.strokeStyle = i % 2 === 0 ? palette.band : palette.dark;
-          ctx.lineWidth = palette.gas ? 2 + (i % 5 === 0 ? 1 : 0) : 1 + (i % 8 === 0 ? 1 : 0);
-          ctx.beginPath();
-          ctx.moveTo(0, y + Math.sin((i + seed) * 0.11) * 7);
-          ctx.bezierCurveTo(c.width * 0.28, y - 6, c.width * 0.6, y + 10, c.width, y + Math.cos((i + seed) * 0.1) * 7);
-          ctx.stroke();
-        }
-
-        ctx.globalAlpha = 0.24;
-        for (let i = 0; i < (palette.gas ? 10 : 16); i += 1) {
-          const x = Math.random() * c.width;
-          const y = Math.random() * c.height;
-          const r = 40 + Math.random() * 120;
-          const rg = ctx.createRadialGradient(x, y, r * 0.1, x, y, r);
-          rg.addColorStop(0, "rgba(255,255,255,0.32)");
-          rg.addColorStop(1, "rgba(255,255,255,0)");
-          ctx.fillStyle = rg;
-          ctx.beginPath();
-          ctx.arc(x, y, r, 0, Math.PI * 2);
-          ctx.fill();
-        }
-
-        if (palette.gas) {
-          ctx.globalAlpha = 0.22;
-          for (let i = 0; i < 22; i += 1) {
-            const y = (i / 22) * c.height;
-            ctx.strokeStyle = i % 2 === 0 ? palette.light : palette.core;
-            ctx.lineWidth = 3 + Math.random() * 3;
-            ctx.beginPath();
-            ctx.moveTo(0, y + Math.sin(i * 0.5 + seed) * 4);
-            ctx.quadraticCurveTo(c.width * 0.5, y + Math.cos(i * 0.4) * 12, c.width, y + Math.sin(i * 0.6) * 4);
-            ctx.stroke();
-          }
-        }
-
-        ctx.globalAlpha = 1;
-        const img = ctx.getImageData(0, 0, c.width, c.height);
-        const d = img.data;
-        for (let i = 0; i < d.length; i += 4) {
-          const n = (Math.random() - 0.5) * 20;
-          d[i] = clamp(d[i] + n, 0, 255);
-          d[i + 1] = clamp(d[i + 1] + n, 0, 255);
-          d[i + 2] = clamp(d[i + 2] + n, 0, 255);
-        }
-        ctx.putImageData(img, 0, 0);
-
-        const tex = new THREE.CanvasTexture(c);
-        tex.colorSpace = THREE.SRGBColorSpace;
-        return tex;
-      }
-
-      function createStarField() {
-        const isMobile = window.matchMedia("(max-width: 860px)").matches;
-
-        const starCount = isMobile ? 2200 : 3600;
-        const starGeo = new THREE.BufferGeometry();
-        const starPos = new Float32Array(starCount * 3);
-        const starCol = new Float32Array(starCount * 3);
-
-        for (let i = 0; i < starCount; i += 1) {
-          const i3 = i * 3;
-          const r = 18 + Math.random() * 56;
-          const phi = Math.random() * Math.PI * 2;
-          const cost = Math.random() * 2 - 1;
-          const sint = Math.sqrt(1 - cost * cost);
-          starPos[i3] = r * sint * Math.cos(phi);
-          starPos[i3 + 1] = r * cost;
-          starPos[i3 + 2] = r * sint * Math.sin(phi);
-
-          const tint = Math.random();
-          const c = new THREE.Color(tint > 0.88 ? 0xffd7a4 : tint > 0.62 ? 0xa8d6ff : 0xffffff);
-          starCol[i3] = c.r;
-          starCol[i3 + 1] = c.g;
-          starCol[i3 + 2] = c.b;
-        }
-
-        starGeo.setAttribute("position", new THREE.BufferAttribute(starPos, 3));
-        starGeo.setAttribute("color", new THREE.BufferAttribute(starCol, 3));
-        const starsMat = new THREE.PointsMaterial({
-          size: isMobile ? 0.07 : 0.082,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.88,
-          depthWrite: false,
+      function loadImage(path) {
+        return new Promise((resolve, reject) => {
+          const img = new Image();
+          img.decoding = "async";
+          img.onload = () => resolve(img);
+          img.onerror = reject;
+          img.src = path;
         });
-        const stars = new THREE.Points(starGeo, starsMat);
-        scene.add(stars);
-
-        const dustCount = isMobile ? 2400 : 4200;
-        const dustGeo = new THREE.BufferGeometry();
-        const dustPos = new Float32Array(dustCount * 3);
-        const dustCol = new Float32Array(dustCount * 3);
-        const radii = new Float32Array(dustCount);
-        const angles = new Float32Array(dustCount);
-        const speeds = new Float32Array(dustCount);
-        const heights = new Float32Array(dustCount);
-        const phases = new Float32Array(dustCount);
-
-        const maxR = 15.8;
-        for (let i = 0; i < dustCount; i += 1) {
-          const i3 = i * 3;
-          const r = 1.2 + Math.pow(Math.random(), 1.35) * maxR;
-          const a = Math.random() * Math.PI * 2;
-          const y = (Math.random() - 0.5) * (0.16 + (r / maxR) * 0.24);
-          const s = (0.24 / Math.sqrt(r + 0.5)) * (0.55 + Math.random() * 0.9);
-          const p = Math.random() * Math.PI * 2;
-
-          radii[i] = r;
-          angles[i] = a;
-          speeds[i] = s;
-          heights[i] = y;
-          phases[i] = p;
-
-          dustPos[i3] = Math.cos(a) * r;
-          dustPos[i3 + 1] = y;
-          dustPos[i3 + 2] = Math.sin(a) * r;
-
-          const c = new THREE.Color(Math.random() > 0.84 ? 0xffb774 : Math.random() > 0.55 ? 0xb0d6ff : 0xffffff);
-          c.offsetHSL(0, 0, 0.08);
-          dustCol[i3] = c.r;
-          dustCol[i3 + 1] = c.g;
-          dustCol[i3 + 2] = c.b;
-        }
-
-        dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
-        dustGeo.setAttribute("color", new THREE.BufferAttribute(dustCol, 3));
-        const dustMat = new THREE.PointsMaterial({
-          size: isMobile ? 0.034 : 0.04,
-          vertexColors: true,
-          transparent: true,
-          opacity: 0.36,
-          depthWrite: false,
-        });
-        const dust = new THREE.Points(dustGeo, dustMat);
-        scene.add(dust);
-
-        return {
-          starsMat,
-          dust,
-          dustPos,
-          dustGeo,
-          radii,
-          angles,
-          speeds,
-          heights,
-          phases,
-          maxR,
-        };
       }
 
-      const FAMILY_PHOTO_PATHS = [
-        "{{ '/family-gallery/content/photos/IMG_0048.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0055.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0064.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0081.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0082.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0085.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0088.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_0099.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1213.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1376.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1379.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1393.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1424.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1535.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1539.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1550.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1558.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1559.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1560.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1563.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1640.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1667.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1932.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_1979.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_2000.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_2391.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_2463.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_2482.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_2546.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/IMG_3179.jpg' | relative_url }}",
-        "{{ '/family-gallery/content/photos/tempImageLRZ2ml.jpg' | relative_url }}",
-      ];
-      const MEMORIES = FAMILY_PHOTO_PATHS.map((src, i) => createPhotoMemory(src, i));
-      const GALAXY = {
-        radius: 9.4,
-        inner: 1.1,
-        arms: 4,
-        twist: 0.95,
-        thickness: 0.2,
-      };
-      const CHESTNUT_TEXTURE_POOL = Array.from({ length: PLANET_PALETTES.length }, (_, i) => createChestnutTexture(i));
+      async function analyzePhoto(path) {
+        if (analysisCache.has(path)) return analysisCache.get(path);
 
-      function buildChestnuts() {
-        for (let i = 0; i < MEMORIES.length; i += 1) {
-          const group = new THREE.Group();
-          const palette = PLANET_PALETTES[i % PLANET_PALETTES.length];
-          const arm = i % GALAXY.arms;
-          const armPhase = (arm / GALAXY.arms) * Math.PI * 2;
-          // 中心更密、外围更稀：指数越大越偏向内侧
-          const radial = GALAXY.inner + Math.pow(Math.random(), 3.35) * (GALAXY.radius - GALAXY.inner);
-          const angleJitter = (Math.random() - 0.5) * (0.25 + (radial / GALAXY.radius) * 0.22);
-          const angle = armPhase + radial * GALAXY.twist + angleJitter;
-          const yOff = (Math.random() - 0.5) * (GALAXY.thickness + (radial / GALAXY.radius) * 0.14);
-          // 平均尺寸整体再减小，仍保留大/小变化
-          const baseScale = clamp(
-            0.145 + (1 - radial / GALAXY.radius) * 0.15 + Math.pow(Math.random(), 1.6) * 0.05,
-            0.13,
-            0.36
-          );
-          const sizeRatio = (baseScale - 0.13) / (0.36 - 0.13); // 0=小, 1=大
-          const sizeSpeedFactor = 1.34 - sizeRatio * 0.54; // 小快(≈1.34), 大慢(≈0.8)
+        const scores = Object.fromEntries(COLORS.map((c) => [c.id, 0]));
+        const hits = Object.fromEntries(COLORS.map((c) => [c.id, 0]));
+        try {
+          const img = await loadImage(path);
+          analyzerCtx.clearRect(0, 0, analyzerCanvas.width, analyzerCanvas.height);
+          analyzerCtx.drawImage(img, 0, 0, analyzerCanvas.width, analyzerCanvas.height);
+          const data = analyzerCtx.getImageData(0, 0, analyzerCanvas.width, analyzerCanvas.height).data;
 
-          const shell = new THREE.Mesh(
-            new THREE.SphereGeometry(0.38, 34, 28),
-            new THREE.MeshStandardMaterial({
-              map: CHESTNUT_TEXTURE_POOL[i % CHESTNUT_TEXTURE_POOL.length],
-              roughness: 0.76,
-              metalness: 0.02,
-              emissive: new THREE.Color(palette.core).multiplyScalar(0.38),
-              emissiveIntensity: 0.11,
-            })
-          );
-          shell.scale.set(1.12, 0.9, 1.04);
-          shell.userData.chestnutIndex = i;
-          group.add(shell);
+          let useful = 0;
+          for (let i = 0; i < data.length; i += 16) {
+            const a = data[i + 3];
+            if (a < 40) continue;
 
-          const hitMesh = new THREE.Mesh(
-            new THREE.SphereGeometry(0.95, 12, 10),
-            new THREE.MeshBasicMaterial({ transparent: true, opacity: 0 })
-          );
-          hitMesh.userData.chestnutIndex = i;
-          group.add(hitMesh);
-          chestnutMeshes.push(hitMesh);
+            const { h, s, v } = rgbToHsv(data[i], data[i + 1], data[i + 2]);
+            if (v < 0.02) continue;
 
-          const photoPlane = new THREE.Mesh(
-            new THREE.PlaneGeometry(0.76, 0.92),
-            new THREE.MeshBasicMaterial({
-              map: MEMORIES[i].texture,
-              transparent: true,
-              opacity: 0.98,
-              side: THREE.DoubleSide,
-              depthWrite: false,
-              depthTest: false,
-            })
-          );
-          photoPlane.position.set(0, 0.86 + baseScale * 0.42, 0);
-          photoPlane.rotation.x = -0.14;
-          photoPlane.renderOrder = 8;
-          group.add(photoPlane);
-
-          group.position.set(Math.cos(angle) * radial, yOff, Math.sin(angle) * radial);
-          group.scale.setScalar(baseScale);
-          group.rotation.y = Math.random() * Math.PI * 2;
-
-          const orbitSpeed =
-            (0.72 / Math.pow(radial + 0.45, 0.8)) *
-            sizeSpeedFactor *
-            (0.96 + Math.random() * 0.08);
-
-          group.userData = {
-            index: i,
-            baseAngle: angle,
-            radial,
-            yOff,
-            phase: i * 0.48 + Math.random() * 2.2,
-            orbitSpeed,
-            currentOrbitSpeed: orbitSpeed,
-            speedScale: 1,
-            slowNear: 1,
-            boostNear: 1,
-            orbitAngle: angle,
-            bobAmp: 0.03 + Math.random() * 0.035,
-            baseScale,
-            shellMat: shell.material,
-            glowBase: 0.12 + Math.random() * 0.07,
-            photoPlane,
-            photoBaseScale: 0.78 + baseScale * 0.26,
-            spinSpeed: 0.002 + Math.random() * 0.0015,
-            targetX: Math.cos(angle) * radial,
-            targetZ: Math.sin(angle) * radial,
-          };
-
-          chestnutGroups.push(group);
-          chestnutRoot.add(group);
-        }
-      }
-
-      const ambient = new THREE.AmbientLight(0x745f4a, 0.54);
-      scene.add(ambient);
-
-      const hemi = new THREE.HemisphereLight(0x6b738d, 0x210f07, 0.62);
-      scene.add(hemi);
-
-      const warmKey = new THREE.PointLight(0xffa14d, 26, 24, 2);
-      warmKey.position.set(3.4, 2.2, 4.1);
-      scene.add(warmKey);
-
-      const coolKey = new THREE.PointLight(0x7faeff, 14, 24, 2);
-      coolKey.position.set(-4.6, 2.4, -3.6);
-      scene.add(coolKey);
-
-      galaxyField = createStarField();
-      buildChestnuts();
-      chestnutRoot.rotation.x = -0.3;
-      chestnutRoot.rotation.z = -0.08;
-
-      function triggerBurst(position, colorHex) {
-        const c = new THREE.Color(colorHex);
-        for (let i = 0; i < burstCount; i += 1) {
-          const i3 = i * 3;
-          burstPos[i3] = position.x;
-          burstPos[i3 + 1] = position.y;
-          burstPos[i3 + 2] = position.z;
-
-          const dir = new THREE.Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5).normalize();
-          const speed = 0.04 + Math.random() * 0.12;
-          burstVel[i].copy(dir).multiplyScalar(speed);
-          burstLife[i] = 0.65 + Math.random() * 0.95;
-
-          const cc = c.clone().offsetHSL((Math.random() - 0.5) * 0.05, 0.15, 0.2);
-          burstCol[i3] = cc.r;
-          burstCol[i3 + 1] = cc.g;
-          burstCol[i3 + 2] = cc.b;
-        }
-        burstGeo.attributes.position.needsUpdate = true;
-        burstGeo.attributes.color.needsUpdate = true;
-      }
-
-      function openMemory(idx) {
-        if (idx < 0 || idx >= MEMORIES.length) return;
-        const memory = MEMORIES[idx];
-        const rgb = colorToRgb(memory.keyColor);
-
-        activeChestnutIndex = idx;
-        lastOpenedIndex = idx;
-        toAccent(rgb);
-
-        viewerImage.src = memory.src;
-        viewerTitle.textContent = memory.title;
-        viewer.classList.add("show");
-        viewer.setAttribute("aria-hidden", "false");
-
-        const wp = new THREE.Vector3();
-        chestnutGroups[idx].getWorldPosition(wp);
-        triggerBurst(wp, memory.keyColor);
-      }
-
-      function openNextMemory() {
-        const idx = pickRandom(MEMORIES.length, lastOpenedIndex);
-        if (idx >= 0) openMemory(idx);
-      }
-
-      function closeViewer() {
-        viewer.classList.remove("show");
-        viewer.setAttribute("aria-hidden", "true");
-      }
-
-      function pickChestnutFromPointer(clientX, clientY) {
-        pointerNdc.x = (clientX / window.innerWidth) * 2 - 1;
-        pointerNdc.y = -(clientY / window.innerHeight) * 2 + 1;
-        raycaster.setFromCamera(pointerNdc, camera);
-        const hits = raycaster.intersectObjects(chestnutMeshes, false);
-        if (!hits.length) return -1;
-        return hits[0].object.userData.chestnutIndex;
-      }
-
-      canvas.addEventListener("pointermove", (event) => {
-        pointerLook.x = (event.clientX / window.innerWidth - 0.5) * 2;
-        pointerLook.y = (event.clientY / window.innerHeight - 0.5) * 2;
-        const idx = pickChestnutFromPointer(event.clientX, event.clientY);
-        canvas.style.cursor = idx >= 0 ? "pointer" : "default";
-      });
-
-      canvas.addEventListener("pointerdown", (event) => {
-        const idx = pickChestnutFromPointer(event.clientX, event.clientY);
-        if (idx >= 0) openMemory(idx);
-      });
-
-      nextBtn.addEventListener("click", openNextMemory);
-      closeBtn.addEventListener("click", closeViewer);
-      viewer.addEventListener("click", (event) => {
-        if (event.target === viewer) closeViewer();
-      });
-
-      window.addEventListener("keydown", (event) => {
-        if (event.key === "Escape") {
-          closeViewer();
-          return;
-        }
-        if ((event.key === "Enter" || event.key === " ") && viewer.classList.contains("show")) {
-          event.preventDefault();
-          openNextMemory();
-        }
-      });
-
-      function onResize() {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
-        renderer.setSize(window.innerWidth, window.innerHeight);
-      }
-      window.addEventListener("resize", onResize);
-
-      function updateBurst(dt) {
-        let anyAlive = false;
-        for (let i = 0; i < burstCount; i += 1) {
-          if (burstLife[i] <= 0) continue;
-          anyAlive = true;
-
-          const i3 = i * 3;
-          burstPos[i3] += burstVel[i].x;
-          burstPos[i3 + 1] += burstVel[i].y;
-          burstPos[i3 + 2] += burstVel[i].z;
-          burstVel[i].multiplyScalar(0.986);
-          burstLife[i] -= dt * 1.16;
-
-          if (burstLife[i] <= 0) {
-            burstPos[i3 + 1] = -1000;
-          }
-        }
-
-        burstPoints.visible = anyAlive;
-        burstGeo.attributes.position.needsUpdate = true;
-      }
-
-      function updateGalaxyField(t) {
-        if (!galaxyField) return;
-        const {
-          starsMat,
-          dustGeo,
-          dustPos,
-          radii,
-          angles,
-          speeds,
-          heights,
-          phases,
-          maxR,
-        } = galaxyField;
-
-        starsMat.opacity = 0.8 + Math.sin(t * 0.38) * 0.06;
-        for (let i = 0; i < radii.length; i += 1) {
-          const i3 = i * 3;
-          const a = angles[i] + t * speeds[i];
-          const r = radii[i] + Math.sin(t * 0.28 + phases[i]) * 0.08;
-          const diskCurve = a + r * 0.09;
-          dustPos[i3] = Math.cos(diskCurve) * r;
-          dustPos[i3 + 2] = Math.sin(diskCurve) * r;
-          dustPos[i3 + 1] = heights[i] + Math.sin(t * 1.2 + phases[i]) * (0.015 + (r / maxR) * 0.02);
-        }
-        dustGeo.attributes.position.needsUpdate = true;
-      }
-
-      function animate() {
-        const dt = clock.getDelta();
-        elapsed += dt;
-        const t = elapsed;
-
-        warmKey.position.set(Math.cos(t * 0.4) * 6.2, 3 + Math.sin(t * 0.8) * 0.3, Math.sin(t * 0.4) * 5.8);
-        coolKey.position.set(Math.cos(t * 0.3 + 1.5) * -6, 2.8 + Math.sin(t * 0.58) * 0.2, Math.sin(t * 0.3 + 1.5) * -5.6);
-
-        const camTargetX = pointerLook.x * 0.74;
-        const camTargetY = 6.2 - pointerLook.y * 0.48;
-        camera.position.x += (camTargetX - camera.position.x) * 0.05;
-        camera.position.y += (camTargetY - camera.position.y) * 0.05;
-        camera.lookAt(0, 0, 0);
-
-        root.rotation.y += dt * 0.03;
-        updateGalaxyField(t);
-
-        for (let i = 0; i < chestnutGroups.length; i += 1) {
-          const u = chestnutGroups[i].userData;
-          const radiusWave = u.radial + Math.sin(t * 0.5 + u.phase) * 0.16;
-          u.targetX = Math.cos(u.orbitAngle) * radiusWave;
-          u.targetZ = Math.sin(u.orbitAngle) * radiusWave;
-          u.slowNear = 1;
-          u.boostNear = 1;
-        }
-
-        for (let i = 0; i < chestnutGroups.length; i += 1) {
-          const ua = chestnutGroups[i].userData;
-          for (let j = i + 1; j < chestnutGroups.length; j += 1) {
-            const ub = chestnutGroups[j].userData;
-            const dx = ub.targetX - ua.targetX;
-            const dz = ub.targetZ - ua.targetZ;
-            const distSq = dx * dx + dz * dz;
-            const minDist =
-              0.4 +
-              (ua.baseScale + ub.baseScale) * 1.1 +
-              ((ua.radial + ub.radial) / (2 * GALAXY.radius)) * 0.2;
-            if (distSq >= minDist * minDist) continue;
-
-            const dist = Math.sqrt(Math.max(distSq, 0.0001));
-            const overlap = 1 - dist / minDist;
-            const diff = clamp(overlap * 0.12, 0, 0.09);
-            const speedA = Math.abs(ua.currentOrbitSpeed);
-            const speedB = Math.abs(ub.currentOrbitSpeed);
-            if (speedA >= speedB) {
-              ua.slowNear = Math.min(ua.slowNear, 1 - diff);
-              ub.boostNear = Math.max(ub.boostNear, 1 + diff * 0.78);
-            } else {
-              ub.slowNear = Math.min(ub.slowNear, 1 - diff);
-              ua.boostNear = Math.max(ua.boostNear, 1 + diff * 0.78);
+            useful += 1;
+            if (v <= 0.2 && s <= 0.42) {
+              hits.black += 1;
+              continue;
             }
+            if (v >= 0.82 && s <= 0.2) {
+              hits.white += 1;
+              continue;
+            }
+            if (s < 0.075 || v < 0.08) continue;
 
-            // 仅做非常轻微的角度分离，避免长时间重叠观感
-            const angNudge = overlap * 0.0018;
-            if (dx >= 0) {
-              ua.orbitAngle -= angNudge;
-              ub.orbitAngle += angNudge;
-            } else {
-              ua.orbitAngle += angNudge;
-              ub.orbitAngle -= angNudge;
+            let bestId = null;
+            let bestD = Infinity;
+            for (const c of HUE_COLORS) {
+              const d = hueDistanceForColor(h, c.id, c.hue);
+              if (d < bestD) {
+                bestD = d;
+                bestId = c.id;
+              }
+            }
+            const bestSpan = bestId === "purple" ? 60 : 50;
+            if (bestId && bestD <= bestSpan) {
+              hits[bestId] += 1;
             }
           }
+
+          if (useful > 0) {
+            for (const c of COLORS) scores[c.id] = hits[c.id] / useful;
+          }
+        } catch (_) {
+          // keep zero scores
         }
 
-        for (let i = 0; i < chestnutGroups.length; i += 1) {
-          const g = chestnutGroups[i];
-          const u = g.userData;
-          const pairSpeed = clamp(u.slowNear * u.boostNear, 0.86, 1.11);
-          u.speedScale += (pairSpeed - u.speedScale) * 0.038;
-          const desiredSpeed = u.orbitSpeed * u.speedScale;
-          u.currentOrbitSpeed += (desiredSpeed - u.currentOrbitSpeed) * 0.062;
-          u.orbitAngle += u.currentOrbitSpeed * dt;
-          const radiusWave = u.radial + Math.sin(t * 0.5 + u.phase) * 0.16;
-          const targetX = Math.cos(u.orbitAngle) * radiusWave;
-          const targetZ = Math.sin(u.orbitAngle) * radiusWave;
-          tmpTargetPos.set(targetX, u.yOff + Math.sin(t * 1.1 + u.phase) * u.bobAmp, targetZ);
-          g.position.lerp(tmpTargetPos, 0.19);
-          g.rotation.x = 0;
-          g.rotation.y = 0;
-
-          g.getWorldPosition(tmpWorldPos);
-          const dist = camera.position.distanceTo(tmpWorldPos);
-          const depthScale = clamp(24 / dist, 0.62, 2.62);
-          const targetScale = u.baseScale * depthScale * (i === activeChestnutIndex ? 1.32 : 1);
-          tmpScale.set(targetScale, targetScale, targetScale);
-          g.scale.lerp(tmpScale, 0.065);
-
-          const shellSpin = u.spinSpeed + (i % 4) * 0.00016;
-          const depthGlow = (depthScale - 0.72) * 0.052;
-          u.shellMat.emissiveIntensity =
-            u.glowBase +
-            Math.sin(t * 1.4 + u.phase) * 0.028 +
-            depthGlow +
-            (i === activeChestnutIndex ? 0.08 : 0);
-
-          // 星球轻微自转
-          const shell = g.children[0];
-          shell.rotation.y += shellSpin;
-          shell.rotation.x = Math.sin(t * 0.55 + u.phase) * 0.04;
-
-          // 相片悬浮并沿公转方向摆向，且按距离实现近大远小
-          const photo = u.photoPlane;
-          const hoverR = 0.04 + u.baseScale * 0.06;
-          photo.position.x = Math.cos(t * 0.95 + u.phase) * hoverR;
-          photo.position.z = Math.sin(t * 0.95 + u.phase) * hoverR;
-          photo.position.y = 0.9 + u.baseScale * 0.44 + Math.sin(t * 1.6 + u.phase) * 0.04;
-
-          const motionYaw = u.orbitAngle + Math.PI * 0.5;
-          photo.rotation.y = motionYaw;
-          photo.rotation.x = -0.14 + Math.sin(t * 0.8 + u.phase) * 0.04;
-
-          const nearFar = clamp(17.8 / dist, 0.58, 2.36);
-          const photoScale = u.photoBaseScale * nearFar * (i === activeChestnutIndex ? 1.08 : 1);
-          photo.scale.setScalar(photoScale);
-
-        }
-
-        updateBurst(dt);
-        renderer.render(scene, camera);
+        analysisCache.set(path, scores);
+        return scores;
       }
 
-      renderer.setAnimationLoop(animate);
+      function evaluateColorFit(scores, colorId) {
+        const target = scores[colorId] || 0;
+        const isNeutral = colorId === "white" || colorId === "black";
+        const isPurple = colorId === "purple";
+        let maxOther = 0;
+        let sumOther = 0;
+        for (const c of COLORS) {
+          if (c.id === colorId) continue;
+          const v = scores[c.id] || 0;
+          sumOther += v;
+          if (v > maxOther) maxOther = v;
+        }
+
+        const dominance = target / Math.max(maxOther, 0.0001);
+        const relative = target / Math.max(target + sumOther, 0.0001);
+
+        const minPresence = isNeutral ? 0.06 : (isPurple ? 0.04 : 0.05);
+        const strongPresence = isNeutral ? 0.14 : (isPurple ? 0.095 : 0.12);
+        const minDominance = isNeutral ? 0.86 : (isPurple ? 0.66 : 0.78);
+        const minRelative = isNeutral ? 0.32 : (isPurple ? 0.22 : 0.28);
+        const qualifies =
+          target >= minPresence &&
+          (dominance >= minDominance ||
+            target >= strongPresence ||
+            relative >= minRelative);
+
+        const strength = target * 1.3 + Math.min(1.6, dominance) * 0.18 + relative * 0.42;
+        return { target, dominance, relative, qualifies, strength };
+      }
+
+      function weightedPick(items, count) {
+        const pool = items.slice();
+        const picked = [];
+        while (pool.length && picked.length < count) {
+          const total = pool.reduce((sum, it) => sum + (it.score + 0.01), 0);
+          let r = Math.random() * total;
+          let idx = 0;
+          for (; idx < pool.length; idx += 1) {
+            r -= pool[idx].score + 0.01;
+            if (r <= 0) break;
+          }
+          picked.push(pool[Math.min(idx, pool.length - 1)]);
+          pool.splice(Math.min(idx, pool.length - 1), 1);
+        }
+        return picked;
+      }
+
+      async function pickByColor(colorId) {
+        const shuffled = shuffle(PHOTO_POOL);
+        const maxScan = Math.min(shuffled.length, 420);
+
+        const scanned = [];
+
+        for (let i = 0; i < maxScan; i += 1) {
+          const path = shuffled[i];
+          const scores = await analyzePhoto(path);
+          const fit = evaluateColorFit(scores, colorId);
+          scanned.push({ path, score: fit.target, strength: fit.strength, qualifies: fit.qualifies });
+          if (scanned.length >= 220 && i >= 120) {
+            const hitCount = scanned.reduce((n, x) => n + (x.qualifies ? 1 : 0), 0);
+            if (hitCount >= 96) break;
+          }
+        }
+
+        const pool = scanned
+          .filter((x) => x.qualifies)
+          .sort((a, b) => b.strength - a.strength)
+          .slice(0, 140);
+
+        if (!pool.length) {
+          const softer = scanned
+            .filter((x) => x.score >= 0.035)
+            .sort((a, b) => b.score - a.score)
+            .slice(0, 80);
+          if (softer.length) {
+            const count = randInt(1, 4);
+            return weightedPick(softer, Math.min(count, softer.length));
+          }
+          const fallbackCount = randInt(1, 4);
+          return shuffle(PHOTO_POOL).slice(0, fallbackCount).map((p) => ({ path: p, score: 0 }));
+        }
+
+        const count = randInt(1, 4);
+        return weightedPick(pool, Math.min(count, pool.length));
+      }
+
+      function renderCards(list) {
+        cardsEl.innerHTML = "";
+        cardsEl.className = "cards";
+
+        const templates = {
+          leftStack: {
+            1: [{ x: 14, y: 5, w: 72, h: 90 }],
+            2: [
+              { x: 4, y: 10, w: 48, h: 82 },
+              { x: 44, y: 8, w: 48, h: 84 },
+            ],
+            3: [
+              { x: 2, y: 16, w: 38, h: 74 },
+              { x: 24, y: 5, w: 40, h: 76 },
+              { x: 54, y: 15, w: 42, h: 78 },
+            ],
+            4: [
+              { x: 2, y: 10, w: 34, h: 66 },
+              { x: 20, y: 20, w: 34, h: 66 },
+              { x: 44, y: 6, w: 34, h: 66 },
+              { x: 64, y: 18, w: 32, h: 64 },
+            ],
+          },
+          diagonal: {
+            1: [{ x: 16, y: 5, w: 70, h: 90 }],
+            2: [
+              { x: 6, y: 6, w: 46, h: 80 },
+              { x: 48, y: 16, w: 46, h: 80 },
+            ],
+            3: [
+              { x: 2, y: 6, w: 36, h: 70 },
+              { x: 32, y: 16, w: 36, h: 70 },
+              { x: 62, y: 26, w: 34, h: 68 },
+            ],
+            4: [
+              { x: 1, y: 4, w: 32, h: 62 },
+              { x: 24, y: 12, w: 32, h: 62 },
+              { x: 47, y: 20, w: 32, h: 62 },
+              { x: 68, y: 28, w: 30, h: 60 },
+            ],
+          },
+          radial: {
+            1: [{ x: 15, y: 6, w: 70, h: 88 }],
+            2: [
+              { x: 11, y: 12, w: 38, h: 76 },
+              { x: 51, y: 12, w: 38, h: 76 },
+            ],
+            3: [
+              { x: 29, y: 2, w: 40, h: 74 },
+              { x: 7, y: 24, w: 38, h: 72 },
+              { x: 55, y: 24, w: 38, h: 72 },
+            ],
+            4: [
+              { x: 32, y: 2, w: 36, h: 64 },
+              { x: 6, y: 22, w: 34, h: 64 },
+              { x: 32, y: 30, w: 36, h: 64 },
+              { x: 60, y: 22, w: 34, h: 64 },
+            ],
+          },
+          centerCascade: {
+            1: [{ x: 18, y: 5, w: 64, h: 90 }],
+            2: [
+              { x: 21, y: 5, w: 56, h: 82 },
+              { x: 24, y: 17, w: 52, h: 78 },
+            ],
+            3: [
+              { x: 24, y: 2, w: 50, h: 72 },
+              { x: 13, y: 16, w: 40, h: 70 },
+              { x: 47, y: 20, w: 40, h: 70 },
+            ],
+            4: [
+              { x: 25, y: 2, w: 44, h: 62 },
+              { x: 8, y: 17, w: 35, h: 62 },
+              { x: 33, y: 25, w: 35, h: 62 },
+              { x: 58, y: 17, w: 35, h: 62 },
+            ],
+          },
+          arcFlow: {
+            1: [{ x: 17, y: 5, w: 68, h: 90 }],
+            2: [
+              { x: 8, y: 18, w: 44, h: 76 },
+              { x: 50, y: 4, w: 44, h: 76 },
+            ],
+            3: [
+              { x: 2, y: 21, w: 36, h: 68 },
+              { x: 30, y: 8, w: 38, h: 70 },
+              { x: 60, y: 2, w: 36, h: 68 },
+            ],
+            4: [
+              { x: 2, y: 26, w: 30, h: 60 },
+              { x: 23, y: 14, w: 31, h: 60 },
+              { x: 46, y: 6, w: 31, h: 60 },
+              { x: 68, y: 2, w: 30, h: 60 },
+            ],
+          },
+          splitBands: {
+            1: [{ x: 15, y: 5, w: 70, h: 90 }],
+            2: [
+              { x: 3, y: 8, w: 45, h: 82 },
+              { x: 52, y: 8, w: 45, h: 82 },
+            ],
+            3: [
+              { x: 5, y: 5, w: 34, h: 66 },
+              { x: 32, y: 26, w: 36, h: 66 },
+              { x: 61, y: 5, w: 34, h: 66 },
+            ],
+            4: [
+              { x: 2, y: 6, w: 28, h: 58 },
+              { x: 25, y: 22, w: 28, h: 58 },
+              { x: 48, y: 6, w: 28, h: 58 },
+              { x: 71, y: 22, w: 27, h: 58 },
+            ],
+          },
+          cornerOrbit: {
+            1: [{ x: 16, y: 5, w: 68, h: 90 }],
+            2: [
+              { x: 2, y: 6, w: 40, h: 74 },
+              { x: 58, y: 20, w: 40, h: 74 },
+            ],
+            3: [
+              { x: 4, y: 4, w: 34, h: 66 },
+              { x: 33, y: 17, w: 34, h: 66 },
+              { x: 62, y: 30, w: 34, h: 66 },
+            ],
+            4: [
+              { x: 2, y: 3, w: 30, h: 58 },
+              { x: 67, y: 8, w: 30, h: 58 },
+              { x: 8, y: 35, w: 30, h: 58 },
+              { x: 61, y: 28, w: 30, h: 58 },
+            ],
+          },
+          twinPeaks: {
+            1: [{ x: 18, y: 5, w: 64, h: 90 }],
+            2: [
+              { x: 9, y: 6, w: 40, h: 76 },
+              { x: 50, y: 18, w: 40, h: 76 },
+            ],
+            3: [
+              { x: 3, y: 16, w: 33, h: 66 },
+              { x: 34, y: 4, w: 34, h: 68 },
+              { x: 64, y: 16, w: 33, h: 66 },
+            ],
+            4: [
+              { x: 2, y: 24, w: 28, h: 56 },
+              { x: 24, y: 8, w: 28, h: 56 },
+              { x: 48, y: 8, w: 28, h: 56 },
+              { x: 70, y: 24, w: 28, h: 56 },
+            ],
+          },
+          windmill: {
+            1: [{ x: 16, y: 5, w: 68, h: 88 }],
+            2: [
+              { x: 14, y: 8, w: 36, h: 74 },
+              { x: 50, y: 18, w: 36, h: 74 },
+            ],
+            3: [
+              { x: 31, y: 2, w: 36, h: 68 },
+              { x: 7, y: 20, w: 34, h: 66 },
+              { x: 57, y: 20, w: 34, h: 66 },
+            ],
+            4: [
+              { x: 32, y: 2, w: 30, h: 60 },
+              { x: 6, y: 20, w: 30, h: 60 },
+              { x: 32, y: 31, w: 30, h: 60 },
+              { x: 58, y: 20, w: 30, h: 60 },
+            ],
+          },
+          horizonDrift: {
+            1: [{ x: 17, y: 6, w: 68, h: 88 }],
+            2: [
+              { x: 5, y: 16, w: 42, h: 76 },
+              { x: 53, y: 10, w: 42, h: 76 },
+            ],
+            3: [
+              { x: 4, y: 12, w: 34, h: 66 },
+              { x: 33, y: 20, w: 34, h: 66 },
+              { x: 61, y: 8, w: 34, h: 66 },
+            ],
+            4: [
+              { x: 1, y: 14, w: 28, h: 56 },
+              { x: 24, y: 22, w: 28, h: 56 },
+              { x: 47, y: 10, w: 28, h: 56 },
+              { x: 70, y: 18, w: 28, h: 56 },
+            ],
+          },
+        };
+
+        const styleNames = Object.keys(templates);
+        const style = templates[styleNames[Math.floor(Math.random() * styleNames.length)]];
+        const layout = style[Math.max(1, Math.min(4, list.length))];
+        for (let i = 0; i < list.length; i += 1) {
+          const item = list[i];
+          const slot = layout[i];
+          const card = document.createElement("figure");
+          card.className = "card";
+          const jx = (Math.random() - 0.5) * 3.2;
+          const jy = (Math.random() - 0.5) * 3.2;
+          const jw = (Math.random() - 0.5) * 2.6;
+          card.style.left = `${slot.x + jx}%`;
+          card.style.top = `${slot.y + jy}%`;
+          card.style.width = `${slot.w + jw}%`;
+          card.style.zIndex = String(10 + i);
+          card.style.setProperty("--rot", `${(Math.random() - 0.5) * 8}deg`);
+
+          const img = document.createElement("img");
+          img.src = item.path;
+          img.alt = fileLabel(item.path);
+          img.loading = "eager";
+
+          card.addEventListener("pointerdown", () => {
+            topZ += 1;
+            for (const c of cardsEl.querySelectorAll(".card")) {
+              c.classList.remove("front");
+              c.style.setProperty("--zoom", "1");
+            }
+            card.classList.add("front");
+            card.style.zIndex = String(topZ);
+            card.style.setProperty("--zoom", "1.03");
+          });
+
+          card.appendChild(img);
+          cardsEl.appendChild(card);
+        }
+      }
+
+      function setBusy(flag) {
+        busy = flag;
+        for (const btn of paletteEl.querySelectorAll("button")) btn.disabled = flag;
+      }
+
+      async function runPick(color) {
+        if (busy || !PHOTO_POOL.length) return;
+        currentColor = color;
+        setBusy(true);
+
+        for (const btn of paletteEl.querySelectorAll("button")) {
+          btn.classList.toggle("active", btn.dataset.color === color.id);
+        }
+
+        const list = await pickByColor(color.id);
+        renderCards(list);
+
+        setBusy(false);
+      }
+
+      function buildPalette() {
+        paletteEl.innerHTML = "";
+        for (const color of COLORS) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = `color-btn ${color.className}`;
+          btn.dataset.color = color.id;
+          btn.textContent = color.label;
+          btn.addEventListener("click", () => runPick(color));
+          paletteEl.appendChild(btn);
+        }
+      }
+
+      buildPalette();
+
+      if (!PHOTO_POOL.length) {
+        cardsEl.innerHTML = '<div class="empty">未检测到可用图片</div>';
+      } else {
+        runPick(COLORS[5]);
+      }
     </script>
   </body>
 </html>

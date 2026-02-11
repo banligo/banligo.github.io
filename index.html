@@ -11,40 +11,8 @@ layout: home
   <div class="roll-in" data-delay="0.16s">
     <ul>
       <li>Valentine mini app: <a href="/valentine/">/valentine/</a></li>
-      <li>Family palette gallery: <a href="/family-gallery/">/family-gallery/</a></li>
+      <li>Family gallery: <a href="/family-gallery/">/family-gallery/</a></li>
     </ul>
-  </div>
-
-  <div class="roll-in" data-delay="0.24s">
-    <section class="home-family-panel">
-      <h4>家庭照片画廊预览 🎨</h4>
-      <p>只展示家庭照片（无话语卡片），完整页面见 <a href="/family-gallery/">/family-gallery/</a></p>
-      <div class="home-family-palette" aria-hidden="true">
-        <span class="home-family-chip chip-umber">Burnt Umber</span>
-        <span class="home-family-chip chip-olive">Olive Green</span>
-        <span class="home-family-chip chip-teal">Cobalt Teal</span>
-        <span class="home-family-chip chip-cadmium">Cadmium Orange</span>
-      </div>
-      {%- assign _image_exts = ".jpg,.jpeg,.png,.webp,.gif,.avif,.bmp,.svg" -%}
-      {%- assign _sorted_files = site.static_files | sort: "path" -%}
-      {%- assign _home_photo_count = 0 -%}
-      <div class="home-family-grid">
-        {%- for f in _sorted_files -%}
-          {%- assign _ext = f.extname | downcase -%}
-          {%- if f.path contains "/family-gallery/content/photos/" and _image_exts contains _ext -%}
-            {%- if _home_photo_count < 8 -%}
-              {%- assign _home_photo_count = _home_photo_count | plus: 1 -%}
-              <a class="home-family-thumb" href="/family-gallery/" aria-label="打开家庭画廊">
-                <img src="{{ f.path | relative_url }}" alt="家庭照片 {{ _home_photo_count }}" loading="lazy" decoding="async" />
-              </a>
-            {%- endif -%}
-          {%- endif -%}
-        {%- endfor -%}
-      </div>
-      {%- if _home_photo_count == 0 -%}
-        <p class="home-family-empty">还没有家庭照片。把图片放到 <code>family-gallery/content/photos/</code> 后，这里和相册页都会自动出现。</p>
-      {%- endif -%}
-    </section>
   </div>
 </div>
 
