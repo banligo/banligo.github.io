@@ -238,6 +238,14 @@ layout: none
           {% endif %}
         {% endfor %}
       ];
+      const PHOTO_SET = new Set(PHOTO_POOL);
+      const SCORE_CACHE_KEY = "family_gallery_scores_v3";
+      const SCORE_CACHE_VERSION = 3;
+      const SCORE_CACHE_MAX = 1600;
+      const SCAN_CONCURRENCY = 2;
+      const SCAN_BATCH_PAUSE_MS = 40;
+      const SCAN_IDLE_PAUSE_MS = 170;
+      const TARGET_QUALIFIED_PER_COLOR = 34;
 
       const COLORS = [
         { id: "red", label: "红", className: "red", hue: 0, mode: "hue" },
@@ -259,11 +267,18 @@ layout: none
       let currentColor = null;
       let busy = false;
       let topZ = 40;
-      let hasFirstScan = false;
+      let userPickCount = 0;
+      const scoreCache = new Map();
+      const qualifiedCounts = Object.fromEntries(COLORS.map((c) => [c.id, 0]));
+      let scanOrder = [];
+      let scanIndex = 0;
+      let scanRunning = false;
+      let analyzedCount = 0;
+      let saveCacheTimer = null;
 
       const analyzerCanvas = document.createElement("canvas");
-      analyzerCanvas.width = 56;
-      analyzerCanvas.height = 56;
+      analyzerCanvas.width = 48;
+      analyzerCanvas.height = 48;
       const analyzerCtx = analyzerCanvas.getContext("2d", { willReadFrequently: true });
 
       function randInt(min, max) {
@@ -277,6 +292,96 @@ layout: none
           [a[i], a[j]] = [a[j], a[i]];
         }
         return a;
+      }
+
+      function sleep(ms) {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+      }
+
+      function getStorage() {
+        try {
+          return window.localStorage;
+        } catch (_) {
+          return null;
+        }
+      }
+
+      function clearQualifiedCounts() {
+        for (const c of COLORS) qualifiedCounts[c.id] = 0;
+      }
+
+      function accumulateQualifiedCounts(scores) {
+        for (const c of COLORS) {
+          if (evaluateColorFit(scores, c.id).qualifies) qualifiedCounts[c.id] += 1;
+        }
+      }
+
+      function rebuildQualifiedCounts() {
+        clearQualifiedCounts();
+        for (const scores of scoreCache.values()) {
+          accumulateQualifiedCounts(scores);
+        }
+      }
+
+      function loadScoreCache() {
+        const storage = getStorage();
+        if (!storage) return;
+        try {
+          const raw = storage.getItem(SCORE_CACHE_KEY);
+          if (!raw) return;
+          const parsed = JSON.parse(raw);
+          if (!parsed || parsed.v !== SCORE_CACHE_VERSION || !Array.isArray(parsed.items)) return;
+
+          for (const item of parsed.items) {
+            if (!Array.isArray(item) || item.length !== 2) continue;
+            const path = item[0];
+            const arr = item[1];
+            if (typeof path !== "string" || !PHOTO_SET.has(path) || !Array.isArray(arr)) continue;
+
+            const scores = {};
+            for (let i = 0; i < COLORS.length; i += 1) {
+              const id = COLORS[i].id;
+              const value = Number(arr[i] || 0);
+              scores[id] = Number.isFinite(value) ? value : 0;
+            }
+            scoreCache.set(path, scores);
+            analysisCache.set(path, scores);
+          }
+          rebuildQualifiedCounts();
+          analyzedCount = scoreCache.size;
+        } catch (_) {
+          // ignore malformed cache
+        }
+      }
+
+      function saveScoreCacheNow() {
+        const storage = getStorage();
+        if (!storage) return;
+        try {
+          const items = [];
+          let kept = 0;
+          for (const [path, scores] of scoreCache) {
+            if (!PHOTO_SET.has(path)) continue;
+            items.push([path, COLORS.map((c) => Number((scores[c.id] || 0).toFixed(4)))]);
+            kept += 1;
+            if (kept >= SCORE_CACHE_MAX) break;
+          }
+          storage.setItem(SCORE_CACHE_KEY, JSON.stringify({ v: SCORE_CACHE_VERSION, items }));
+        } catch (_) {
+          // ignore quota/storage errors
+        }
+      }
+
+      function queueSaveScoreCache() {
+        if (saveCacheTimer !== null) return;
+        saveCacheTimer = setTimeout(() => {
+          saveCacheTimer = null;
+          saveScoreCacheNow();
+        }, 1200);
+      }
+
+      function hasEnoughCoverage() {
+        return COLORS.every((c) => qualifiedCounts[c.id] >= TARGET_QUALIFIED_PER_COLOR);
       }
 
       function fileLabel(path) {
@@ -349,7 +454,7 @@ layout: none
           const data = analyzerCtx.getImageData(0, 0, analyzerCanvas.width, analyzerCanvas.height).data;
 
           let useful = 0;
-          for (let i = 0; i < data.length; i += 16) {
+          for (let i = 0; i < data.length; i += 20) {
             const a = data[i + 3];
             if (a < 40) continue;
 
@@ -440,26 +545,76 @@ layout: none
         return picked;
       }
 
-      async function pickByColor(colorId) {
-        const shuffled = shuffle(PHOTO_POOL);
-        const scanBudget = hasFirstScan ? 50 : 35;
-        const maxScan = Math.min(shuffled.length, scanBudget);
-        const earlyCheckAt = hasFirstScan ? 30 : 20;
-        const enoughHits = hasFirstScan ? 10 : 6;
+      async function analyzeAndStore(path) {
+        if (scoreCache.has(path)) return;
+        const scores = await analyzePhoto(path);
+        scoreCache.set(path, scores);
+        accumulateQualifiedCounts(scores);
+        analyzedCount = scoreCache.size;
+        queueSaveScoreCache();
+      }
 
-        const scanned = [];
-
-        for (let i = 0; i < maxScan; i += 1) {
-          const path = shuffled[i];
-          const scores = await analyzePhoto(path);
-          const fit = evaluateColorFit(scores, colorId);
-          scanned.push({ path, score: fit.target, strength: fit.strength, qualifies: fit.qualifies });
-          if (scanned.length >= earlyCheckAt && i >= Math.floor(earlyCheckAt * 0.7)) {
-            const hitCount = scanned.reduce((n, x) => n + (x.qualifies ? 1 : 0), 0);
-            if (hitCount >= enoughHits) break;
-          }
+      function ensureBackgroundScan() {
+        if (!PHOTO_POOL.length) return;
+        if (!scanOrder.length) {
+          scanOrder = shuffle(PHOTO_POOL);
+          scanIndex = 0;
+          analyzedCount = scoreCache.size;
         }
-        hasFirstScan = true;
+        if (scanRunning || scanIndex >= scanOrder.length) return;
+
+        scanRunning = true;
+        void (async () => {
+          while (scanIndex < scanOrder.length) {
+            if (document.hidden) {
+              await sleep(450);
+              continue;
+            }
+
+            const batch = [];
+            while (batch.length < SCAN_CONCURRENCY && scanIndex < scanOrder.length) {
+              const path = scanOrder[scanIndex];
+              scanIndex += 1;
+              if (!scoreCache.has(path)) batch.push(path);
+            }
+
+            if (!batch.length) {
+              await sleep(0);
+              continue;
+            }
+
+            await Promise.all(batch.map((path) => analyzeAndStore(path)));
+            await sleep(hasEnoughCoverage() ? SCAN_IDLE_PAUSE_MS : SCAN_BATCH_PAUSE_MS);
+          }
+          scanRunning = false;
+          queueSaveScoreCache();
+        })();
+      }
+
+      async function waitForAnalyzed(targetCount) {
+        ensureBackgroundScan();
+        while (analyzedCount < targetCount && (scanRunning || scanIndex < scanOrder.length)) {
+          await sleep(70);
+        }
+      }
+
+      function buildScannedListForColor(colorId) {
+        const list = [];
+        for (const [path, scores] of scoreCache.entries()) {
+          const fit = evaluateColorFit(scores, colorId);
+          list.push({
+            path,
+            score: fit.target,
+            strength: fit.strength,
+            qualifies: fit.qualifies,
+          });
+        }
+        return list;
+      }
+
+      async function pickByColor(colorId, requiredAnalyzed) {
+        await waitForAnalyzed(requiredAnalyzed);
+        const scanned = buildScannedListForColor(colorId);
 
         const pool = scanned
           .filter((x) => x.qualifies)
@@ -713,16 +868,21 @@ layout: none
         for (const btn of paletteEl.querySelectorAll("button")) btn.disabled = flag;
       }
 
-      async function runPick(color) {
+      async function runPick(color, options = {}) {
         if (busy || !PHOTO_POOL.length) return;
         currentColor = color;
         setBusy(true);
+        ensureBackgroundScan();
 
         for (const btn of paletteEl.querySelectorAll("button")) {
           btn.classList.toggle("active", btn.dataset.color === color.id);
         }
 
-        const list = await pickByColor(color.id);
+        const countAsClick = options.countAsClick !== false;
+        if (countAsClick) userPickCount += 1;
+        const requiredAnalyzed = Math.min(PHOTO_POOL.length, (countAsClick ? userPickCount : 1) * 20);
+
+        const list = await pickByColor(color.id, requiredAnalyzed);
         renderCards(list);
 
         setBusy(false);
@@ -741,12 +901,19 @@ layout: none
         }
       }
 
+      loadScoreCache();
+      window.addEventListener("pagehide", saveScoreCacheNow);
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) queueSaveScoreCache();
+        else ensureBackgroundScan();
+      });
       buildPalette();
 
       if (!PHOTO_POOL.length) {
         cardsEl.innerHTML = '<div class="empty">未检测到可用图片</div>';
       } else {
-        runPick(COLORS[5]);
+        ensureBackgroundScan();
+        runPick(COLORS[5], { countAsClick: false });
       }
     </script>
   </body>
