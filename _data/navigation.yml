@@ -1,1 +1,13 @@
-header: false
+header:
+  - title: Home
+    url: /
+    key: home
+  - title: Diary
+    url: /diary/
+    key: diary
+  - title: Study
+    url: /study/
+    key: study
+  - title: About
+    url: /about.html
+    key: about

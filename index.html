@@ -1,18 +1,19 @@
 ---
 layout: home
+nav_key: home
 ---
 <div class="personal-home">
 
   <div class="roll-in" data-delay="0.08s">
-    <h3>Hello, </h3>
-    <p></p>
+    <!-- <p class="personal-home__eyebrow">Yingqiu's personal site</p> -->
+    <h1>Hello.</h1>
+    <p>这里放日记、学习记录，以及一些值得长期保存的东西。</p>
   </div>
 
-  <div class="roll-in" data-delay="0.16s">
-    <ul>
-      <li>Valentine mini app: <a href="/valentine/">/valentine/</a></li>
-      <li>Family gallery: <a href="/family-gallery/">/family-gallery/</a></li>
-    </ul>
+  <div class="personal-home__links roll-in" data-delay="0.16s">
+    <a class="button button--primary button--rounded" href="{{ '/diary/' | relative_url }}"> Diary</a>
+    <a class="button button--secondary button--rounded" href="{{ '/study/' | relative_url }}">Study</a>
+    <a class="button button--secondary button--rounded" href="{{ '/about.html' | relative_url }}">About</a>
   </div>
 </div>
 

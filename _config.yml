@@ -27,8 +27,8 @@ description: > # this means to ignore newlines until "Language & timezone"
 
 ## => Language and Timezone
 ##############################
-lang: en
-timezone: # see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones for the available values
+lang: zh-Hans
+timezone: Asia/Tokyo
 
 
 ## => Author and Social
@@ -183,6 +183,14 @@ markdown    : kramdown
 highlighter : rouge
 permalink   : date
 
+include:
+  - _pages
+
+collections:
+  diary:
+    output: true
+    permalink: /diary/:name.html
+
 exclude:
   - CHANGELOG.md
   - HOW_TO_RELEASE.md
@@ -215,9 +223,12 @@ defaults:
       show_subscribe: true
       pageview: true
   - scope:
-      path: "diary"
+      path: ""
+      type: diary
     values:
       layout: article
+      license: false
+      sharing: false
       aside:
         toc: true
 
