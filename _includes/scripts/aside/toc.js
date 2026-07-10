@@ -1,6 +1,7 @@
 (function() {
   var SOURCES = window.TEXT_VARIABLES.sources;
   var TOC_SELECTOR = window.TEXT_VARIABLES.site.toc.selectors;
+  var FAB_TOC_SELECTOR = 'h1,h2,h3';
   window.Lazyload.js(SOURCES.jquery, function() {
     var $window = $(window);
     var $articleContent = $('.js-article-content');
@@ -13,6 +14,7 @@
     var tocDisabled = false;
     var hasSidebar = $('.js-page-root').hasClass('layout--page--sidebar');
     var hasToc = $articleContent.find(TOC_SELECTOR).length > 0;
+    var hasFabToc = $articleContent.find(FAB_TOC_SELECTOR).length > 0;
     if (!hasToc) {
       $col2.hide();
     }
@@ -27,7 +29,7 @@
     }
 
     function updateFabVisibility() {
-      if (!hasToc) {
+      if (!hasFabToc) {
         $tocFab.prop('hidden', true);
         closeFabPanel();
         return;
@@ -45,9 +47,9 @@
       disabled: tocDisabled
     });
 
-    if ($tocFabRoot.length && hasToc) {
+    if ($tocFabRoot.length && hasFabToc) {
       fabToc = $tocFabRoot.toc({
-        selectors: TOC_SELECTOR,
+        selectors: FAB_TOC_SELECTOR,
         container: $articleContent,
         scrollTarget: hasSidebar ? '.js-page-main' : null,
         scroller: hasSidebar ? '.js-page-main' : null,
