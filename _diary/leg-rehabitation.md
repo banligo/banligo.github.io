@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "腿部受伤+复健记录"
-date: 2024-08-24
+date: 2026-07-10
 bookSearchExclude: true
 type: "blog"
 ---
@@ -9,7 +9,7 @@ type: "blog"
 
 <!--more-->
 
-# 
+#
 
 ## 资料
 【1】2021年4月至2022年9月膝伤日记：
@@ -37,7 +37,7 @@ type: "blog"
 [202404关节超声](/assets/documents/leg-diary/20240426关节超声报告.pdf)，
 [202406右踝MR](https://zjyx.gjwlyy.com/cloudfilm/reporttemplate/zr?hospitalId=95710002&accessNumber=22418211&p=EZSzM4P%2F69f%2FCmgNB1Cw%2Bz6IoY72TNxhP3%2FCbttiHedYj3KWJDWGjnvZ4JWIBjXnmb35r%2FqUDnBK2Vgj1tlbs382IZgdWvQjZIkUjiqfvnc%3D)
 [步态分析报告](https://gait.xingzheng.site/v2/reports/walking?id=2e259d26-6894-495d-8bef-96405273bcfc&language=zh)，
-[202409](/assets/documents/leg-diary/贺迎秋动_1.pdf)，[202409](/assets/documents/leg-diary/贺迎秋静_1.pdf)
+[202409动](/assets/documents/leg-diary/贺迎秋动_1.pdf)，[202409静](/assets/documents/leg-diary/贺迎秋静_1.pdf)
 
 
 ### 笔头记录
@@ -51,3 +51,5 @@ type: "blog"
 目前症状：静息状态下，右脚踝扭伤部位至右半边臀部腰部持续酸痛，小腿和臀部肌肉偶尔抽搐；坐立时，因左侧肌肉相对右侧大腿较萎缩，右侧受力大酸痛加剧；走路走楼梯时，左膝关节不灵活；慢跑时，左右腿无异，但运动后右侧酸胀感更明显；羽毛球运动，无法跳跃，左腿发力困难但不酸胀。较严重影响生活质量。
 
 2024/8/13至8/23期间，共复健5次，右侧腿部肌肉酸胀程度较以往有较明显改善，不至于无法忍受。以上。
+
+2026/07/10 没想到啊谁曾想，两年后我又来咯。在老家定制了个鞋垫后也断断续续的一直在穿，然后和对象一起游泳运动啥的最近也好了非常多，以后一定勤游泳！

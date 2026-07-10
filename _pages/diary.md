@@ -26,7 +26,7 @@ aside: false
 ### diary 2026
 
 
-<a class="button button--primary button--rounded button--sm" href="y26-0709">07-00</a> 第一篇文章！！！
+<a class="button button--primary button--rounded button--sm" href="y26-0709">07-09</a> 第一篇文章！我会化妆啦？！
 
 <a class="button button--primary button--rounded button--sm" href="y26-0406">04-06</a> 完成硕士论文ing。
 
