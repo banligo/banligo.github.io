@@ -37,6 +37,6 @@
   });
 
   window.addEventListener('resize', function () {
-    if (window.innerWidth >= 500) closeNavigation();
+    if (window.innerWidth >= 768) closeNavigation();
   });
 })();
