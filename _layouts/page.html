@@ -233,6 +233,10 @@ layout: base
   </div> {%- comment -%} end page__viewport {%- endcomment -%}
 {%- endif -%}
 
+{%- if page.aside and page.aside.toc -%}
+  {%- include toc-fab.html -%}
+{%- endif -%}
+
 <script>{%- include scripts/lib/modal.js -%}</script>
 {%- if _lightbox == true -%}
   <div class="modal d-print-none js-page-gallery-modal"><div class="gallery"></div></div>

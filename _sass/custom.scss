@@ -107,70 +107,64 @@
 }
 
 .toc-fab {
-  display: none;
+  position: fixed;
+  right: map-get($spacers, 4);
+  bottom: map-get($spacers, 5);
+  z-index: map-get($z-indexes, actions) + 1;
+  display: block;
 }
 
-@include media-breakpoint-down(lg) {
-  .toc-fab {
-    position: fixed;
-    right: map-get($spacers, 4);
-    bottom: map-get($spacers, 5);
-    z-index: map-get($z-indexes, actions) + 1;
-    display: block;
-  }
+.toc-fab__button {
+  width: 52px;
+  height: 52px;
+  border: 0;
+  border-radius: 50%;
+  background: $main-color-1;
+  color: $text-color-theme-dark;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
+  cursor: pointer;
+}
 
-  .toc-fab__button {
-    width: 52px;
-    height: 52px;
-    border: 0;
-    border-radius: 50%;
-    background: $main-color-1;
-    color: $text-color-theme-dark;
-    box-shadow: 0 10px 24px rgba(0, 0, 0, .25);
-    cursor: pointer;
-  }
+.toc-fab__panel {
+  position: absolute;
+  right: 0;
+  bottom: 64px;
+  width: min(76vw, 320px);
+  max-height: min(62vh, 420px);
+  background: $background-color;
+  border-radius: 12px;
+  box-shadow: 0 16px 36px rgba(0, 0, 0, .28);
+  overflow: hidden;
+}
 
-  .toc-fab__panel {
-    position: absolute;
-    right: 0;
-    bottom: 64px;
-    width: min(76vw, 320px);
-    max-height: min(62vh, 420px);
-    background: $background-color;
-    border-radius: 12px;
-    box-shadow: 0 16px 36px rgba(0, 0, 0, .28);
-    overflow: hidden;
-  }
+.toc-fab__header {
+  padding: map-get($spacers, 2) map-get($spacers, 3);
+  font-size: map-get($base, font-size-sm);
+  font-weight: map-get($base, font-weight-bold);
+  @include split-line(bottom);
+}
 
-  .toc-fab__header {
-    padding: map-get($spacers, 2) map-get($spacers, 3);
+.toc-fab__body {
+  max-height: min(52vh, 340px);
+  overflow: auto;
+  padding: map-get($spacers, 2) map-get($spacers, 3);
+}
+
+.toc-fab .toc {
+  .toc-h1, .toc-h1 a {
+    font-size: map-get($base, font-size);
+    line-height: map-get($base, line-height);
+  }
+  .toc-h2, .toc-h2 a {
     font-size: map-get($base, font-size-sm);
-    font-weight: map-get($base, font-weight-bold);
-    @include split-line(bottom);
+    line-height: map-get($base, line-height-sm);
   }
-
-  .toc-fab__body {
-    max-height: min(52vh, 340px);
-    overflow: auto;
-    padding: map-get($spacers, 2) map-get($spacers, 3);
-  }
-
-  .toc-fab .toc {
-    .toc-h1, .toc-h1 a {
-      font-size: map-get($base, font-size);
-      line-height: map-get($base, line-height);
-    }
-    .toc-h2, .toc-h2 a {
-      font-size: map-get($base, font-size-sm);
-      line-height: map-get($base, line-height-sm);
-    }
-    .toc-h3, .toc-h3 a,
-    .toc-h4, .toc-h4 a,
-    .toc-h5, .toc-h5 a,
-    .toc-h6, .toc-h6 a {
-      font-size: map-get($base, font-size-xs);
-      line-height: map-get($base, line-height-xs);
-    }
+  .toc-h3, .toc-h3 a,
+  .toc-h4, .toc-h4 a,
+  .toc-h5, .toc-h5 a,
+  .toc-h6, .toc-h6 a {
+    font-size: map-get($base, font-size-xs);
+    line-height: map-get($base, line-height-xs);
   }
 }
 

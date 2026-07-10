@@ -21,17 +21,13 @@
       return $col2.css('display') === 'none' || !hasToc;
     }
 
-    function smallScreen() {
-      return window.matchMedia('(max-width: 1024px)').matches;
-    }
-
     function closeFabPanel() {
       $tocFabPanel.prop('hidden', true);
       $tocFabToggle.attr('aria-expanded', 'false');
     }
 
     function updateFabVisibility() {
-      if (!hasToc || !smallScreen()) {
+      if (!hasToc) {
         $tocFab.prop('hidden', true);
         closeFabPanel();
         return;

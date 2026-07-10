@@ -18,9 +18,16 @@
         {%- if site.search.provider -%}
           <button class="button button--secondary button--circle search-button js-search-toggle"><i class="fas fa-search"></i></button>
         {%- endif -%}
+        {%- if site.data.navigation.header -%}
+          <button class="navigation-toggle js-navigation-toggle" type="button" aria-expanded="false" aria-controls="site-navigation" aria-label="打开导航">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+          </button>
+        {%- endif -%}
       </div>
       {%- if site.data.navigation.header -%}
-      <nav class="navigation">
+      <nav class="navigation" id="site-navigation" aria-label="主导航">
         <ul>
           {%- for _item in site.data.navigation.header -%}
             {%- include snippets/get-nav-url.html path=_item.url -%}
