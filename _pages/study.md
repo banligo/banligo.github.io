@@ -13,14 +13,17 @@ aside:
 #### 论文 / Paper
 
 Thesis:
-- `2024.6` Bachelor thesis
-- `2026.7` Master thesis
+- `2024.6` Bachelor thesis [🔗](assets/documents/BScThesis-heyingqiu.pdf) slides (assets/documents/BScThesisPPT-heyingqiu.pdf)
+- `2026.7` Master thesis [🔗](/assets/documents/Yingqiu_MSreport202607.pdf) slides (assets/documents/202607_defense_MS_Yingqiu_final.pdf)
 - `2029.7` Doctor thesis
 
 Paper:
 - “Validating critical-points in cosmic fields”
 
+
+
 Notes:
+-
 
 
 #### 会议 / Workshop
@@ -44,7 +47,6 @@ Notes:
 #### 讨论会 / Seminar
 
 - `2026.10.09` Theory Center Journal Club: Massive neutrino? 待确认题目
-- `2026.07.15` Master Defense: CPs in NG fields
 - `2026.06.19` GM Talk: Master Pre-defense
 - `2026.06.19` arXiv Club: [Reviving primordial black hole formation in slow first-order phase transitions](https://arxiv.org/abs/2605.11332)
 - `2026.02.05` arXiv Club: [Euclid preparation. Galaxy power spectrum modelling in redshift space](https://arxiv.org/abs/2601.20826)
