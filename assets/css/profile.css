@@ -125,7 +125,7 @@ nav a { padding: 8px 0; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
 .work-group + .work-group { margin-top: 27px; }
-.group-label { font-size: 12px; font-weight: 500; color: var(--muted); margin-bottom: 15px; }
+.group-label { font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 16px; }
 .study-heading { padding: 38px 0 28px; border-bottom: 1px solid var(--line); }
 .back-link { font-size: 11px; color: var(--muted); }
 .study-heading h1 { font-size: 26px; font-weight: 500; margin-top: 17px; }
@@ -145,3 +145,5 @@ nav a { padding: 8px 0; }
   .study-content { font-size: 12px; }
   .study-content h2 { font-size: 16px; }
 }
+
+.paper-citation { font-size: 14px; line-height: 1.85; padding-left: 1.4em; text-indent: -1.4em; }

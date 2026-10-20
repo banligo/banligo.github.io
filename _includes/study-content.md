@@ -1,7 +1,7 @@
 ## 论文
 {: #papers }
 
-- Y. He, et al., “Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields.” *Physical Review D*, under review, 2026.
+- Y. He et al., “Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields,” *Physical Review D*（2026，审稿中）。
 
 ## 学位论文
 {: #theses }
