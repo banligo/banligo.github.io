@@ -7,77 +7,59 @@ layout: none
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>贺迎秋 · Yingqiu He</title>
-  <meta name="description" content="贺迎秋，SOKENDAI / KEK 博士研究生。研究随机几何、临界点统计及其宇宙学应用。">
+  <meta name="description" content="贺迎秋，SOKENDAI / KEK 博士研究生。研究随机几何、非高斯临界点统计与随机拓扑。">
   <link rel="canonical" href="{{ '/' | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/profile.css' | relative_url }}">
 </head>
 <body>
   <header class="site-header wrap">
-    <a class="wordmark" href="#about" aria-label="Yingqiu He 首页">{% include svg/logo.svg %}<span>Yingqiu He</span></a>
+    <a class="wordmark" href="#about" aria-label="贺迎秋 首页">{% include svg/logo.svg %}<span>贺迎秋</span></a>
     <nav aria-label="主导航">
-      <a href="#background">教育</a>
-      <a href="#research">研究</a>
-      <a href="{{ '/study/' | relative_url }}">Study ↗</a>
-      <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">CV ↗</a>
+      <a href="#education">教育</a>
+      <a href="#publications">成果</a>
+      <a href="{{ '/study/' | relative_url }}">学习记录</a>
+      <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">简历</a>
     </nav>
   </header>
 
   <main class="wrap">
     <section class="intro" id="about" aria-labelledby="name">
-      <div class="intro-copy">
-        <p class="eyebrow"><span class="small-dot"></span> Cosmology & Astrophysics</p>
-        <h1 id="name">Yingqiu He<span class="chinese-name">贺迎秋</span></h1>
-        <p class="position">博士研究生 <span>/</span> SOKENDAI · KEK</p>
-        <p class="bio">在随机场中理解宇宙的结构。</p>
-        <p class="intro-detail">现于综合研究大学院大学、高能加速器研究机构从事宇宙学研究，导师为 Takahiko Matsubara。关注随机几何的高阶展开、临界点统计，以及生成式 AI 在随机拓扑中的应用。</p>
-        <div class="intro-links">
-          <a class="primary-link" href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">查看简历 <span>↗</span></a>
-          <a class="text-link" href="mailto:{{ site.author.email }}">{{ site.author.email }} <span>↗</span></a>
-        </div>
+      <h1 id="name">贺迎秋 <span>Yingqiu He</span></h1>
+      <p class="position">博士研究生 · 宇宙学与天体物理 <span>SOKENDAI / KEK</span></p>
+      <p class="research-keywords" aria-label="研究关键词">随机几何 · 非高斯临界点统计 · 生成式 AI 与随机拓扑</p>
+      <div class="intro-links">
+        <a href="mailto:{{ site.author.email }}">{{ site.author.email }}</a>
+        <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">简历 <span>PDF ↗</span></a>
       </div>
     </section>
 
-    <section class="section background-section" id="background" aria-label="教育背景与奖项资助">
-      <p class="eyebrow background-label">01 / Background</p>
-      <div class="background-grid">
-        <div>
-          <h2 class="column-title">Education <span>教育背景</span></h2>
-          <article class="timeline-item"><span class="date">2024.10 — 至今</span><h3>综合研究大学院大学 / KEK</h3><p>博士研究生 · 粒子与核物理（宇宙学方向）<br>导师：Takahiko Matsubara</p></article>
-          <article class="timeline-item"><span class="date">2020.09 — 2024.06</span><h3>浙江工业大学</h3><p>理学学士 · 物理学（光电信息科学与工程方向）</p></article>
-        </div>
-        <div>
-          <h2 class="column-title">Awards & Funding <span>奖项与资助</span></h2>
-          <article class="timeline-item"><span class="date">2026 — 2029</span><h3>JST SPRING 次世代研究者项目</h3><p>博士研究 Fellowship 及研究经费</p></article>
-          <article class="timeline-item"><span class="date">2024</span><h3>浙江工业大学健行荣誉证书</h3><p>健行学院荣誉生培养项目</p></article>
-        </div>
+    <section class="section" id="education" aria-labelledby="education-title">
+      <div class="section-heading"><h2 id="education-title">教育背景</h2><span lang="en">Education</span></div>
+      <div class="section-content">
+        <article class="entry"><p class="date">2024.10 — 至今</p><div><h3>综合研究大学院大学 / KEK</h3><p>博士研究生 · 粒子与核物理（宇宙学方向）</p><p>导师：Takahiko Matsubara</p></div></article>
+        <article class="entry"><p class="date">2020.09 — 2024.06</p><div><h3>浙江工业大学</h3><p>理学学士 · 物理学（光电信息科学与工程方向）</p></div></article>
       </div>
     </section>
 
-    <section class="section" id="research" aria-labelledby="research-title">
-      <div class="section-heading"><p class="eyebrow">02 / Research</p><h2 id="research-title">研究方向</h2></div>
-      <div class="research-grid">
-        <article><span class="index">i.</span><h3>随机几何与宇宙学</h3><p>研究随机几何的高阶展开，连接随机场的几何性质与宇宙学观测。</p></article>
-        <article><span class="index">ii.</span><h3>非高斯临界点统计</h3><p>推导一维、二维和三维宇宙场中的弱非高斯临界点统计，以数值模拟检验理论预测。</p></article>
-        <article><span class="index">iii.</span><h3>生成式 AI 与随机拓扑</h3><p>探索生成式 AI 在随机拓扑中的应用，结合科学计算与统计推断开展研究。</p></article>
+    <section class="section" id="awards" aria-labelledby="awards-title">
+      <div class="section-heading"><h2 id="awards-title">奖项与资助</h2><span lang="en">Awards & Funding</span></div>
+      <div class="section-content">
+        <article class="entry"><p class="date">2026 — 2029</p><div><h3>JST SPRING 次世代研究者项目</h3><p>博士研究 Fellowship 及研究经费</p></div></article>
+        <article class="entry"><p class="date">2024</p><div><h3>浙江工业大学健行荣誉证书</h3><p>健行学院荣誉生培养项目</p></div></article>
       </div>
     </section>
 
-    <section class="section work-section" aria-labelledby="work-title">
-      <div class="section-heading"><p class="eyebrow">03 / Selected work</p><h2 id="work-title">学术成果</h2><a class="section-link" href="{{ '/study/' | relative_url }}">全部学习与研究记录 ↗</a></div>
-      <article class="publication">
-        <div class="publication-meta"><span>论文 · 2026</span><span class="review-status">Under review</span></div>
-        <h3>Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields</h3>
-        <p class="publication-credit"><strong>Y. He</strong>, et al. <span>Physical Review D · 审稿中</span></p>
-        <p>将解析弱非高斯临界点统计推广至多类临界点及一维、二维、三维宇宙场，并通过数值模拟系统验证理论预测精度。</p>
-      </article>
-      <div class="talks">
-        <article><span class="date">2026.10 <span>口头报告 · 计划</span></span><div><h3>Perturbative Critical-Point Statistics for Cosmological Inference</h3><p>Filaments in the Multi-scale Universe · Kavli IPMU</p></div></article>
-        <article><span class="date">2025.07 <span>海报报告</span></span><div><h3>Cosmic Topology: Is the Universe Finite?</h3><p>天文・天体物理若手夏の学校</p></div></article>
+    <section class="section" id="publications" aria-labelledby="work-title">
+      <div class="section-heading"><h2 id="work-title">学术成果</h2><span lang="en">Selected work</span></div>
+      <div class="section-content">
+        <article class="entry work-entry"><p class="date">2026 · 论文</p><div><h3 lang="en">Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields</h3><p>Y. He, et al. · <i lang="en">Physical Review D</i>，审稿中</p></div></article>
+        <article class="entry work-entry"><p class="date">2026.10 · 口头报告</p><div><h3 lang="en">Perturbative Critical-Point Statistics for Cosmological Inference</h3><p>Filaments in the Multi-scale Universe · Kavli IPMU · 计划</p></div></article>
+        <article class="entry work-entry"><p class="date">2025.07 · 海报</p><div><h3 lang="en">Cosmic Topology: Is the Universe Finite?</h3><p>天文・天体物理若手夏の学校</p></div></article>
+        <a class="more-link" href="{{ '/study/' | relative_url }}">更多学习与研究记录 ↗</a>
       </div>
     </section>
-
   </main>
-  <footer class="site-footer wrap"><span><a class="diary-door" href="{{ '/diary/' | relative_url }}" aria-label="个人记录" rel="nofollow">©</a> {{ 'now' | date: '%Y' }} Yingqiu He</span><span>Tsukuba, Japan <span class="footer-dot">·</span> <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">Curriculum vitae ↗</a></span></footer>
+  <footer class="site-footer wrap"><span><a class="diary-door" href="{{ '/diary/' | relative_url }}" aria-label="个人记录" rel="nofollow">©</a> {{ 'now' | date: '%Y' }} 贺迎秋</span><span>筑波，日本</span></footer>
 </body>
 </html>
