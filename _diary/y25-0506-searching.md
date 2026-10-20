@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二五年5-6月日记"
-layout: article
+layout: diary
 license: true
 aside:
   toc: true

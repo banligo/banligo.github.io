@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年4月日记"
-layout: article
+layout: diary
 ---
 
 

@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二五年9-12月日记"
-layout: article
+layout: diary
 ---
 
 我是对人有价值的吗。

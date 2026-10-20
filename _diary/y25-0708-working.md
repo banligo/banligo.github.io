@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二五年7-8月日记"
-layout: article
+layout: diary
 ---
 
 工作工作。

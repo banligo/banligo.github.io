@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年11月日记"
-layout: article
+layout: diary
 ---
 
 上个月10号搬入新家的，要慢慢磨合呀。

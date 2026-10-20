@@ -8,11 +8,12 @@ layout: none
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% if page.title %}{{ page.title | escape }} · {% endif %}贺迎秋 · Yingqiu He</title>
   <meta name="description" content="贺迎秋，SOKENDAI / 高能加速器研究机构（KEK）博士研究生。研究随机几何、非高斯临界点统计与随机拓扑。">
+  {% if page.robots %}<meta name="robots" content="{{ page.robots | escape }}">{% endif %}
   <link rel="canonical" href="{{ page.url | absolute_url }}">
   <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
   <link rel="stylesheet" href="{{ '/assets/css/profile.css' | relative_url }}">
 </head>
-<body>
+<body id="top">
   <header class="site-header wrap">
     <a class="wordmark" href="{{ '/#about' | relative_url }}" aria-label="Personal site 首页">{% include svg/logo.svg %}<span>Personal site</span></a>
     <nav aria-label="主导航">

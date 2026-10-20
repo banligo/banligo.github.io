@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年10月日记"
-layout: article
+layout: diary
 ---
 
 感觉有种不配得感。

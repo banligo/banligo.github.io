@@ -230,7 +230,7 @@ defaults:
     values:
       sitemap: false
       robots: noindex, nofollow
-      layout: article
+      layout: diary
       license: false
       sharing: false
       aside:

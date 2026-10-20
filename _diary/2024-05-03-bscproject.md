@@ -6,7 +6,7 @@ title: 重子声波振荡的理论研究
 tags: ["物理","宇宙学"]
 mathjax: true
 mathjax_autoNumber: true
-layout: article
+layout: diary
 sidebar:
   nav: layouts
 ---

@@ -7,8 +7,8 @@ Yingqiu 的个人网站，使用 Jekyll 构建。
 - `index.html`：板栗标识、姓名与研究关键词、邮箱、教育背景、奖项资助及学术成果；中文标题为主。
 - `_includes/study-content.md`：学习、论文、会议和报告记录，修改这里会更新独立的 `/study/` 页面。
 - `_data/navigation.yml`：Diary 等文章页的导航；主页与 Study 共用 `_layouts/profile.html` 中的导航。
-- `assets/css/profile.css`：主页与 Study 共用的视觉样式。
-- `_sass/custom.scss`：Study、Diary 等文章页的自定义样式。
+- `assets/css/profile.css`：主页、Study、日记共用的视觉样式。
+- `_sass/custom.scss`：旧版归档等遗留页面的样式，日记已不再使用。
 - `/study/` 为详细学习与研究记录；`/about.html` 跳转到首页个人介绍。
 - `assets/documents/CV-贺迎秋.pdf`：公开简历；替换同名文件即可更新。
 
@@ -19,8 +19,10 @@ Yingqiu 的个人网站，使用 Jekyll 构建。
 **进入方法：滚动到任意页面最底部，点击版权行最前面的 `©` 符号。**
 也可以收藏 `https://banligo.github.io/diary/`，直接进入。
 
-- `_diary/`：原有日记文件，仍在原位置。
-- `_pages/diary.md`：日记目录。增加日记后，在这里加上链接。
+- `_diary/`：日记正文，新日记可省略 layout；如需显式指定，请使用 `layout: diary`。
+- `_layouts/diary.html`：日记正文布局，含长文目录和返回链接。
+- `_layouts/diary-index.html`：日记目录布局。
+- `_pages/diary.md`：按年份分组的日记目录。增加日记后，在相应列表中加上链接，使用 `/diary/文件名.html`。
 - `assets/images/`、`assets/documents/`：图片和附件。
 - 日记页面带有 `noindex, nofollow`，且不列入站点地图；搜索引擎是否及何时移除旧收录由搜索引擎决定。
 - 这是低调入口，没有登录或密码保护。知道网址的人仍可访问；公开 GitHub 仓库中也能看到日记原文。

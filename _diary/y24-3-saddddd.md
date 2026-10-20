@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年3月日记"
-layout: article
+layout: diary
 ---
 
 二十二岁有二十二岁的烦恼。

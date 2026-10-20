@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年5月日记"
-layout: article
+layout: diary
 ---
 
 数模校赛、光设报告、毕业论文、毕业答辩、准备升学笔试和面试……我的2024年5月

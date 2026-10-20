@@ -1,0 +1,22 @@
+---
+layout: profile
+---
+<article class="diary-article">
+  <header class="diary-heading">
+    <a class="back-link" href="{{ '/diary/' | relative_url }}">← 日记目录</a>
+    <h1>{{ page.title | escape }}</h1>
+  </header>
+  <details class="diary-toc" hidden>
+    <summary>文章目录</summary>
+    <ol></ol>
+  </details>
+  <div class="diary-content">{{ content }}</div>
+  <nav class="diary-return" aria-label="日记导航">
+    <a href="{{ '/diary/' | relative_url }}">← 返回日记目录</a>
+    <a href="#top">回到顶部 ↑</a>
+  </nav>
+</article>
+<script src="{{ '/assets/js/diary.js' | relative_url }}" defer></script>
+{% if page.mathjax != false and site.mathjax %}
+  {% include markdown-enhancements/mathjax.html %}
+{% endif %}

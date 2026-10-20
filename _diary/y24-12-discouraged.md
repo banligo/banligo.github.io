@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二四年12月日记"
-layout: article
+layout: diary
 ---
 
 很清楚自己应该要干什么，但是却……无动于衷。恨自己没有多读几本书。

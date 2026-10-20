@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "二五年3-4月日记"
-layout: article
+layout: diary
 ---
 
 ### 2025-03-04

@@ -1,7 +1,7 @@
 ---
 nav_key: diary
 title: "Study Memo for Master-1st-fall"
-layout: article
+layout: diary
 permalink: /diary/M1-1-studymemo.html
 ---
 
