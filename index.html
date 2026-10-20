@@ -1,40 +1,41 @@
 ---
-layout: home
+layout: page
 nav_key: home
+show_title: false
+comment: false
 ---
 <div class="personal-home">
+  <section class="home-intro" id="home" aria-labelledby="hello-title">
+    <p class="personal-home__eyebrow">Yingqiu He · A personal space</p>
+    <h1 id="hello-title">Hello.</h1>
+    <p class="home-intro__lead">在学习中探索，<br>在生活中慢慢积累。</p>
+    <p class="home-intro__note">这里放研究、学习记录，以及一些值得长期保存的东西。</p>
+    <div class="personal-home__links">
+      <a class="button button--primary button--rounded" href="#study">Study <span aria-hidden="true">↓</span></a>
+      <a class="button button--secondary button--rounded" href="#about">About</a>
+    </div>
+    <a class="home-intro__scroll" href="#study">向下看看 <span aria-hidden="true">↓</span></a>
+  </section>
 
-  <div class="roll-in" data-delay="0.08s">
-    <!-- <p class="personal-home__eyebrow">Yingqiu's personal site</p> -->
-    <h1>Hello.</h1>
-    <p>这里放日记、学习记录，以及一些值得长期保存的东西。</p>
-  </div>
+  <section class="home-section" id="study" aria-labelledby="study-title">
+    <div class="home-section__heading">
+      <span class="personal-home__eyebrow">01 / Learning & research</span>
+      <h2 id="study-title">Study<span class="home-section__subtitle">学习与研究</span></h2>
+    </div>
+    <div class="article__content home-study">
+      {% capture study_content %}{% include study-content.md %}{% endcapture %}
+      {{ study_content | markdownify }}
+    </div>
+  </section>
 
-  <div class="personal-home__links roll-in" data-delay="0.16s">
-    <a class="button button--primary button--rounded" href="{{ '/diary/' | relative_url }}"> Diary</a>
-    <a class="button button--secondary button--rounded" href="{{ '/study/' | relative_url }}">Study</a>
-    <a class="button button--secondary button--rounded" href="{{ '/about.html' | relative_url }}">About</a>
-  </div>
+  <section class="home-section home-about" id="about" aria-labelledby="about-title">
+    <div>
+      <span class="personal-home__eyebrow">02 / A little about me</span>
+      <h2 id="about-title">About</h2>
+      <p>Hi，我是 Yingqiu He。</p>
+      <p>在这里整理学习与研究的轨迹，也给未来的自己留一些线索。</p>
+      <a class="home-about__contact" href="mailto:{{ site.author.email | escape }}">{{ site.author.email }}</a>
+    </div>
+    <img class="home-about__avatar" src="{{ site.author.avatar | relative_url }}" alt="Yingqiu He 的头像" width="128" height="128" loading="lazy">
+  </section>
 </div>
-
-<script>
-  (() => {
-    const items = document.querySelectorAll('.roll-in');
-    if (!items.length) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (reduced || !('IntersectionObserver' in window)) {
-      items.forEach((el) => el.classList.add('is-visible'));
-      return;
-    }
-    const observer = new IntersectionObserver((entries, obs) => {
-      entries.forEach((entry) => {
-        if (!entry.isIntersecting) return;
-        const delay = entry.target.getAttribute('data-delay');
-        if (delay) entry.target.style.transitionDelay = delay;
-        entry.target.classList.add('is-visible');
-        obs.unobserve(entry.target);
-      });
-    }, { threshold: 0.18 });
-    items.forEach((el) => observer.observe(el));
-  })();
-</script>

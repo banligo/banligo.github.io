@@ -1,13 +1,10 @@
 header:
   - title: Home
-    url: /
+    url: /#home
     key: home
-  - title: Diary
-    url: /diary/
-    key: diary
   - title: Study
-    url: /study/
+    url: /#study
     key: study
   - title: About
-    url: /about.html
+    url: /#about
     key: about

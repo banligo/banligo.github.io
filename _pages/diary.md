@@ -3,6 +3,8 @@ title: "Diary"
 layout: article
 permalink: /diary/
 nav_key: diary
+sitemap: false
+robots: noindex, nofollow
 aside: false
 ---
 

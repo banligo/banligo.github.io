@@ -192,6 +192,8 @@ collections:
     permalink: /diary/:name.html
 
 exclude:
+  - .private
+  - tools
   - CHANGELOG.md
   - HOW_TO_RELEASE.md
   - Gemfile
@@ -226,6 +228,8 @@ defaults:
       path: ""
       type: diary
     values:
+      sitemap: false
+      robots: noindex, nofollow
       layout: article
       license: false
       sharing: false

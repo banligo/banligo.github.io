@@ -159,3 +159,52 @@
 }
 
 /* end custom scss snippet */
+
+// One-page public home. Content remains visible even without JavaScript.
+html { scroll-behavior: smooth; }
+.personal-home { max-width: 960px; padding: 0; }
+.personal-home section { scroll-margin-top: 2rem; }
+.home-intro {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  min-height: min(780px, 85vh);
+  padding: 5rem 0 6rem;
+  h1 {
+    margin: .5rem 0 1.5rem;
+    font-size: clamp(4.5rem, 13vw, 8.5rem);
+    font-weight: 700;
+    letter-spacing: -.07em;
+    line-height: 1;
+  }
+}
+.home-intro__lead { font-size: clamp(1.4rem, 3vw, 2rem); line-height: 1.7; }
+.home-intro__note { max-width: 32rem; color: $text-color-l; line-height: 1.9; }
+.home-intro__scroll { margin-top: 3rem; color: $text-color-l; font-size: .85rem; }
+.home-section {
+  padding: 4.5rem 0;
+  border-top: 1px solid $border-color-l;
+  h2 { margin: .5rem 0 2rem; font-size: clamp(2rem, 5vw, 3rem); letter-spacing: -.035em; }
+}
+.home-section__subtitle { display: inline-block; margin-left: 1rem; font-size: 1rem; font-weight: 400; color: $text-color-l; letter-spacing: 0; }
+.home-study {
+  line-height: 1.9;
+  h3 { margin-top: 3rem; margin-bottom: 1.25rem; font-size: 1.25rem; }
+  li { margin-bottom: .85rem; overflow-wrap: anywhere; }
+  a { overflow-wrap: anywhere; }
+}
+.home-about { display: flex; justify-content: space-between; align-items: center; gap: 2rem; }
+.home-about__avatar { width: 128px; height: 128px; border-radius: 50%; object-fit: cover; flex-shrink: 0; }
+.home-about__contact { display: inline-block; margin-top: 1rem; overflow-wrap: anywhere; }
+.footer a.diary-door { color: inherit; font-weight: inherit; text-decoration: none; }
+.diary-door:focus-visible { outline: 2px solid $main-color-1; outline-offset: 4px; }
+@media (max-width: 600px) {
+  .home-intro { min-height: 75vh; padding: 3rem 0; }
+  .home-section { padding: 3rem 0; }
+  .home-section__subtitle { display: block; margin: .75rem 0 0; }
+  .home-about { flex-direction: column-reverse; align-items: flex-start; }
+  .home-about__avatar { width: 88px; height: 88px; }
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
