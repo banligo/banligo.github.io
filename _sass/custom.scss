@@ -160,42 +160,6 @@
 
 /* end custom scss snippet */
 
-// Concise academic profile.
-html { scroll-behavior: smooth; }
-.personal-home { max-width: 900px; padding: 0; }
-.profile {
-  padding: clamp(3rem, 9vw, 6rem) 0;
-  scroll-margin-top: 2rem;
-  line-height: 1.9;
-  > p { max-width: 44rem; margin-bottom: 1rem; }
-  h1 {
-    margin: .5rem 0 .75rem;
-    font-size: clamp(2rem, 5vw, 3rem);
-    line-height: 1.3;
-    letter-spacing: -.025em;
-    span { display: block; margin-top: .6rem; font-size: .55em; font-weight: 400; color: $text-color-l; letter-spacing: 0; }
-  }
-}
-.profile__header { display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; margin-bottom: 2rem; }
-.profile__role { margin-bottom: 0; color: $text-color-l; }
-.profile__avatar { width: 112px; height: 112px; object-fit: cover; border-radius: 50%; flex-shrink: 0; }
-.profile__education {
-  margin-top: 2rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid $border-color-l;
-  font-size: .9rem;
-  p { margin-bottom: .65rem; }
-  span { display: inline-block; min-width: 8rem; color: $text-color-l; }
-}
-.profile__links { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; margin-top: 2rem; }
-.profile__filetype { margin-left: .4rem; font-size: .75em; opacity: .85; }
-.profile__email { font-size: .9rem; overflow-wrap: anywhere; }
+// Discreet diary entrance in the shared article footer.
 .footer a.diary-door { color: inherit; font-weight: inherit; text-decoration: none; }
 .diary-door:focus-visible { outline: 2px solid $main-color-1; outline-offset: 4px; }
-@media (max-width: 600px) {
-  .profile__header { align-items: flex-start; }
-  .profile__avatar { width: 72px; height: 72px; }
-  .profile__education span { display: block; }
-  .profile__email { flex-basis: 100%; margin-top: .25rem; }
-}
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
