@@ -25,6 +25,7 @@ aside: false
 
 ### diary 2026
 
+<a class="button button--primary button--rounded button--sm" href="y26-1012">10-12</a> 文章个屁，化妆个屁，事多。
 
 <a class="button button--primary button--rounded button--sm" href="y26-0709">07-09</a> 第一篇文章！我会化妆啦？！
 
