@@ -89,6 +89,9 @@ nav a { padding: 8px 0; }
 .education-timeline .entry + .entry { margin-top: 0; }
 .education-timeline .entry:last-child { padding-bottom: 0; }
 .education-timeline .date { padding-top: 0; margin-bottom: 5px; }
+.thesis a { border-bottom: 1px solid #d7d5cb; }
+.thesis a:hover { color: var(--accent); }
+.thesis span { font-size: 10px; margin-left: 4px; white-space: nowrap; }
 .site-footer { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px; padding: 22px 0 28px; border-top: 1px solid var(--line); font-size: 10px; color: var(--muted); }
 .diary-door { color: inherit; }
 @media (max-width: 760px) {
