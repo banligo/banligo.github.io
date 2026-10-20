@@ -1,41 +1,29 @@
 ---
 layout: page
-nav_key: home
+nav_key: about
 show_title: false
 comment: false
 ---
-<div class="personal-home">
-  <section class="home-intro" id="home" aria-labelledby="hello-title">
-    <p class="personal-home__eyebrow">Yingqiu He · A personal space</p>
-    <h1 id="hello-title">Hello.</h1>
-    <p class="home-intro__lead">在学习中探索，<br>在生活中慢慢积累。</p>
-    <p class="home-intro__note">这里放研究、学习记录，以及一些值得长期保存的东西。</p>
-    <div class="personal-home__links">
-      <a class="button button--primary button--rounded" href="#study">Study <span aria-hidden="true">↓</span></a>
-      <a class="button button--secondary button--rounded" href="#about">About</a>
+<div class="personal-home" id="home">
+  <section class="profile" id="about" aria-labelledby="profile-name">
+    <div class="profile__header">
+      <div>
+        <p class="personal-home__eyebrow">About</p>
+        <h1 id="profile-name">贺迎秋 <span>Yingqiu He</span></h1>
+        <p class="profile__role">博士研究生 · 宇宙学与天体物理</p>
+      </div>
+      <img class="profile__avatar" src="{{ site.author.avatar | relative_url }}" alt="贺迎秋" width="112" height="112">
     </div>
-    <a class="home-intro__scroll" href="#study">向下看看 <span aria-hidden="true">↓</span></a>
-  </section>
-
-  <section class="home-section" id="study" aria-labelledby="study-title">
-    <div class="home-section__heading">
-      <span class="personal-home__eyebrow">01 / Learning & research</span>
-      <h2 id="study-title">Study<span class="home-section__subtitle">学习与研究</span></h2>
+    <p>就读于综合研究大学院大学（SOKENDAI），在高能加速器研究机构（KEK）开展研究。导师为 Takahiko Matsubara。</p>
+    <p>研究兴趣包括随机几何的高阶展开及其宇宙学应用，以及生成式 AI 在随机拓扑中的应用。</p>
+    <div class="profile__education">
+      <p><span>2024 — 至今</span> SOKENDAI / KEK · 粒子与核物理（宇宙学方向）</p>
+      <p><span>2020 — 2024</span> 浙江工业大学 · 理学学士</p>
     </div>
-    <div class="article__content home-study">
-      {% capture study_content %}{% include study-content.md %}{% endcapture %}
-      {{ study_content | markdownify }}
+    <div class="profile__links" aria-label="个人资料与联系方式">
+      <a class="button button--primary button--rounded" href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">简历 CV <span class="profile__filetype">PDF</span></a>
+      <a class="button button--secondary button--rounded" href="{{ '/study/' | relative_url }}">学习与研究 →</a>
+      <a class="profile__email" href="mailto:{{ site.author.email | escape }}">{{ site.author.email }}</a>
     </div>
-  </section>
-
-  <section class="home-section home-about" id="about" aria-labelledby="about-title">
-    <div>
-      <span class="personal-home__eyebrow">02 / A little about me</span>
-      <h2 id="about-title">About</h2>
-      <p>Hi，我是 Yingqiu He。</p>
-      <p>在这里整理学习与研究的轨迹，也给未来的自己留一些线索。</p>
-      <a class="home-about__contact" href="mailto:{{ site.author.email | escape }}">{{ site.author.email }}</a>
-    </div>
-    <img class="home-about__avatar" src="{{ site.author.avatar | relative_url }}" alt="Yingqiu He 的头像" width="128" height="128" loading="lazy">
   </section>
 </div>

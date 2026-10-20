@@ -1,10 +1,10 @@
 header:
-  - title: Home
-    url: /#home
-    key: home
-  - title: Study
-    url: /#study
-    key: study
   - title: About
     url: /#about
     key: about
+  - title: Study
+    url: /study/
+    key: study
+  - title: CV
+    url: /assets/documents/CV-贺迎秋.pdf
+    key: cv

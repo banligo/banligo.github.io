@@ -9,7 +9,7 @@ Thesis:
 - `2029.7` Doctor thesis
 
 Paper:
-- “Validating critical-points in cosmic fields”
+- Y. He, et al., “Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields.” *Physical Review D*, under review, 2026.
 
 
 

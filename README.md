@@ -2,13 +2,14 @@
 
 Yingqiu 的个人网站，使用 Jekyll 构建。
 
-## 一页式首页
+## 个人主页
 
-- `index.html`：Hello、Study、About 三个区域。
-- `_includes/study-content.md`：学习、论文、会议和报告记录，修改这里会更新首页 Study。
-- `_data/navigation.yml`：顶部锚点导航。
+- `index.html`：个人介绍、教育背景、简历和联系入口。
+- `_includes/study-content.md`：学习、论文、会议和报告记录，修改这里会更新独立的 `/study/` 页面。
+- `_data/navigation.yml`：顶部 About、Study、CV 导航。
 - `_sass/custom.scss`：首页与网站的自定义样式。
-- 原 `/study/`、`/about.html` 地址会跳转到首页相应区域。
+- `/study/` 为详细学习与研究记录；`/about.html` 跳转到首页个人介绍。
+- `assets/documents/CV-贺迎秋.pdf`：公开简历；替换同名文件即可更新。
 
 ## Diary 入口与更新
 
