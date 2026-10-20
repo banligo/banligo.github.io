@@ -6,8 +6,8 @@ Yingqiu 的个人网站，使用 Jekyll 构建。
 
 - `index.html`：板栗标识、姓名与研究关键词、邮箱、教育背景、奖项资助及学术成果；中文标题为主。
 - `_includes/study-content.md`：学习、论文、会议和报告记录，修改这里会更新独立的 `/study/` 页面。
-- `_data/navigation.yml`：Study 和文章页的导航；主页导航在 `index.html` 中。
-- `assets/css/profile.css`：学术主页的独立视觉样式。
+- `_data/navigation.yml`：Diary 等文章页的导航；主页与 Study 共用 `_layouts/profile.html` 中的导航。
+- `assets/css/profile.css`：主页与 Study 共用的视觉样式。
 - `_sass/custom.scss`：Study、Diary 等文章页的自定义样式。
 - `/study/` 为详细学习与研究记录；`/about.html` 跳转到首页个人介绍。
 - `assets/documents/CV-贺迎秋.pdf`：公开简历；替换同名文件即可更新。

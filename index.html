@@ -1,30 +1,7 @@
 ---
-layout: none
+layout: profile
 ---
-<!doctype html>
-<html lang="zh-Hans">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>贺迎秋 · Yingqiu He</title>
-  <meta name="description" content="贺迎秋，SOKENDAI / KEK 博士研究生。研究随机几何、非高斯临界点统计与随机拓扑。">
-  <link rel="canonical" href="{{ '/' | absolute_url }}">
-  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
-  <link rel="stylesheet" href="{{ '/assets/css/profile.css' | relative_url }}">
-</head>
-<body>
-  <header class="site-header wrap">
-    <a class="wordmark" href="#about" aria-label="贺迎秋 首页">{% include svg/logo.svg %}<span>贺迎秋</span></a>
-    <nav aria-label="主导航">
-      <a href="#education">教育</a>
-      <a href="#publications">成果</a>
-      <a href="{{ '/study/' | relative_url }}">学习记录</a>
-      <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">简历</a>
-    </nav>
-  </header>
-
-  <main class="wrap">
-    <section class="intro" id="about" aria-labelledby="name">
+<section class="intro" id="about" aria-labelledby="name">
       <h1 id="name">贺迎秋 <span>Yingqiu He</span></h1>
       <p class="position">博士研究生 · 宇宙学与天体物理 <span>SOKENDAI / KEK</span></p>
       <p class="research-keywords" aria-label="研究关键词">随机几何 · 非高斯临界点统计 · 生成式 AI 与随机拓扑</p>
@@ -53,13 +30,15 @@ layout: none
     <section class="section" id="publications" aria-labelledby="work-title">
       <div class="section-heading"><h2 id="work-title">学术成果</h2><span lang="en">Selected work</span></div>
       <div class="section-content">
-        <article class="entry work-entry"><p class="date">2026 · 论文</p><div><h3 lang="en">Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields</h3><p>Y. He, et al. · <i lang="en">Physical Review D</i>，审稿中</p></div></article>
-        <article class="entry work-entry"><p class="date">2026.10 · 口头报告</p><div><h3 lang="en">Perturbative Critical-Point Statistics for Cosmological Inference</h3><p>Filaments in the Multi-scale Universe · Kavli IPMU · 计划</p></div></article>
-        <article class="entry work-entry"><p class="date">2025.07 · 海报</p><div><h3 lang="en">Cosmic Topology: Is the Universe Finite?</h3><p>天文・天体物理若手夏の学校</p></div></article>
+        <div class="work-group" aria-labelledby="papers-label">
+          <h3 class="group-label" id="papers-label">论文</h3>
+        <article class="entry work-entry"><p class="date">2026 · 论文</p><div><h4 lang="en">Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields</h4><p>Y. He, et al. · <i lang="en">Physical Review D</i>，审稿中</p></div></article>
+        </div>
+        <div class="work-group" aria-labelledby="conferences-label">
+          <h3 class="group-label" id="conferences-label">会议报告</h3>
+        <article class="entry work-entry"><p class="date">2026.10 · 口头报告</p><div><h4 lang="en">Perturbative Critical-Point Statistics for Cosmological Inference</h4><p>Filaments in the Multi-scale Universe · Kavli IPMU · 计划</p></div></article>
+        <article class="entry work-entry"><p class="date">2025.07 · 海报</p><div><h4 lang="en">Cosmic Topology: Is the Universe Finite?</h4><p>天文・天体物理若手夏の学校</p></div></article>
+        </div>
         <a class="more-link" href="{{ '/study/' | relative_url }}">更多学习与研究记录 ↗</a>
       </div>
     </section>
-  </main>
-  <footer class="site-footer wrap"><span><a class="diary-door" href="{{ '/diary/' | relative_url }}" aria-label="个人记录" rel="nofollow">©</a> {{ 'now' | date: '%Y' }} 贺迎秋</span><span>筑波，日本</span></footer>
-</body>
-</html>

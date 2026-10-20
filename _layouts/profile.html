@@ -1,0 +1,31 @@
+---
+layout: none
+---
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% if page.title %}{{ page.title | escape }} · {% endif %}贺迎秋 · Yingqiu He</title>
+  <meta name="description" content="贺迎秋，SOKENDAI / KEK 博士研究生。研究随机几何、非高斯临界点统计与随机拓扑。">
+  <link rel="canonical" href="{{ page.url | absolute_url }}">
+  <link rel="icon" href="{{ '/favicon.ico' | relative_url }}">
+  <link rel="stylesheet" href="{{ '/assets/css/profile.css' | relative_url }}">
+</head>
+<body>
+  <header class="site-header wrap">
+    <a class="wordmark" href="{{ '/#about' | relative_url }}" aria-label="贺迎秋 首页">{% include svg/logo.svg %}<span>贺迎秋</span></a>
+    <nav aria-label="主导航">
+      <a href="{{ '/#education' | relative_url }}">教育</a>
+      <a href="{{ '/#publications' | relative_url }}">成果</a>
+      <a href="{{ '/study/' | relative_url }}">学习记录</a>
+      <a href="{{ '/assets/documents/CV-贺迎秋.pdf' | relative_url }}">简历</a>
+    </nav>
+  </header>
+
+  <main class="wrap">
+{{ content }}
+  </main>
+  <footer class="site-footer wrap"><span><a class="diary-door" href="{{ '/diary/' | relative_url }}" aria-label="个人记录" rel="nofollow">©</a> {{ 'now' | date: '%Y' }} 贺迎秋</span><span>筑波，日本</span></footer>
+</body>
+</html>

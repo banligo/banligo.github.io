@@ -1,27 +1,25 @@
-这里记录研究生阶段的学习、会议、workshop、seminar、journal club，以及自己的论文、报告和海报发表。
+## 论文
+{: #papers }
 
+- Y. He, et al., “Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields.” *Physical Review D*, under review, 2026.
 
-### 论文 / Paper
+## 学位论文
+{: #theses }
 
-Thesis:
 - `2024.6` Bachelor thesis [🔗](/assets/documents/BScThesis-heyingqiu.pdf) slides [🔗](/assets/documents/BScThesisPPT-heyingqiu.pdf)
 - `2026.7` Master thesis [🔗](/assets/documents/Yingqiu_MSreport202607.pdf) slides [🔗](/assets/documents/202607_defense_MS_Yingqiu_final.pdf)
 - `2029.7` Doctor thesis
 
-Paper:
-- Y. He, et al., “Validating Non-Gaussian Critical-Point Statistics in Cosmic Fields.” *Physical Review D*, under review, 2026.
+## 课程笔记
+{: #notes }
 
-
-
-Notes:
 - Theoretical Mechanics [PDF](/assets/documents/Theoretical-Mechanics-heyingqiu.pdf)
 - Electromagnetic Field [PDF](/assets/documents/EMfield_Yingqiu.pdf)
 - Statistical Mechanics [PDF](/assets/documents/Statistical-Mechanics-heyingqiu.pdf)
 - Quantum Mechanics [PDF](/assets/documents/QuantumMechanics-heyingqiu.pdf)
 
-
-
-### 会议 / Workshop
+## 会议
+{: #conferences }
 
 
 - `2026.11.24~27` [PTChat: Cosmological Perturbation Theory in the era of stage IV surveys](https://indico.in2p3.fr/event/39928/overview), Panasonic Auditorium, Yukawa Hall, Yukawa Institute, Kyoto University, 参加
@@ -38,7 +36,8 @@ Notes:
 - `2024.11.06~08` [Evolution of the Inhomogeneous Universe: From Inflation to Structure Formation (KEK-Cosmo AY2024)](https://www-conf.kek.jp/KEKCosmoAY2024/index.html), KEK Tsukuba Campus, 参加
 
 
-### 讨论会 / Seminar
+## 讨论会
+{: #seminars }
 
 - `2026.01.14` arXiv Club: AI for cosmology?
 - `2026.11.12` GM Talk: Recent progress on critical-point statistics: working with ChatGPT (NLO should be work out, 21cm same)
