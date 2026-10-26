@@ -1,114 +1,113 @@
 import { active, directions, dualGraph, neighbor, primalGraph, primalOpen, remapDual, same, shortestPath, tile } from './graphs.js';
-
 export function positions(level, symbol) {
-  const found = [];
-  level.map.forEach((row, y) => [...row].forEach((t, x) => { if (t === symbol) found.push({ x, y }); }));
-  return found;
+  return level.map.flatMap((row, y) => [...row].flatMap((t, x) => t === symbol ? [{ x, y }] : []));
 }
 export function initialState(level) {
-  return {
-    levelId: level.id, player: positions(level, 'P')[0], boxes: positions(level, 'B'), hunters: positions(level, 'M'),
+  return { version: 2, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
     shadows: level.shadow ? [{ x: level.shadow[0], y: level.shadow[1] }] : [],
-    scale: level.initialScale, topology: level.initialTopology, hasKey: false, sealActivated: false,
-    turn: 0, status: 'playing', events: ['空间已就绪。每次有效行动推进一回合。'],
-  };
+    pieces: level.pieces.map(p => ({ id: p.id, rotation: p.rotation, slot: null })),
+    scale: level.initialScale, topology: level.initialTopology, hasKey: false, starCollected: false,
+    turn: 0, status: 'playing', events: [] };
 }
-export const plateActive = (state, level) => positions(level, 'S').every(p => state.boxes.some(b => same(p, b)));
 export const beaconPosition = (state, level) => level.beacon ? remapDual({ x: level.beacon[0], y: level.beacon[1] }, level, state.topology) : null;
 export function shadowPaths(state, level) {
   if (!state.shadows.length) return [];
-  const { graph } = dualGraph(level, state), beacon = beaconPosition(state, level);
-  return state.shadows.map(p => shortestPath(graph, p, beacon));
+  const { graph } = dualGraph(level, state);
+  return state.shadows.map(p => shortestPath(graph, p, beaconPosition(state, level)));
 }
-export const disconnected = (state, level) => state.shadows.length > 0 && shadowPaths(state, level).every(p => !p);
-export function requirements(state, level, conditions = level.exit) {
-  return [
-    ...(conditions.key ? [{ label: '取得钥匙', met: state.hasKey }] : []),
-    ...(conditions.plate ? [{ label: '箱子压住机关', met: plateActive(state, level) }] : []),
-    ...(conditions.sealed ? [{ label: '激活封印', met: state.sealActivated }] : []),
-    ...(conditions.scale ? [{ label: `尺度 ${conditions.scale}`, met: state.scale === conditions.scale }] : []),
-    ...(conditions.topology ? [{ label: ({ plane: '平面', cylinder: '圆柱', mobius: '莫比乌斯' })[conditions.topology], met: state.topology === conditions.topology }] : []),
-    ...(conditions.disconnected ? [{ label: '暗影与信标不连通', met: disconnected(state, level) }] : []),
-  ];
+export const disconnected = (state, level) => !!state.shadows.length && shadowPaths(state, level).every(p => !p);
+export function objectiveMet(objective, state, level) {
+  switch (objective.type) {
+    case 'reachGoal': return tile(level, state.player) === 'E';
+    case 'key': return state.hasKey;
+    case 'shadowDisconnected': return disconnected(state, level);
+    case 'scale': return state.scale === objective.value;
+    case 'topology': return state.topology === objective.value;
+    case 'piecesPlaced': return state.pieces.every(p => p.slot !== null);
+    default: throw new Error(`Unknown objective: ${objective.type}`);
+  }
+}
+export const isLevelComplete = (state, level) => state.status !== 'lost' && level.levelObjectives.every(o => objectiveMet(o, state, level));
+export function score(state, level) {
+  if (state.status !== 'won') return 0;
+  return 1 + Number(state.turn <= level.par) + Number(state.turn <= level.par && state.starCollected);
 }
 export const rejected = (state, message) => ({ state, valid: false, message });
-
-// Full snapshots live outside this pure transition function. Invalid actions
-// return the original object and never advance an enemy's clock.
-export function transition(state, action, level) {
-  if (state.status !== 'playing') return rejected(state, '关卡已结束，可以撤销或重开。');
-  const next = structuredClone(state), events = [];
-  const previouslyDisconnected = state.shadows.length ? disconnected(state, level) : false;
-  if (action.type === 'move') {
-    const dir = directions.find(d => d.name === action.direction);
-    if (!dir) return rejected(state, '未知方向。');
-    const target = neighbor(state.player, dir, level, state.topology);
-    if (!target || !primalOpen(level, state, state.player, target)) return rejected(state, '道路尚未接通。试试尺度或空间切换。');
-    const boxIndex = state.boxes.findIndex(p => same(p, target));
-    if (boxIndex >= 0) {
-      const beyond = neighbor(target, dir, level, state.topology);
-      if (!beyond || !primalOpen(level, state, target, beyond) || state.boxes.some(p => same(p, beyond)) || state.hunters.some(p => same(p, beyond)) || same(beyond, state.player)) return rejected(state, '箱子前方没有可用空间。');
-      next.boxes[boxIndex] = beyond;
-    }
-    next.player = target;
-    if (Math.abs(target.x - state.player.x) > 1) events.push(state.topology === 'mobius' ? '边界穿越：上下位置翻转。' : '边界穿越：到达世界另一端。');
-    if (tile(level, target) === 'K' && !state.hasKey) { next.hasKey = true; events.push('取得钥匙，所有金色锁门已开启。'); }
-  } else if (action.type === 'scale') {
-    if (!level.scales.includes(action.value) || state.scale === action.value) return rejected(state, '当前关卡不支持该尺度，或尺度没有变化。');
-    if ([state.player, ...state.boxes, ...state.hunters].some(p => !active(level, p, action.value))) return rejected(state, '无法缩小：角色或箱子仍在即将消失的地板上。');
+function geometryChange(state, action, level) {
+  const next = structuredClone(state);
+  if (action.type === 'scale') {
+    if (!level.scales.includes(action.value) || state.scale === action.value) return rejected(state, '这一档还不能用。');
+    if ([state.player, ...state.hunters].some(p => !active(level, p, action.value, state))) return rejected(state, '先离开将要消失的道路。');
     next.scale = action.value;
-    events.push(action.value > state.scale ? '尺度放大：新的桥梁出现。' : '尺度缩小：高阈值道路关闭。');
   } else if (action.type === 'topology') {
-    if (!level.modes.includes(action.value) || state.topology === action.value) return rejected(state, '当前关卡不支持该空间，或空间没有变化。');
-    next.topology = action.value;
-    next.shadows = state.shadows.map(p => remapDual(p, level, next.topology));
-    events.push(({ plane: '切开边界，回到平面。', cylinder: '左右边界已连接。', mobius: '边界已扭转：左右连接，上下翻转。' })[next.topology]);
-  } else if (action.type === 'interact') {
-    if (tile(level, state.player) !== 'T' || !level.seal) return rejected(state, '站在封印台 T 上，按 F 激活。');
-    if (state.sealActivated) return rejected(state, '封印已经激活。');
-    const missing = requirements(state, level, level.seal).filter(r => !r.met);
-    if (missing.length) return rejected(state, `封印还需要：${missing.map(r => r.label).join('、')}。`);
-    next.sealActivated = true; events.push('封印已激活，将在这次关卡中永久保留。');
-  } else if (action.type === 'wait') events.push('等待一回合。');
-  else return rejected(state, '未知操作。');
+    if (!level.modes.includes(action.value) || state.topology === action.value) return rejected(state, '这条边界还不能改变。');
+    next.topology = action.value; next.shadows = next.shadows.map(p => remapDual(p, level, action.value));
+  } else if (['rotate', 'place', 'remove'].includes(action.type)) {
+    const piece = next.pieces.find(p => p.id === action.pieceId), definition = level.pieces.find(p => p.id === action.pieceId);
+    if (!piece || !definition) return rejected(state, '先选一块碎片。');
+    if (action.type === 'rotate') piece.rotation = (piece.rotation + 1) % 4;
+    else {
+      if (piece.slot) {
+        const oldSlot = level.slots.find(s => s.id === piece.slot);
+        if ([state.player, ...state.hunters].some(p => same(p, oldSlot))) return rejected(state, '有人站在这块路上；可旋转，或先移开。');
+      }
+      if (action.type === 'remove') {
+        if (!piece.slot) return rejected(state, '碎片已在背包里。');
+        piece.slot = null;
+      } else {
+        const slot = level.slots.find(s => s.id === action.slotId);
+        if (!slot || !definition.allowedSlots.includes(slot.id)) return rejected(state, '试试带有相同纹样的空位。');
+        if (state.pieces.some(p => p.slot === slot.id)) return rejected(state, '空位已有碎片，可先收回。');
+        piece.slot = slot.id;
+      }
+    }
+  } else return rejected(state, '无法预览这个操作。');
+  return { state: next, valid: true };
+}
+export function preview(state, action, level) {
+  const result = geometryChange(state, action, level); return result.valid ? result.state : null;
+}
+export function transition(state, action, level) {
+  if (state.status !== 'playing') return rejected(state, '可撤销一步，或重来。');
+  let next; const events = [];
+  if (action.type === 'move') {
+    const dir = directions.find(d => d.name === action.direction), target = dir && neighbor(state.player, dir, level, state.topology);
+    if (!target || !primalOpen(level, state, state.player, target)) return rejected(state, tile(level, target || state.player) === 'D' ? '那扇门需要钥匙。' : '路还没接上。试试另一种办法。');
+    next = structuredClone(state); next.player = target;
+    if (Math.abs(target.x - state.player.x) > 1) events.push(state.topology === 'mobius' ? '另一边，上下倒了过来。' : '原来两边连在一起。');
+    if (tile(level, target) === 'K' && !state.hasKey) { next.hasKey = true; events.push('钥匙找到了。'); }
+    if (same(target, level.star) && !state.starCollected) { next.starCollected = true; events.push('捡到一片星光。'); }
+  } else if (action.type === 'wait') next = structuredClone(state);
+  else {
+    const result = geometryChange(state, action, level); if (!result.valid) return result;
+    next = result.state;
+    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '有些路改变了。', topology: '世界的边缘改变了。' })[action.type]);
+  }
   next.turn++;
-  if (positions(level, 'S').length && plateActive(next, level) !== plateActive(state, level)) events.push(plateActive(next, level) ? '压力板已激活。' : '压力板已释放。');
-  const nowDisconnected = next.shadows.length ? disconnected(next, level) : false;
-  if (nowDisconnected !== previouslyDisconnected) events.push(nowDisconnected ? '暗影路径已切断。' : '暗影路径重新接通。');
-
-  // Entering an occupied hunter cell loses even if that hunter would move away.
-  if (next.hunters.some(p => same(p, next.player))) { next.status = 'lost'; events.push('撞上猎手。撤销一步，换条路试试。'); }
+  if (state.shadows.length && disconnected(state, level) !== disconnected(next, level)) events.push(disconnected(next, level) ? '影子停住了。' : '影子又找到路了。');
+  if (next.hunters.some(p => same(p, next.player))) next.status = 'lost';
   if (level.hunterSpeed && next.turn % level.hunterSpeed === 0) {
     const graph = primalGraph(level, next);
     next.hunters = next.hunters.map(p => shortestPath(graph, p, next.player)?.[1] ?? p);
-    if (next.hunters.some(p => same(p, next.player))) { next.status = 'lost'; events.push('猎手追上了你。'); }
+    if (next.hunters.some(p => same(p, next.player))) next.status = 'lost';
   }
   if (level.shadowSpeed && next.turn % level.shadowSpeed === 0) {
-    const paths = shadowPaths(next, level);
-    next.shadows = next.shadows.map((p, i) => paths[i]?.[1] ?? p);
+    const paths = shadowPaths(next, level); next.shadows = next.shadows.map((p, i) => paths[i]?.[1] ?? p);
   }
-  if (next.shadows.some(p => same(p, beaconPosition(next, level)))) { next.status = 'lost'; events.push('暗影抵达信标。'); }
-  if (next.status === 'playing' && tile(level, next.player) === 'E') {
-    const missing = requirements(next, level).filter(r => !r.met);
-    if (!missing.length) { next.status = 'won'; events.push('出口已开启。空间重构完成。'); }
-    else events.push(`出口还需要：${missing.map(r => r.label).join('、')}。`);
-  }
-  next.events = events.length ? events : ['行动完成。'];
-  return { state: next, valid: true, message: next.events.join(' ') };
+  if (next.shadows.some(p => same(p, beaconPosition(next, level)))) next.status = 'lost';
+  if (next.status === 'lost') events.push('没关系，撤销一步就好。');
+  else if (isLevelComplete(next, level)) { next.status = 'won'; events.push('找到路了。'); }
+  else if (tile(level, next.player) === 'E') events.push(level.goalText);
+  next.events = events;
+  return { state: next, valid: true, message: events.at(-1) || '' };
 }
 export const applyAction = (state, action, level) => transition(state, action, level).state;
-export function preview(state, action, level) {
-  // A preview changes geometry only, without moving monsters or advancing time.
-  if (action.type === 'scale' && (!level.scales.includes(action.value) || [state.player, ...state.boxes, ...state.hunters].some(p => !active(level, p, action.value)))) return null;
-  if (action.type === 'topology' && !level.modes.includes(action.value)) return null;
-  return { ...state, scale: action.type === 'scale' ? action.value : state.scale, topology: action.type === 'topology' ? action.value : state.topology, shadows: state.shadows.map(p => remapDual(p, level, action.type === 'topology' ? action.value : state.topology)) };
-}
-export function createSession(level) {
-  let state = initialState(level); const history = [];
-  return {
-    get state() { return state; }, get undoCount() { return history.length; },
+export function createSession(level, snapshot = null) {
+  let state = snapshot?.state ? structuredClone(snapshot.state) : initialState(level);
+  const history = snapshot?.history ? structuredClone(snapshot.history) : [];
+  return { get state() { return state; }, get undoCount() { return history.length; },
+    snapshot: () => ({ state: structuredClone(state), history: structuredClone(history) }),
     act(action) { const result = transition(state, action, level); if (result.valid) { history.push(state); state = result.state; } return result; },
     undo() { if (!history.length) return false; state = history.pop(); return true; },
-    restart() { state = initialState(level); history.length = 0; },
-  };
+    restart() { state = initialState(level); history.length = 0; } };
 }

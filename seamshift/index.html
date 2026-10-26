@@ -2,55 +2,43 @@
 <html lang="zh-Hans">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0c1118">
-  <meta name="description" content="SEAMSHIFT：用尺度、对偶图和莫比乌斯边界改造迷宫的五关回合制策略解谜游戏。">
-  <title>SEAMSHIFT · Labyrinth of Dual Worlds</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#e9dfc6">
+  <meta name="description" content="SEAMSHIFT：拼起道路、扭转边界，走过五座小小的几何迷宫。支持手机触控与键盘。">
+  <title>SEAMSHIFT · 缝隙之间</title>
   <link rel="icon" href="../favicon.ico">
   <link rel="stylesheet" href="../assets/seamshift/game.css">
   <script type="module" src="../assets/seamshift/app.js"></script>
 </head>
 <body>
-  <header class="masthead">
-    <a class="brand" href="#" id="menu-button" aria-label="打开游戏主菜单"><svg viewBox="0 0 36 36" aria-hidden="true"><path d="M5 11 18 4 31 11v14l-13 7L5 25Z M5 11l13 7 13-7M18 18v14M11 7.5l14 21M25 7.5l-14 21"/></svg><span>SEAMSHIFT<small>LABYRINTH OF DUAL WORLDS</small></span></a>
-    <div class="header-right"><span class="system-status"><i></i> DETERMINISTIC UNIVERSE</span><button class="text-button" id="help-button">操作说明 <kbd>?</kbd></button><a class="home-link" href="../#experience">返回主页 ↗</a></div>
-  </header>
-  <main class="shell">
-    <aside class="campaign" aria-label="章节选择">
-      <div class="eyebrow">THE EXPEDITION <span>01—05</span></div>
-      <h1>空间重构计划</h1><p class="campaign-description">走出迷宫之前，<br>先改变它的规则。</p>
-      <nav id="level-list" class="level-list" aria-label="五个关卡"></nav>
-      <div class="campaign-bottom"><div class="completion"><span>探索进度</span><b id="progress-text">0 / 5</b></div><div class="progress-track"><i id="progress-bar"></i></div><p>无需计时。每一步，都可以重来。</p><button class="text-button" id="back-menu">← 主菜单</button></div>
-    </aside>
-    <section class="workspace" aria-labelledby="level-title">
-      <div class="level-heading"><div><p class="eyebrow" id="chapter-label"></p><h2 id="level-title"></h2><p id="lesson" class="lesson"></p></div><div class="turn-counter"><span>TURN</span><b id="turn">00</b><small id="best-score">BEST —</small></div></div>
-      <div class="play-layout">
-        <div class="board-column">
-          <div class="board-card">
-            <div class="board-toolbar"><span class="live-label"><i></i> <span id="world-label">PLANE WORLD</span></span><div class="view-switch" role="group" aria-label="网络显示"><button data-view="primal" aria-pressed="true">原始</button><button data-view="dual" aria-pressed="false">对偶</button><button data-view="combined" aria-pressed="false">双层 <kbd>Tab</kbd></button></div></div>
-            <div id="board" class="board" tabindex="0" role="application" aria-label="迷宫：用方向键移动，数字键选择尺度，T 切换空间。"></div>
-            <div class="board-caption"><span id="board-status">SPACE IS STABLE</span><span id="coordinates">POSITION 01 : 01</span></div>
-          </div>
-          <div id="message" class="message" role="status" aria-live="polite"></div>
-          <div class="utility-row"><button id="undo-button" class="utility-button">↶ 撤销 <kbd>Z</kbd></button><button id="restart-button" class="utility-button">↻ 重开 <kbd>R</kbd></button><button id="hint-button" class="utility-button">✧ 提示 <kbd>H</kbd></button><span class="utility-note">有效行动才推进时间</span></div>
-          <div class="legend"><span><i class="legend-player"></i>你</span><span><i class="legend-key"></i>钥匙</span><span><i class="legend-exit"></i>出口</span><span><i class="legend-hunter"></i>猎手</span><span><i class="legend-shadow"></i>暗影</span><span><i class="legend-beacon"></i>信标</span></div>
-        </div>
-        <aside class="instruments" aria-label="空间操作与目标">
-          <section class="instrument"><div class="instrument-heading"><h3>空间尺度</h3><span>FILTRATION</span></div><div id="scale-controls" class="scale-controls"></div><p class="instrument-note">放大尺度，接通新的道路。<br>悬停或聚焦按钮，预览变化。</p></section>
-          <section class="instrument"><div class="instrument-heading"><h3>边界规则</h3><kbd>T</kbd></div><div id="topology-controls" class="topology-controls"></div></section>
-          <section class="instrument objectives"><div class="instrument-heading"><h3>出口条件</h3><span id="objective-count"></span></div><ul id="objectives"></ul><div id="seal-requirements"></div></section>
-          <section class="instrument enemy-section" id="enemy-panel"><div class="instrument-heading"><h3>威胁预测</h3><span>NEXT MOVE</span></div><div id="enemy-info"></div></section>
-          <div class="action-controls"><button id="interact-button">激活封印 <kbd>F</kbd></button><button id="wait-button">等待一回合 <kbd>Space</kbd></button></div>
-          <div class="dpad" role="group" aria-label="移动"><button data-direction="up" aria-label="向上">↑</button><button data-direction="left" aria-label="向左">←</button><span aria-hidden="true">✧</span><button data-direction="right" aria-label="向右">→</button><button data-direction="down" aria-label="向下">↓</button></div>
-        </aside>
-      </div>
-      <details class="mathematics"><summary><span>WHY IT WORKS</span> 空间背后的数学 <span class="details-plus">+</span></summary><div><p id="level-concept"></p><dl><dt>尺度与渗流</dt><dd>房间和桥梁有固定出生阈值。随尺度增加，边集满足 E(1) ⊆ E(2) ⊆ E(3)，使原本分离的区域逐渐连通。地图的关键结构固定，节点的轻微几何扰动由固定种子生成。</dd><dt>原始图与对偶图</dt><dd>玩家沿房间中心之间的边移动；暗影沿格子角点之间的对偶边移动。每条内部对偶边穿过一条原始边，两者恰好互补。箱子阻挡角色，但不删除底层几何边。</dd><dt>边界识别</dt><dd>圆柱连接左右同一行；莫比乌斯带把左侧第 y 行连接到右侧第 H−1−y 行。对偶角点使用 H−j 的反向识别。上下边界始终封闭，暗影不能从地图外侧绕行。</dd></dl></div></details>
+  <main id="game" class="game world-plane">
+    <header class="game-header">
+      <button id="levels-button" class="text-button" aria-label="选择关卡"><span data-icon="levels"></span><span>关卡</span></button>
+      <div class="chapter"><span class="wordmark">seamshift</span><h1 id="level-title">断开的路</h1><span id="chapter-number">01 / 05</span></div>
+      <div class="header-tools"><button id="discoveries-button" class="icon-button" aria-label="发现手记" title="发现手记"><span data-icon="book"></span><i id="discovery-dot" hidden></i></button><button id="help-button" class="icon-button" aria-label="操作帮助" title="操作帮助"><span data-icon="help"></span></button></div>
+    </header>
+    <div class="small-hud"><span id="moves">0 步</span><span id="par" title="收集星片且不超过推荐步数，可获得三星"></span><span id="held-star" aria-label="尚未收集星片"><span data-icon="star"></span></span><span id="best-stars" aria-label="本关历史星级"></span></div>
+    <section id="arena" class="arena" aria-label="当前关卡地图">
+      <div id="board" class="board" tabindex="0" role="application" aria-label="方向键或滑动移动，数字键切换尺度，T 切换边界。"></div>
+      <button id="view-button" class="icon-button view-button" aria-label="切换网络视图" title="切换网络视图（Tab）"><span data-icon="eye"></span></button>
+      <div id="particles" class="particles" aria-hidden="true"></div>
+      <div id="clear-overlay" class="clear-overlay" hidden role="status" aria-live="polite"><div class="clear-paper"><p class="small-caps">LEVEL CLEAR</p><h2 id="clear-title">找到路了。</h2><div id="clear-stars" class="clear-stars"></div><p id="clear-score"></p><small>轻触继续</small></div></div>
+      <div id="lost-overlay" class="lost-overlay" hidden><div><p>试试另一条路。</p><button id="recover-button" class="paper-button"><span data-icon="undo"></span>撤销一步</button><button id="lost-restart-button" class="quiet-button">重新开始</button></div></div>
     </section>
+    <div id="message" class="message" role="status" aria-live="polite"></div>
+    <footer class="dock">
+      <div id="puzzle-tray" class="puzzle-tray" hidden><span class="tray-label">道路碎片</span><div id="pieces" class="pieces"></div><div class="piece-tools"><button id="rotate-button" class="icon-button" aria-label="旋转选中的碎片" title="旋转碎片"><span data-icon="rotate"></span></button><button id="remove-button" class="icon-button" aria-label="收回选中的碎片" title="收回碎片"><span data-icon="remove"></span></button></div></div>
+      <div class="control-deck">
+        <div class="world-controls"><div class="scale-row"><span class="control-label">尺度</span><div id="scale-buttons" class="scale-buttons" role="group" aria-label="空间尺度"></div></div><div id="mode-buttons" class="mode-buttons" role="group" aria-label="空间边界"></div><div class="tools"><button id="undo-button" class="icon-button" aria-label="撤销（Z）" title="撤销（Z）"><span data-icon="undo"></span></button><button id="restart-button" class="icon-button" aria-label="重新开始（R）" title="重新开始（R）"><span data-icon="restart"></span></button><button id="hint-button" class="icon-button" aria-label="渐进提示（H），长按查看帮助" title="提示（H），长按查看帮助"><span data-icon="hint"></span></button></div></div>
+        <div class="dpad" role="group" aria-label="移动方向"><button data-direction="up" aria-label="向上移动"><span data-icon="up"></span></button><button data-direction="left" aria-label="向左移动"><span data-icon="left"></span></button><button id="wait-button" aria-label="等待一回合（Space）"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7v5l3 2"/></svg></button><button data-direction="right" aria-label="向右移动"><span data-icon="right"></span></button><button data-direction="down" aria-label="向下移动"><span data-icon="down"></span></button></div>
+      </div>
+    </footer>
   </main>
-  <footer class="game-footer"><span>A SMALL EXPERIMENT IN CONNECTIVITY</span><span>GEOMETRY IS A RULE. CHANGE IT.</span></footer>
-  <dialog id="menu-dialog" class="menu-dialog"><div class="dialog-content"><p class="eyebrow">FIVE ROOMS. TWO WORLDS. ONE WAY OUT.</p><div class="menu-symbol" aria-hidden="true">◇<span>◇</span></div><h2>改变世界的<br><em>连接方式。</em></h2><p class="dialog-intro">放大道路，扭转边界。<br>把你的通路，变成暗影的牢笼。</p><button id="start-button" class="primary-button">开始探索 <span>→</span></button><div id="menu-levels" class="menu-levels" aria-label="从指定关卡开始"></div><p class="dialog-footnote">回合制策略解谜 · 五个关卡 · 可随时撤销</p></div></dialog>
-  <dialog id="result-dialog"><div class="dialog-content"><p class="eyebrow" id="result-eyebrow"></p><div class="result-symbol" id="result-symbol"></div><h2 id="result-title"></h2><p id="result-description"></p><div id="result-actions" class="result-actions"></div></div></dialog>
-  <dialog id="help-dialog"><div class="dialog-content help-content"><p class="eyebrow">FIELD MANUAL</p><h2>操作手册</h2><p>每次有效移动、尺度变化、边界切换或等待消耗一回合；先行动，再轮到怪物。失败后可撤销。</p><dl><dt>移动 / 推箱子</dt><dd>方向键 / WASD，也可点击方向盘。箱子压住压力板才生效；箱子不能拉。</dd><dt>尺度 / 拓扑</dt><dd><kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> 选择尺度，<kbd>T</kbd> 循环切换边界；点击面板可直接选择。悬停或聚焦按钮可预览。</dd><dt>机关 / 等待</dt><dd><kbd>F</kbd> 在 T 封印台激活机关，<kbd>Space</kbd> 等待。</dd><dt>观察 / 回溯</dt><dd><kbd>Tab</kbd> 切换网络视图，<kbd>Z</kbd> 撤销，<kbd>R</kbd> 重开，<kbd>H</kbd> 提示，<kbd>Esc</kbd> 主菜单。</dd><dt>怪物</dt><dd>红色猎手追逐你；紫色暗影沿对偶网络寻找信标。虚线路径和空心图标是下一步预测。右侧显示行动倒计时。</dd></dl><button class="primary-button" id="close-help">返回探索 →</button></div></dialog>
-  <noscript>这个游戏需要 JavaScript。请在浏览器中开启 JavaScript 后刷新。</noscript>
+  <div id="drag-ghost" class="drag-ghost" hidden aria-hidden="true"></div>
+  <dialog id="levels-dialog"><div class="dialog-header"><h2>小小的旅程</h2><button class="icon-button" data-close aria-label="关闭关卡选择"><span data-icon="close"></span></button></div><p class="dialog-note">找到一条路，就能继续下一段旅程。</p><nav id="level-list" class="level-list" aria-label="全部五关"></nav><a class="home-link" href="../#experience">返回个人主页</a></dialog>
+  <dialog id="help-dialog"><div class="dialog-header"><h2>口袋说明书</h2><button class="icon-button" data-close aria-label="关闭操作帮助"><span data-icon="close"></span></button></div><p id="current-goal" class="current-goal"></p><dl><dt>走一走</dt><dd>方向键 / WASD，或在地图上滑动。手机也可以点方向盘。每次有效操作才推进一回合。</dd><dt>改一改</dt><dd>数字 1–3 切换尺度；T 切换边界。选碎片，再点同纹样的空位放下；再点碎片旋转。也可以拖放，或使用旋转、收回按钮。</dd><dt>试错没关系</dt><dd>Z 撤销，R 重来，Space 等待。虚线和空心标记显示怪物下一步；它们按固定回合行动。</dd><dt>捡一点星光</dt><dd>通关得一星；不超过推荐步数得两星；再捡到可选星片得三星。星片不影响解锁。</dd><dt>多看一层</dt><dd>眼睛按钮切换网络视图；地图聚焦时也可按 Tab。数学解释藏在发现手记里。</dd></dl><button id="help-hint-button" class="paper-button">给我一点提示</button><p id="help-hint" class="dialog-note" role="status"></p></dialog>
+  <dialog id="discoveries-dialog"><div class="dialog-header"><h2>发现手记</h2><button class="icon-button" data-close aria-label="关闭发现手记"><span data-icon="close"></span></button></div><p class="dialog-note">先遇见，再理解。</p><div id="discovery-cards"></div></dialog>
+  <dialog id="ending-dialog"><div class="dialog-header"><span class="wordmark">seamshift</span><button class="icon-button" data-close aria-label="关闭旅程完成界面"><span data-icon="close"></span></button></div><div class="ending-art" aria-hidden="true"><svg viewBox="0 0 160 100"><path d="M14 79q29-48 59-24t68-28" fill="none" stroke="#8a9c79" stroke-width="13"/><path d="M14 79q29-48 59-24t68-28" fill="none" stroke="#e7d5a6" stroke-width="7"/><path d="M117 35V18a15 15 0 0 1 30 0v17Z" fill="#748d6c" stroke="#53664b" stroke-width="2"/><path d="M125 35V18a7 7 0 0 1 14 0v17Z" fill="#ebdbaa"/><path d="M22 77V65q0-14 15-14t15 14v12" fill="#b97757"/><circle cx="37" cy="51" r="11" fill="#e4d3a8" stroke="#8b7957"/><path d="M28 62h20l8 7-12-2H28Z" fill="#778c6d"/></svg></div><p class="small-caps">JOURNEY COMPLETE</p><h2 class="ending-title">世界比想象中近。</h2><p id="ending-score" class="dialog-note"></p><div class="ending-actions"><button id="ending-levels" class="paper-button">回看走过的路</button><button id="ending-replay" class="quiet-button">再玩第五关</button></div></dialog>
+  <noscript>请开启 JavaScript，和小旅人一起找到出口。</noscript>
 </body>
 </html>

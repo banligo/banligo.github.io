@@ -1,19 +1,18 @@
-import { applyAction, initialState, plateActive, positions } from './engine.js';
-import { directions, key, primalGraph, shortestPath } from './graphs.js';
-
+import { applyAction, disconnected, initialState, positions } from './engine.js';
+import { directions, key, neighbor, same, shortestPath, tile, dualGraph } from './graphs.js';
+import { pieceSignature, ports } from './pieces.js';
 const gcd = (a, b) => b ? gcd(b, a % b) : a;
 export const period = level => ((level.hunterSpeed || 1) * (level.shadowSpeed || 1)) / gcd(level.hunterSpeed || 1, level.shadowSpeed || 1);
 export function stateHash(state, level) {
-  return [key(state.player), state.boxes.map(key).sort().join(';'), state.hunters.map(key).join(';'), state.shadows.map(key).join(';'),
-    state.hasKey ? 1 : 0, state.scale, state.topology, state.sealActivated ? 1 : 0, state.turn % period(level)].join('|');
+  return [key(state.player), state.hunters.map(key).join(';'), state.shadows.map(key).join(';'),
+    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level)].join('|');
 }
-export const actionsFor = level => [
-  ...directions.map(dir => ({ type: 'move', direction: dir.name })),
-  ...level.scales.map(value => ({ type: 'scale', value })),
-  ...level.modes.map(value => ({ type: 'topology', value })),
-  { type: 'interact' }, { type: 'wait' },
-];
-
+export function actionsFor(level) {
+  return [...directions.map(d => ({ type: 'move', direction: d.name })),
+    ...level.scales.map(value => ({ type: 'scale', value })), ...level.modes.map(value => ({ type: 'topology', value })),
+    ...level.pieces.flatMap(p => [{ type: 'rotate', pieceId: p.id }, { type: 'remove', pieceId: p.id }, ...p.allowedSlots.map(slotId => ({ type: 'place', pieceId: p.id, slotId }))]),
+    { type: 'wait' }];
+}
 class Heap {
   data = [];
   push(node) {
@@ -32,60 +31,66 @@ class Heap {
   }
 }
 
-function makeHeuristic(level) {
-  // Relaxed union of all permitted geometries. This is search guidance only;
-  // every candidate is still advanced through the real engine, with enemies.
-  const union = new Map();
-  for (const topology of level.modes) {
-    const graph = primalGraph(level, { ...initialState(level), topology, scale: Math.max(...level.scales), hasKey: true }, { boxes: false });
-    for (const [id, ns] of graph) union.set(id, [...new Set([...(union.get(id) || []), ...ns])]);
-  }
-  const cache = new Map();
-  const distance = (a, b) => {
-    if (!a || !b) return 0;
-    const id = `${key(a)}:${key(b)}`;
-    if (!cache.has(id)) cache.set(id, (shortestPath(union, a, b)?.length ?? 41) - 1);
-    return cache.get(id);
-  };
-  const plate = positions(level, 'S')[0], consolePosition = positions(level, 'T')[0], exit = positions(level, 'E')[0], item = positions(level, 'K')[0];
-  return state => {
-    if (plate && !plateActive(state, level)) {
-      const box = state.boxes[0];
-      // Boxes in a dead end cannot be pulled back. The relaxed distance still
-      // leaves actual push legality to the engine rather than guessing it.
-      return 32 + 3 * distance(box, plate) + Math.max(0, distance(state.player, box) - 1);
+function makeHeuristic(level, requireStar) {
+  const union = new Map(), distanceCache = new Map();
+  for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
+    const p = { x, y }; if (tile(level, p) === '#') continue;
+    const ns = [];
+    for (const mode of level.modes) for (const d of directions) {
+      const q = neighbor(p, d, level, mode); if (q && tile(level, q) !== '#') ns.push(key(q));
     }
-    if (!state.hasKey) return 22 + distance(state.player, item);
-    if (consolePosition && !state.sealActivated) return 10 + distance(state.player, consolePosition) + (state.scale === 3 ? 0 : 1) + (state.topology === 'plane' ? 0 : 1);
-    return distance(state.player, exit) + (level.exit.scale && state.scale !== level.exit.scale ? 1 : 0) + (level.exit.topology && state.topology !== level.exit.topology ? 1 : 0);
+    union.set(key(p), [...new Set(ns)]);
+  }
+  const distance = (a, b) => {
+    const id = `${key(a)}:${key(b)}`;
+    if (!distanceCache.has(id)) distanceCache.set(id, (shortestPath(union, a, b)?.length ?? 40) - 1);
+    return distanceCache.get(id);
+  };
+  const goal = positions(level, 'E')[0], item = positions(level, 'K')[0];
+  const desired = new Map(level.pieces.map(definition => {
+    const slot = level.slots.find(s => s.id === definition.allowedSlots[0]);
+    const neighbors = directions.flatMap((d, i) => tile(level, { x: slot.x + d.x, y: slot.y + d.y }) !== '#' ? [i] : []);
+    return [definition.id, Array.from({ length: 4 }, (_, rotation) => rotation).filter(rotation => neighbors.every(i => ports({ rotation }, definition).includes(i)))];
+  }));
+  return state => {
+    let puzzleCost = 0;
+    state.pieces.forEach(p => {
+      puzzleCost += p.slot ? 0 : 1;
+      puzzleCost += Math.min(...desired.get(p.id).map(r => (r - p.rotation + 4) % 4), 4);
+    });
+    let target = goal, missing = 0;
+    if (item && !state.hasKey) { target = item; missing += 12; }
+    if (requireStar && !state.starCollected) { target = level.star; missing += 12; }
+    const shadowCost = state.shadows.length && !disconnected(state, level) ? 12 + 2 * (dualGraph(level, state).graph.get(key(state.shadows[0]))?.length || 0) : 0;
+    return distance(state.player, target) + puzzleCost * 2 + missing + shadowCost;
   };
 }
-
-// Weighted A*: returns a verified route, not a claim of an optimal route.
-export function solve(level, start = initialState(level), { maxExpanded = 180000, maxDepth = 50 } = {}) {
-  if (start.status === 'won') return { actions: [], expanded: 0 };
-  if (start.status !== 'playing') return null;
-  const heuristic = makeHeuristic(level), open = new Heap(), best = new Map(), actions = actionsFor(level);
-  const root = { state: start, depth: 0, parent: null, action: null, priority: 0 };
-  open.push(root); best.set(stateHash(start, level), 0);
+// Weighted A* searches real game states. It finds verified routes, not necessarily
+// shortest routes. Tests derive Par from a replayed star-collecting solution.
+export function search(level, start = initialState(level), { maxExpanded = 200000, maxDepth = 48, requireStar = false, forbid = () => false } = {}) {
+  const heuristic = makeHeuristic(level, requireStar), open = new Heap(), best = new Map(), actions = actionsFor(level).filter(a => !forbid(a));
+  open.push({ state: start, depth: 0, parent: null, action: null, priority: 0 }); best.set(stateHash(start, level), 0);
   let expanded = 0;
   while (open.data.length && expanded < maxExpanded) {
     const node = open.pop();
     if (node.depth > best.get(stateHash(node.state, level))) continue;
-    if (node.state.status === 'won') {
+    if (node.state.status === 'won' && (!requireStar || node.state.starCollected)) {
       const route = []; for (let p = node; p.parent; p = p.parent) route.push(p.action);
-      return { actions: route.reverse(), expanded };
+      return { actions: route.reverse(), expanded, exhausted: false };
     }
-    if (node.depth >= maxDepth) continue;
+    if (node.depth >= maxDepth || node.state.status !== 'playing') continue;
     expanded++;
     for (const action of actions) {
       const next = applyAction(node.state, action, level);
-      if (next === node.state || next.status === 'lost') continue;
-      const id = stateHash(next, level), depth = node.depth + 1;
-      if ((best.get(id) ?? Infinity) <= depth) continue;
-      best.set(id, depth);
+      if (next === node.state || next.status === 'lost' || (requireStar && next.status === 'won' && !next.starCollected)) continue;
+      const hash = stateHash(next, level), depth = node.depth + 1;
+      if ((best.get(hash) ?? Infinity) <= depth) continue;
+      best.set(hash, depth);
       open.push({ state: next, depth, parent: node, action, priority: depth + 3 * heuristic(next) - (next.status === 'won' ? 1000 : 0) });
     }
   }
-  return null;
+  return { actions: null, expanded, exhausted: !open.data.length };
+}
+export function solve(level, start = initialState(level), options = {}) {
+  const result = search(level, start, options); return result.actions ? result : null;
 }

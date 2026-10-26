@@ -1,121 +1,114 @@
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, plateActive, requirements, shadowPaths } from './engine.js';
-
-const C = 62, P = 35;
-const colors = { cyan: '#72e5d3', blue: '#74beff', red: '#ff7385', purple: '#bd89ff', gold: '#f1ca77' };
-const px = p => ({ x: P + (p.x + .5) * C, y: P + (p.y + .5) * C });
-const corner = p => ({ x: P + p.x * C, y: P + p.y * C });
-const line = (a, b, color, width, extra = '') => `<path d="M${a.x},${a.y}L${b.x},${b.y}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
-const centered = (p, content, before, seam = false) => {
-  const start = before && !same(p, before) && !seam ? px(before) : null, end = px(p);
-  return `<g transform="translate(${end.x} ${end.y})">${start ? `<animateTransform attributeName="transform" type="translate" from="${start.x} ${start.y}" to="${end.x} ${end.y}" dur=".15s"/>` : ''}${seam ? '<animate attributeName="opacity" values="0;1" dur=".3s"/>' : ''}${content}</g>`;
-};
-const edgeId = (a, b) => [key(a), key(b)].sort().join(':');
-
-function primalEdges(level, state) {
-  const edges = new Map();
-  for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
-    const a = { x, y };
-    for (const dir of directions) {
-      const b = neighbor(a, dir, level, state.topology);
-      if (b && primalOpen(level, state, a, b)) edges.set(edgeId(a, b), { a, b });
-    }
-  }
-  return edges;
+import { beaconPosition, disconnected, objectiveMet, shadowPaths } from './engine.js';
+import { pieceAt, ports } from './pieces.js';
+import { starPath } from './icons.js';
+export const CELL = 56, PADDING = 23;
+const center = p => ({ x: PADDING + (p.x + .5) * CELL, y: PADDING + (p.y + .5) * CELL });
+const corner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
+const palette = { ochre: ['#c9a368', '#80613e'], clay: ['#be846a', '#86523e'], sage: ['#92a485', '#5d735e'] };
+const line = (a, b, stroke, width = 2, extra = '') => `<path d="M${a.x} ${a.y}L${b.x} ${b.y}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
+export function pieceDrawing(piece, definition, previous = null) {
+  const [fill, stroke] = palette[definition.color] ?? palette.ochre;
+  const arms = ports({ ...piece, rotation: 0 }, definition).map(i => `M0 0L${directions[i].x * 25} ${directions[i].y * 25}`).join(' ');
+  const from = (previous?.rotation ?? piece.rotation) * 90;
+  const to = from + ((piece.rotation - (previous?.rotation ?? piece.rotation) + 4) % 4) * 90;
+  return `<g class="puzzle-art"><path d="M-22-22h15q0-7 7-7t7 7h15v15q-7 0-7 7t7 7v15H7q0-7-7-7t-7 7h-15V7q7 0 7-7t-7-7Z" fill="${fill}" stroke="${stroke}" stroke-width="1.5"/><g transform="rotate(${piece.rotation * 90})">${previous && from !== to ? `<animateTransform attributeName="transform" type="rotate" from="${from}" to="${to}" dur=".14s"/>` : ''}<path d="${arms}" fill="none" stroke="${stroke}" stroke-width="13" stroke-linecap="butt"/><path d="${arms}" fill="none" stroke="#f5e7c3" stroke-width="8" stroke-linecap="butt"/><circle r="4" fill="#f5e7c3"/></g><path d="M-17-16h4M15 15h3" stroke="${stroke}" opacity=".5" stroke-linecap="round"/></g>`;
 }
-
-function drawPrimalEdge(a, b, color, width, extra = '') {
-  if (Math.abs(a.x - b.x) <= 1) return line(px(a), px(b), color, width, extra);
+export function pieceIcon(piece, definition) {
+  return `<svg viewBox="-31 -32 62 64" aria-hidden="true">${pieceDrawing(piece, definition)}</svg>`;
+}
+function actor(p, contents, previous, cornerActor = false) {
+  const coordinates = cornerActor ? corner : center, c = coordinates(p);
+  const old = previous && coordinates(previous);
+  const wraps = previous && Math.abs(previous.x - p.x) > 1;
+  return `<g transform="translate(${c.x} ${c.y})">${old && !same(p, previous) && !wraps ? `<animateTransform attributeName="transform" type="translate" from="${old.x} ${old.y}" to="${c.x} ${c.y}" dur=".115s"/>` : ''}${wraps ? '<animate attributeName="opacity" values="0;1" dur=".18s"/>' : ''}${contents}</g>`;
+}
+function segment(a, b, level, coordinates, color, width, extra = '') {
+  if (Math.abs(a.x - b.x) <= 1) return line(coordinates(a), coordinates(b), color, width, extra);
   const left = a.x < b.x ? a : b, right = a.x > b.x ? a : b;
-  return line(px(left), { x: P - 10, y: px(left).y }, color, width, extra) + line(px(right), { x: px(right).x + C / 2 + 10, y: px(right).y }, color, width, extra);
+  return line(coordinates(right), { x: PADDING + level.width * CELL + 11, y: coordinates(right).y }, color, width, extra) + line({ x: PADDING - 11, y: coordinates(left).y }, coordinates(left), color, width, extra);
 }
-
-function dualSegment(a, b, level, state, color, width, extra = '') {
-  if (Math.abs(a.x - b.x) <= 1) return line(corner(a), corner(b), color, width, extra);
-  const left = a.x < b.x ? a : b, right = a.x > b.x ? a : b;
-  const out = { x: P + C * level.width, y: corner(right).y };
-  return line(corner(right), out, color, width, extra) + `<circle cx="${corner(left).x}" cy="${corner(left).y}" r="3" fill="${color}"/>`;
-}
-
-export function renderBoard(level, state, { view = 'primal', previewState = null, previous = null } = {}) {
-  const w = P * 2 + level.width * C, h = P * 2 + level.height * C;
-  const random = seededRandom(level.seed), centers = new Map();
-  for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) centers.set(`${x},${y}`, { x: (random() - .5) * 2, y: (random() - .5) * 2 });
-  const floorParts = [], edges = primalEdges(level, state), floorItems = [], wallParts = [], dualParts = [], actors = [], previews = [];
-  const shown = previewState ?? state, primalOpacity = view === 'dual' ? .25 : 1;
+export function renderBoard(level, state, { previous = null, selected = null, view = 'primal', previewState = null } = {}) {
+  const width = level.width * CELL + PADDING * 2, height = level.height * CELL + PADDING * 2;
+  const random = seededRandom(level.seed), ground = [], markings = [], overlay = [], actors = [];
+  const shown = previewState ?? state;
+  const borders = [];
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
-    const p = { x, y }, t = tile(level, p), c = px(p), jitter = centers.get(key(p)), on = active(level, p, state.scale);
+    const p = { x, y }, t = tile(level, p), c = center(p), variation = random();
     if (t === '#') {
-      wallParts.push(`<rect x="${c.x - 21}" y="${c.y - 21}" width="42" height="42" rx="7" fill="#0c131b" stroke="#192630" stroke-width=".7"/><path d="M${c.x - 4} ${c.y}h8M${c.x} ${c.y - 4}v8" stroke="#253542" stroke-width=".7"/>`);
+      const fill = variation < .35 ? '#b8b097' : variation < .7 ? '#c3bba3' : '#bdb59c';
+      ground.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#98927c"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#dbd3bb" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#7d8d6c" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
       continue;
     }
-    const changing = previewState && active(level, p, shown.scale) !== on;
-    floorParts.push(`<rect class="floor" x="${c.x - 24 + jitter.x}" y="${c.y - 24 + jitter.y}" width="48" height="48" rx="9" fill="${on ? '#1b2a35' : '#111e29'}" stroke="${changing ? (on ? '#ff7385' : '#72e5d3') : on ? '#30434e' : '#345268'}" stroke-width="${changing ? 1.8 : 1}" ${on ? '' : 'stroke-dasharray="3 4"'}/>`);
-    if (t === 'a' || t === 'b') floorItems.push(`<text x="${c.x}" y="${c.y + 18}" text-anchor="middle" fill="${on ? '#72e5d3' : '#48667b'}" font-size="8" font-family="monospace">r ≥ ${t === 'a' ? 2 : 3}</text>`);
-    if (t === 'K' && !state.hasKey) floorItems.push(centered(p, `<g stroke="${colors.gold}" fill="none" stroke-width="2.2"><circle cx="-5" cy="-3" r="5"/><path d="m-1 1 10 10m-4-4 3-3m-6 0 3-3"/></g>`));
-    if (t === 'D') floorItems.push(centered(p, `<rect x="-11" y="-9" width="22" height="20" rx="4" fill="${state.hasKey ? '#1d3b32' : '#3b3120'}" stroke="${state.hasKey ? '#63917a' : colors.gold}"/><path d="M-6-9v-4a6 6 0 0 1 12 0v${state.hasKey ? '-3' : '4'}" fill="none" stroke="${state.hasKey ? '#63917a' : colors.gold}" stroke-width="2"/><circle cy="1" r="2" fill="${state.hasKey ? '#63917a' : colors.gold}"/>`));
-    if (t === 'S') floorItems.push(centered(p, `<rect x="-18" y="-18" width="36" height="36" rx="5" fill="${plateActive(state, level) ? '#1e443d' : '#222635'}" stroke="${plateActive(state, level) ? colors.cyan : '#717a94'}" stroke-width="1.5"/><path d="M-11-11h22v22h-22Z" fill="none" stroke="#778193" stroke-width=".7"/>`));
-    if (t === 'T') floorItems.push(centered(p, `<path d="M0-15 15 0 0 15-15 0Z" fill="${state.sealActivated ? '#324b39' : '#302c28'}" stroke="${state.sealActivated ? colors.cyan : colors.gold}" stroke-width="1.5"/><path d="M-6-6h12M0-6V7" stroke="${state.sealActivated ? colors.cyan : colors.gold}" stroke-width="2"/>`));
+    const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
+    const piece = pieceAt(level, state, p), slot = level.slots.find(s => same(s, p));
+    if (slot && !piece) {
+      const highlighted = selected && level.pieces.find(d => d.id === selected)?.allowedSlots.includes(slot.id);
+      ground.push(`<g data-slot="${slot.id}" role="button" tabindex="0" aria-label="拼图空位 ${level.slots.indexOf(slot) + 1}" class="puzzle-slot ${highlighted ? 'slot-highlight' : ''}"><rect x="${c.x - 25}" y="${c.y - 25}" width="50" height="50" rx="4" fill="${highlighted ? '#f1da9b' : '#b4ac95'}" stroke="${highlighted ? '#876338' : '#8a8069'}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M${c.x - 9} ${c.y}h18M${c.x} ${c.y - 9}v18" stroke="#897f65" opacity=".55"/><text x="${c.x + 17}" y="${c.y + 19}" font-size="9" text-anchor="middle" fill="#6d654f">${['Ⅰ', 'Ⅱ', 'Ⅲ'][level.slots.indexOf(slot)]}</text></g>`);
+      continue;
+    }
+    const changed = previous && on !== oldOn;
+    ground.push(`<g opacity="${on ? 1 : .42}" class="floor">${changed ? `<animate attributeName="opacity" values="${on ? '0;1' : '1;.42'}" dur=".17s"/>` : ''}<rect x="${c.x - 26}" y="${c.y - 23}" width="52" height="52" rx="4" fill="#b5a789"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="50" rx="4" fill="${t === 'a' || t === 'b' ? '#d7d4ad' : '#ded1ad'}" stroke="${on ? '#c5b791' : '#8e9a78'}" stroke-width="1" ${on ? '' : 'stroke-dasharray="4 3"'}/></g>`);
+    if (!piece) {
+      const arms = directions.flatMap((d, i) => {
+        const q = neighbor(p, d, level, state.topology);
+        return q && primalOpen(level, state, p, q) ? [`M${c.x} ${c.y}l${d.x * 28} ${d.y * 28}`] : [];
+      }).join(' ');
+      ground.push(`<path d="${arms}" fill="none" stroke="#eee2c4" stroke-width="15" stroke-linejoin="round"/>`);
+    }
+    if (t === 'a' || t === 'b') markings.push(`<g fill="${on ? '#798462' : '#798867'}">${Array.from({ length: t === 'a' ? 2 : 3 }, (_, i) => `<rect x="${c.x - 9 + i * 7}" y="${c.y + 16}" width="4" height="3" rx="1"/>`).join('')}</g>`);
+    if (piece) {
+      const definition = level.pieces.find(d => d.id === piece.id), prior = previous?.pieces.find(d => d.id === piece.id);
+      markings.push(`<g transform="translate(${c.x} ${c.y})" data-slot="${slot.id}" data-map-piece="${piece.id}" role="button" tabindex="0" aria-label="旋转拼图 ${level.pieces.indexOf(definition) + 1}" class="placed-piece ${selected === piece.id ? 'selected-piece' : ''}"><rect x="-27" y="-29" width="54" height="56" rx="4" fill="transparent"/>${pieceDrawing(piece, definition, prior)}${selected === piece.id ? '<rect x="-27" y="-28" width="54" height="55" rx="5" fill="none" stroke="#685b3b" stroke-width="1.8" stroke-dasharray="3 3"/>' : ''}</g>`);
+    }
+    if (t === 'D') markings.push(actor(p, `<path d="M-20-19h40v38h-40Z" fill="${state.hasKey ? '#b0b28a' : '#8c775b'}" stroke="#66563f" stroke-width="2"/><path d="M-13-18v36M0-18v36M13-18v36" stroke="#d7bd89" stroke-width="2"/>${state.hasKey ? '<path d="M-10 0h20" stroke="#607758" stroke-width="3"/>' : '<rect x="-6" y="-5" width="12" height="13" rx="2" fill="#deb25d" stroke="#765c36"/><path d="M-4-5v-4a4 4 0 0 1 8 0v4" fill="none" stroke="#deb25d" stroke-width="2"/>'}`));
+    if (t === 'K' && !state.hasKey) markings.push(actor(p, '<g fill="none" stroke="#8c6234" stroke-width="3"><circle cx="-5" cy="-5" r="6" fill="#e9c475"/><path d="m-1-1 12 12m-5-5 4-4m-8 0 4-4"/></g>'));
     if (t === 'E') {
-      const ready = requirements(state, level).every(r => r.met), color = ready ? colors.cyan : '#527b70';
-      floorItems.push(centered(p, `<rect x="-16" y="-18" width="32" height="36" rx="6" fill="${ready ? '#21463e' : '#182f2d'}" stroke="${color}" stroke-width="1.5"/><path d="M-7 0H7M2-5l5 5-5 5" fill="none" stroke="${color}" stroke-width="2"/><text y="29" text-anchor="middle" fill="${color}" font-size="7" letter-spacing="1">EXIT</text>`));
+      const ready = level.levelObjectives.filter(o => o.type !== 'reachGoal').every(o => objectiveMet(o, state, level));
+      markings.push(actor(p, `<ellipse cy="9" rx="21" ry="13" fill="#a1b18a"/><path d="M-15 11V-6a15 15 0 0 1 30 0v17Z" fill="${ready ? '#6d8b6c' : '#a0a789'}" stroke="#53644a" stroke-width="2"/><path d="M-8 11V-5a8 8 0 0 1 16 0v16Z" fill="${ready ? '#ebdbaa' : '#c5c4a2'}"/>${ready ? '<path d="M-4 1h8m-3-3 3 3-3 3" fill="none" stroke="#7e966a" stroke-width="2"/>' : '<circle r="3" fill="#7c7e60"/>'}<path d="M-20 13h40" stroke="#5d7052" stroke-width="3" stroke-linecap="round"/>`));
     }
   }
-  for (const { a, b } of edges.values()) {
-    const bridge = level.bridges.find(e => edgeId(a, b) === edgeId({ x: e.from[0], y: e.from[1] }, { x: e.to[0], y: e.to[1] }));
-    edges.set(edgeId(a, b), { a, b });
-    floorParts.unshift(drawPrimalEdge(a, b, bridge ? '#345f5b' : '#263a46', bridge ? 12 : 11));
-    if (bridge) floorItems.push(drawPrimalEdge(a, b, colors.cyan, 2));
-  }
-  for (const bridge of level.bridges) if (state.scale < bridge.birth) {
-    const a = px({ x: bridge.from[0], y: bridge.from[1] }), b = px({ x: bridge.to[0], y: bridge.to[1] });
-    floorItems.push(line(a, b, '#9a7a4b', 2, 'stroke-dasharray="3 5"') + `<text x="${(a.x + b.x) / 2}" y="${a.y - 14}" font-family="monospace" font-size="8" text-anchor="middle" fill="#c9b07c">r ≥ ${bridge.birth}</text>`);
-  }
-  if (previewState) {
-    const future = primalEdges(level, shown);
-    for (const [id, { a, b }] of future) if (!edges.has(id)) previews.push(drawPrimalEdge(a, b, colors.cyan, 3, 'class="preview-edge"'));
-    for (const [id, { a, b }] of edges) if (!future.has(id)) previews.push(drawPrimalEdge(a, b, colors.red, 3, 'class="preview-edge"'));
+  if (!state.starCollected && Math.abs(state.player.x - level.star.x) + Math.abs(state.player.y - level.star.y) <= 3) {
+    markings.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
   }
   const { graph, crossings } = dualGraph(level, shown);
   if (view !== 'primal') {
-    for (const crossing of crossings) {
-      if (crossing.open) dualParts.push(dualSegment(crossing.u, crossing.v, level, shown, '#8159a4', 1.1, 'opacity=".48"'));
-      else {
-        const u = corner(crossing.u), v = corner(crossing.v);
-        if (Math.abs(u.x - v.x) < C * 1.5 && Math.abs(u.y - v.y) < C * 1.5) dualParts.push(`<circle cx="${(u.x + v.x) / 2}" cy="${(u.y + v.y) / 2}" r="2" fill="#72e5d3" opacity=".55"/>`);
-      }
-    }
-    for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), p = corner({ x, y }); dualParts.push(`<circle cx="${p.x}" cy="${p.y}" r="2" fill="#a27ec4" opacity=".6"/>`); }
+    for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#79637b', 1.3, 'opacity=".42"'));
+    for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="1.8" fill="#8d738d" opacity=".5"/>`); }
   }
-  const paths = shadowPaths(shown, level);
   if (state.shadows.length) {
-    for (const path of paths) if (path) for (let i = 1; i < path.length; i++) dualParts.push(dualSegment(path[i - 1], path[i], level, shown, colors.purple, 2, `class="shadow-route" opacity="${view === 'primal' ? .4 : .85}"`));
-    const beacon = corner(beaconPosition(shown, level));
-    dualParts.push(`<g transform="translate(${beacon.x} ${beacon.y})"><circle r="14" fill="#281b40" stroke="${colors.purple}" stroke-width="1"/><circle r="21" fill="none" stroke="${colors.purple}" opacity=".3" class="beacon-pulse"/><path d="M0-7 7 0 0 7-7 0Z" fill="none" stroke="${colors.purple}"/><text y="-26" text-anchor="middle" fill="#9874bd" font-size="7" letter-spacing="1">BEACON</text></g>`);
-    shown.shadows.forEach((p, index) => {
-      const c = corner(p), next = paths[index]?.[1];
-      if (next) { const q = corner(next); dualParts.push(`<path d="M${q.x} ${q.y - 8}l8 8-8 8-8-8Z" fill="none" stroke="${colors.purple}" opacity=".55" stroke-dasharray="2 3"/>`); }
-      actors.push(`<g transform="translate(${c.x} ${c.y})" class="actor-glow"><path d="M0-12 10 0 0 12-10 0Z" fill="${colors.purple}"/><path d="m-4-1 4 4 4-4" fill="none" stroke="#3e2255" stroke-width="2"/></g>`);
+    const paths = shadowPaths(shown, level);
+    paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#79607e', 2, 'stroke-dasharray="3 5" class="shadow-trail"')); });
+    const beacon = beaconPosition(shown, level);
+    overlay.push(actor(beacon, '<ellipse cy="13" rx="12" ry="4" fill="#6a586a" opacity=".18"/><path d="M-7 9V-5h14V9Z" fill="#b1a0a9" stroke="#655467" stroke-width="1.5"/><path d="M-10-6h20M-9 10H9M-3-9q3-5 6 0" fill="none" stroke="#655467" stroke-width="2"/><path d="M0 5c-5-3-2-7 0-10 3 4 5 7 0 10" fill="#eeddbb"/>', null, true));
+    shown.shadows.forEach((p, i) => {
+      const next = paths[i]?.[1];
+      if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" stroke-dasharray="2 3"/>`); }
+      actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
     });
   }
   const hunterGraph = primalGraph(level, shown);
   state.hunters.forEach((p, i) => {
     const next = shortestPath(hunterGraph, p, state.player)?.[1];
     if (next) {
-      const q = px(next);
-      floorItems.push(drawPrimalEdge(p, next, colors.red, 1, 'opacity=".4" stroke-dasharray="3 4"') + `<path d="M${q.x} ${q.y - 12}l12 12-12 12-12-12Z" fill="none" stroke="${colors.red}" opacity=".45" stroke-dasharray="3 3"/>`);
+      const c = center(next); overlay.push(segment(p, next, level, center, '#a1604d', 1.3, 'stroke-dasharray="2 4" opacity=".6"') + `<path d="M${c.x - 3} ${c.y + 4}l3-5 3 5" fill="none" stroke="#a1604d" opacity=".65"/>`);
     }
-    actors.push(centered(p, `<g class="actor-glow"><path d="M0-15 13-3 10 11 0 15-10 11-13-3Z" fill="#482735" stroke="${colors.red}" stroke-width="1.6"/><path d="m-7-3 4 3m10-3-4 3" stroke="${colors.red}" stroke-width="2"/><path d="M-4 6h8" stroke="#fa97a2"/></g>`, previous?.hunters[i], previous && Math.abs(previous.hunters[i].x - p.x) > 1));
+    actors.push(actor(p, '<ellipse cy="13" rx="19" ry="5" fill="#786048" opacity=".25"/><path d="m-17 4-2-12 8 5 3-10 7 7 7-8 3 11 10-4-2 13Z" fill="#97674f" stroke="#77513e" stroke-width="1.5"/><ellipse cy="4" rx="16" ry="11" fill="#bb8060" stroke="#77513e" stroke-width="1.4"/><path d="M-9 11v5M9 11v5" stroke="#77513e" stroke-width="3" stroke-linecap="round"/><circle cx="-6" cy="1" r="2" fill="#443c30"/><circle cx="6" cy="1" r="2" fill="#443c30"/><ellipse cy="7" rx="4" ry="3" fill="#d29a79"/>', previous?.hunters[i]));
   });
-  state.boxes.forEach((p, i) => floorItems.push(centered(p, '<rect x="-17" y="-17" width="34" height="34" rx="5" fill="#594734" stroke="#c3a17c" stroke-width="1.6"/><path d="M-11-11 11 11M11-11-11 11M-11-11h22v22h-22Z" fill="none" stroke="#9b7c5e" stroke-width="1.5"/>', previous?.boxes[i], previous && Math.abs(previous.boxes[i].x - p.x) > 1)));
-  actors.push(centered(state.player, `<circle r="18" fill="#74beff" opacity=".08"/><circle r="11" fill="#20405a" stroke="${colors.blue}" stroke-width="1.7" class="actor-glow"/><circle r="5.3" fill="${colors.blue}"/><path d="M-3-17h6" stroke="${colors.blue}" stroke-width="1.5"/>`, previous?.player, previous && Math.abs(previous.player.x - state.player.x) > 1));
-
-  const boundaries = [];
+  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><path d="M-11-5a11 11 0 0 1 22 0v5h-22Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.5"/><path d="M-7-3h14v5H-7Z" fill="#eedfbe"/><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.player));
   if (shown.topology !== 'plane') for (let y = 0; y < level.height; y++) {
-    const left = { x: 0, y }, right = { x: level.width - 1, y: shown.topology === 'mobius' ? level.height - 1 - y : y };
-    if (!primalOpen(level, shown, left, right)) continue;
-    const l = px(left), r = px(right), code = String.fromCharCode(65 + y);
-    boundaries.push(`<path d="M${P + 5} ${l.y - 15}Q${P - 20} ${l.y} ${P + 5} ${l.y + 15}M${w - P - 5} ${r.y - 15}Q${w - P + 20} ${r.y} ${w - P - 5} ${r.y + 15}" fill="none" stroke="#72e5d3" stroke-width="1.3" opacity=".65"/><text x="${P - 20}" y="${l.y + 3}" text-anchor="middle" class="boundary-label">${code}</text><text x="${w - P + 20}" y="${r.y + 3}" text-anchor="middle" class="boundary-label">${code}</text>`);
+    const a = { x: 0, y }, b = { x: level.width - 1, y: shown.topology === 'mobius' ? level.height - 1 - y : y };
+    if (!primalOpen(level, shown, a, b)) continue;
+    const l = center(a), r = center(b), label = String.fromCharCode(65 + y);
+    borders.push(`<g class="seam-port"><path d="M${PADDING - 3} ${l.y - 15}q-15 15 0 30M${width - PADDING + 3} ${r.y - 15}q15 15 0 30" fill="none" stroke="${shown.topology === 'mobius' ? '#a6746a' : '#728967'}" stroke-width="2"/><text x="${PADDING - 14}" y="${l.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text><text x="${width - PADDING + 14}" y="${r.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text></g>`);
   }
-  return `<svg viewBox="0 0 ${w} ${h}" role="img" aria-label="${level.subtitle}，玩家位置 ${state.player.x},${state.player.y}，尺度 ${state.scale}，${state.topology}，回合 ${state.turn}"><defs><filter id="actor-glow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="3" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="${P}" y="19" class="board-label">${previewState ? 'POSSIBLE WORLD / PREVIEW' : `SECTOR 0${level.id} / ${view.toUpperCase()}`}</text><g opacity="${view === 'dual' ? .65 : 1}">${wallParts.join('')}</g><g opacity="${primalOpacity}">${floorParts.join('')}${floorItems.join('')}</g>${dualParts.join('')}${previews.join('')}${boundaries.join('')}${actors.join('')}</svg>`;
+  if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
+    const a = { x, y };
+    for (const d of directions.slice(1, 3)) {
+      const b = neighbor(a, d, level, shown.topology); if (!b) continue;
+      const old = primalOpen(level, state, a, b), future = primalOpen(level, shown, a, b);
+      if (old !== future) overlay.push(segment(a, b, level, center, future ? '#648461' : '#ae6f56', 3, 'stroke-dasharray="4 4"'));
+    }
+  }
+  return `<svg viewBox="0 0 ${width} ${height}" role="${level.pieces.length ? 'group' : 'img'}" aria-label="第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，尺度 ${state.scale}，${state.topology}" style="--map-width:${width};--map-height:${height}"><g opacity="${view === 'dual' ? .45 : 1}">${ground.join('')}${markings.join('')}</g>${overlay.join('')}${borders.join('')}${actors.join('')}</svg>`;
 }

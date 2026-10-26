@@ -1,190 +1,304 @@
 import { levels, getLevel } from './levels.js';
-import { createSession, disconnected, preview, requirements, shadowPaths } from './engine.js';
-import { renderBoard } from './board.js';
-import { primalGraph, shortestPath } from './graphs.js';
+import { createSession, disconnected, preview, score } from './engine.js';
+import { slotAt } from './pieces.js';
+import { renderBoard, pieceIcon, CELL, PADDING } from './board.js';
+import { icon } from './icons.js';
+import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
+import { loadProgress, recordWin, saveProgress, unlockedLevel } from './progress.js';
 import { stateHash } from './solver.js';
-
 const $ = selector => document.querySelector(selector);
-const names = { plane: '平面', cylinder: '圆柱', mobius: '莫比乌斯' };
-const modeEnglish = { plane: 'PLANE', cylinder: 'CYLINDER', mobius: 'MÖBIUS' };
-const roman = ['I', 'II', 'III', 'IV', 'V'];
-const storageKey = 'seamshift.progress.v1';
-let progress = {};
-try { const saved = JSON.parse(localStorage.getItem(storageKey) || '{}'); if (saved && typeof saved === 'object' && !Array.isArray(saved)) progress = saved; } catch { /* A blocked storage permission never blocks play. */ }
-let level = levels[0], session = createSession(level), view = 'primal', previewState = null, previous = null;
-let worker = null, hintRequest = 0, hintPending = false;
-
-function persistWin() {
-  if (session.state.status !== 'won') return;
-  const prior = progress[level.id];
-  if (!Number.isInteger(prior) || session.state.turn < prior) progress[level.id] = session.state.turn;
-  try { localStorage.setItem(storageKey, JSON.stringify(progress)); } catch { /* Private browsing can disable writes. */ }
+const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转' };
+const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const storage = { getItem: name => localStorage.getItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
+let progress = loadProgress(storage, levels), level = getLevel(progress.currentLevel);
+let session = createSession(level, progress.snapshot), selected = null, view = 'primal', previewState = null;
+let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false;
+const actionQueue = createActionQueue(perform);
+const starsMarkup = count => [1, 2, 3].map(n => icon('star', `class="${n <= count ? 'lit' : ''}"`)).join('');
+function hydrateIcons() { document.querySelectorAll('[data-icon]').forEach(node => { node.innerHTML = icon(node.dataset.icon); }); }
+function toast(text = '', kind = '', duration = 2800) {
+  clearTimeout(toastTimer); $('#message').textContent = text; $('#message').className = `message ${kind}`;
+  if (text) toastTimer = setTimeout(() => $('#message').classList.add('faded'), duration);
 }
-function renderCampaign() {
-  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${level.id === l.id}" aria-label="第 ${l.id} 关 ${l.subtitle}${progress[l.id] ? '，已完成' : ''}"><span class="level-number">${roman[l.id - 1]}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-check">${progress[l.id] ? '✓' : '·'}</span></button>`).join('');
-  const count = levels.filter(l => Number.isInteger(progress[l.id])).length;
-  $('#progress-text').textContent = `${count} / 5`; $('#progress-bar').style.width = `${count * 20}%`;
-  $('#menu-levels').innerHTML = levels.map(l => `<button data-level="${l.id}" class="${progress[l.id] ? 'completed' : ''}" aria-label="开始第 ${l.id} 关：${l.subtitle}">${progress[l.id] ? '✓ ' : ''}0${l.id}</button>`).join('');
-  const next = levels.find(l => !Number.isInteger(progress[l.id])) ?? levels[0];
-  $('#start-button').innerHTML = `${count ? `继续探索 · 第 ${next.id} 关` : '开始探索'} <span>→</span>`;
-  $('#start-button').dataset.level = next.id;
+function persist() { progress.currentLevel = level.id; progress.snapshot = session.snapshot(); saveProgress(storage, progress); }
+function renderMap(previous = null) {
+  $('#board').innerHTML = renderBoard(level, session.state, { selected, view, previewState, previous: reduceMotion ? null : previous });
+  $('#view-button').setAttribute('aria-pressed', String(view !== 'primal'));
+}
+function renderTray() {
+  $('#puzzle-tray').hidden = !level.pieces.length;
+  $('#pieces').innerHTML = session.state.pieces.map((piece, i) => {
+    const definition = level.pieces.find(p => p.id === piece.id);
+    return `<button class="piece-button ${piece.slot ? 'placed' : ''}" data-piece="${piece.id}" aria-pressed="${piece.id === selected}" aria-label="${shapeNames[definition.shape]}碎片 ${i + 1}${piece.slot ? '，已放置' : '，选择后点击空位'}" title="${piece.id === selected ? '再点旋转' : '选择碎片'}">${pieceIcon(piece, definition)}<small>${['Ⅰ', 'Ⅱ', 'Ⅲ'][i]}</small></button>`;
+  }).join('');
+  const piece = session.state.pieces.find(p => p.id === selected);
+  $('#rotate-button').disabled = !piece || session.state.status !== 'playing';
+  $('#remove-button').disabled = !piece?.slot || session.state.status !== 'playing';
 }
 function renderControls() {
   const state = session.state;
-  $('#scale-controls').innerHTML = [1, 2, 3].map(value => `<button data-scale="${value}" data-preview="scale" aria-label="选择尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${value}<small>r = ${value}</small></button>`).join('');
-  $('#topology-controls').innerHTML = ['plane', 'cylinder', 'mobius'].map((value, i) => `<button data-topology="${value}" data-preview="topology" aria-label="切换到${names[value]}" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}><span class="mode-icon" aria-hidden="true">${['▱', '▥', '∞'][i]}</span><span class="mode-name">${names[value]}</span><small>${modeEnglish[value]}</small></button>`).join('');
-  const conditions = requirements(state, level);
-  $('#objective-count').textContent = `${conditions.filter(r => r.met).length} / ${conditions.length}`;
-  $('#objectives').innerHTML = conditions.map(r => `<li class="${r.met ? 'met' : ''}">${r.label}</li>`).join('');
-  $('#seal-requirements').innerHTML = level.seal ? `<div class="seal-objectives"><p>${state.sealActivated ? '✓ 封印已永久激活' : '封印台激活条件 · 站在 T 按 F'}</p>${state.sealActivated ? '' : `<ul>${requirements(state, level, level.seal).map(r => `<li class="${r.met ? 'met' : ''}">${r.label}</li>`).join('')}</ul>`}</div>` : '';
-  $('#undo-button').disabled = !session.undoCount;
-  $('#interact-button').hidden = !level.seal;
-  $('#interact-button').disabled = state.status !== 'playing' || state.sealActivated;
-  $('#wait-button').disabled = state.status !== 'playing';
-  $('#hint-button').disabled = state.status !== 'playing' || hintPending;
-}
-function renderEnemies() {
-  const state = session.state, lines = [];
-  if (state.hunters.length) {
-    const paths = state.hunters.map(p => shortestPath(primalGraph(level, state), p, state.player));
-    const distance = Math.min(...paths.map(p => p ? p.length - 1 : Infinity));
-    lines.push(`<div class="enemy-line"><strong>◆ 猎手</strong><span>${level.hunterSpeed - state.turn % level.hunterSpeed} 回合后行动</span></div><div class="enemy-line"><span>距你</span><span>${Number.isFinite(distance) ? `${distance} 步` : '当前不连通'}</span></div>`);
-  }
-  if (state.shadows.length) {
-    const paths = shadowPaths(state, level), blocked = paths.every(p => !p);
-    lines.push(`<div class="enemy-line shadow"><strong>◇ 暗影</strong><span>${level.shadowSpeed - state.turn % level.shadowSpeed} 回合后行动</span></div><div class="enemy-line ${blocked ? 'disconnected' : ''}"><span>${blocked ? '路径已隔断' : '距信标'}</span><span>${blocked ? 'DISCONNECTED' : `${Math.min(...paths.filter(Boolean).map(p => p.length - 1))} 步`}</span></div>`);
-  }
-  $('#enemy-panel').hidden = !lines.length; $('#enemy-info').innerHTML = lines.join('');
-}
-function renderMap() {
-  $('#board').innerHTML = renderBoard(level, session.state, { view, previewState, previous });
-  $('#coordinates').textContent = `POSITION ${String(session.state.player.x).padStart(2, '0')} : ${String(session.state.player.y).padStart(2, '0')}`;
-  $('#world-label').textContent = `${modeEnglish[previewState?.topology ?? session.state.topology]} WORLD`;
-  $('#board-status').className = previewState ? 'previewing' : '';
-  $('#board-status').textContent = previewState ? `PREVIEW / r = ${previewState.scale}` : session.state.status === 'won' ? 'RECONSTRUCTION COMPLETE' : session.state.shadows.length && disconnected(session.state, level) ? 'SHADOW DISCONNECTED' : 'SPACE IS STABLE';
-}
-function message(text, kind = '') {
-  $('#message').textContent = text; $('#message').className = `message ${kind}`;
+  $('#scale-buttons').innerHTML = [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${value}</button>`).join('');
+  $('#mode-buttons').innerHTML = ['plane', 'cylinder', 'mobius'].map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join('');
+  $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
 function render() {
   const state = session.state;
-  $('#chapter-label').textContent = `CHAPTER 0${level.id} / 05 — ${['SCALE', 'IDENTIFICATION', 'ORIENTATION', 'DUALITY', 'PARADOX'][level.id - 1]}`;
-  $('#level-title').innerHTML = `${level.title}<small>${level.subtitle}</small>`;
-  $('#lesson').textContent = level.lesson; $('#level-concept').textContent = level.concept;
-  $('#turn').textContent = String(state.turn).padStart(2, '0');
-  $('#best-score').textContent = `BEST ${progress[level.id] ?? '—'}`;
-  renderCampaign(); renderControls(); renderEnemies(); renderMap();
-  document.querySelectorAll('[data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
-  message(state.events.join(' '));
-  previous = null;
+  $('#game').className = `game world-${state.topology}`;
+  $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `0${level.id} / 05`;
+  $('#moves').textContent = `${state.turn} 步`; $('#par').textContent = `推荐 ${level.par} 步`;
+  $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
+  $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id]?.stars || 0} 星`);
+  $('#held-star').classList.toggle('collected', state.starCollected);
+  $('#held-star').setAttribute('aria-label', state.starCollected ? '已收集可选星片' : '尚未收集可选星片');
+  $('#current-goal').textContent = level.goalText; $('#lost-overlay').hidden = state.status !== 'lost';
+  renderControls(); renderMap();
+}
+function teachOnce() {
+  const id = `lesson-${level.id}`;
+  if (!progress.seenTips.includes(id)) { progress.seenTips.push(id); saveProgress(storage, progress); toast(level.lesson, '', 3100); }
+  else toast();
+}
+function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
+function checkDiscoveries(before, action) {
+  const state = session.state;
+  if (action.type === 'scale') discover('scale');
+  if (['place', 'rotate'].includes(action.type)) discover('pieces');
+  if (Math.abs(before.player.x - state.player.x) > 1) discover(state.topology);
+  if (state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
+}
+function flashInvalid(text) {
+  toast(text, 'error'); const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
+  setTimeout(() => board.classList.remove('invalid'), 180);
+}
+function burst(position, color = '#c49b51') {
+  if (reduceMotion) return;
+  const svg = $('#board svg'), matrix = svg?.getScreenCTM(); if (!matrix) return;
+  const point = svg.createSVGPoint(); point.x = PADDING + (position.x + .5) * CELL; point.y = PADDING + (position.y + .5) * CELL;
+  const screen = point.matrixTransform(matrix), bounds = $('#arena').getBoundingClientRect();
+  $('#particles').innerHTML = Array.from({ length: 10 }, (_, i) => `<i class="particle" style="left:${screen.x - bounds.left}px;top:${screen.y - bounds.top}px;background:${color};--dx:${Math.cos(i * Math.PI / 5) * 42}px;--dy:${Math.sin(i * Math.PI / 5) * 35}px"></i>`).join('');
+}
+function perform(action) {
+  if (session.state.status !== 'playing' || document.querySelector('dialog[open]') || advancing) return;
+  const before = session.state, result = session.act(action); previewState = null; hintRequest++;
+  if (!result.valid) { flashInvalid(result.message); return; }
+  checkDiscoveries(before, action); renderControls(); renderMap(before);
+  $('#game').className = `game world-${session.state.topology}`; $('#moves').textContent = `${session.state.turn} 步`;
+  $('#held-star').classList.toggle('collected', session.state.starCollected);
+  $('#held-star').setAttribute('aria-label', session.state.starCollected ? '已收集可选星片' : '尚未收集可选星片');
+  if (action.type === 'place') burst(level.slots.find(s => s.id === action.slotId), '#a18e5d');
+  if (!before.starCollected && session.state.starCollected) burst(level.star);
+  if (action.type === 'topology') { $('#arena').classList.remove('world-change'); void $('#arena').offsetWidth; $('#arena').classList.add('world-change'); }
+  if (session.state.status === 'won') { finishLevel(); return; }
+  persist();
+  if (session.state.status === 'lost') { actionQueue.clear(); $('#lost-overlay').hidden = false; toast('没关系，撤销一步就好。', 'error'); }
+  else if (result.message) toast(result.message);
+  else if (level.hunterSpeed && (session.state.turn + 1) % level.hunterSpeed === 0) toast('小兽下一回合会移动。');
+}
+function finishLevel() {
+  actionQueue.clear(); advancing = true; const count = score(session.state, level);
+  progress = recordWin(progress, level.id, count, session.state.turn); saveProgress(storage, progress);
+  $('#best-stars').innerHTML = starsMarkup(progress.results[level.id].stars);
+  $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id].stars} 星`);
+  $('#clear-title').textContent = level.id === 5 ? '最后一条路，也接上了。' : '找到路了。';
+  $('#clear-stars').innerHTML = [1, 2, 3].map(n => icon('star', `class="${n <= count ? 'earned' : ''}"`)).join('');
+  $('#clear-stars').setAttribute('aria-label', `获得 ${count} 星`);
+  $('#clear-score').textContent = `${session.state.turn} 步 · 最佳 ${progress.results[level.id].bestTurns} 步`;
+  $('#clear-overlay').hidden = false; toast(); advanceTimer = setTimeout(advance, reduceMotion ? 900 : 1850);
+}
+function advance() {
+  if (!advancing) return;
+  clearTimeout(advanceTimer); advancing = false; $('#clear-overlay').hidden = true;
+  if (level.id < 5) chooseLevel(level.id + 1);
+  else { persist(); $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((sum, r) => sum + r.stars, 0)} / 15 颗星。`; $('#ending-dialog').showModal(); render(); }
 }
 function closeDialogs() { document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close()); }
 function chooseLevel(id) {
-  level = getLevel(Number(id)) ?? levels[0]; session = createSession(level);
-  previewState = null; previous = null; hintRequest++; hintPending = false;
-  view = level.shadow ? 'combined' : 'primal'; closeDialogs(); render();
+  const chosen = getLevel(id); if (!chosen || chosen.id > unlockedLevel(progress)) return false;
+  clearTimeout(advanceTimer); advancing = false; actionQueue.clear(); closeDialogs(); $('#clear-overlay').hidden = true;
+  level = chosen; session = createSession(level); selected = null; view = 'primal'; previewState = null; hintCount = 0; hintRequest++;
+  render(); persist(); teachOnce(); $('#board').focus({ preventScroll: true }); return true;
+}
+function undo() {
+  clearTimeout(advanceTimer); advancing = false; actionQueue.clear(); closeDialogs(); $('#clear-overlay').hidden = true;
+  if (session.undo()) { previewState = null; hintRequest++; render(); persist(); toast('回到上一步。'); }
   $('#board').focus({ preventScroll: true });
 }
-function showMenu() { closeDialogs(); renderCampaign(); $('#menu-dialog').showModal(); }
-function showResult() {
-  const state = session.state, won = state.status === 'won';
-  $('#result-eyebrow').textContent = won ? `SECTOR 0${level.id} / COMPLETE` : 'A DIFFERENT PATH IS POSSIBLE';
-  $('#result-symbol').textContent = won ? '◇' : '↶'; $('#result-symbol').style.color = won ? '#72e5d3' : '#ff7385';
-  $('#result-title').textContent = won ? level.id === 5 ? '重构完成。' : '空间已接通。' : '这条路没有出口。';
-  $('#result-description').textContent = won ? `用 ${state.turn} 个回合完成「${level.subtitle}」。${level.id === 5 ? '你已完成全部五关。' : '下一段空间，有新的规则。'}` : `${state.events.at(-1)} 撤销可以完整回到上一回合。`;
-  $('#result-actions').innerHTML = won ? `<button class="primary-button" data-result="${level.id < 5 ? 'next' : 'menu'}">${level.id < 5 ? '进入下一关' : '返回章节选择'} →</button><button data-result="undo">撤销最后一步</button><button data-result="restart">再试一次</button>` : '<button class="primary-button" data-result="undo">撤销一步，继续探索 ↶</button><button data-result="restart">重开这一关</button>';
-  $('#result-dialog').showModal();
+function restart() {
+  clearTimeout(advanceTimer); advancing = false; actionQueue.clear(); closeDialogs(); $('#clear-overlay').hidden = true;
+  session.restart(); selected = null; previewState = null; hintRequest++; render(); persist(); toast('再走一次，路还在。'); $('#board').focus({ preventScroll: true });
 }
-function act(action) {
-  if (document.querySelector('dialog[open]')) return;
-  const before = session.state, result = session.act(action);
-  hintRequest++; hintPending = false; previewState = null;
-  if (!result.valid) { renderControls(); message(result.message, 'error'); return; }
-  previous = before; persistWin(); render();
-  if (session.state.status !== 'playing') showResult();
+function renderLevels() {
+  const unlocked = unlockedLevel(progress);
+  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
-function undo() { closeDialogs(); hintRequest++; hintPending = false; previewState = null; previous = null; if (session.undo()) { render(); message('已完整恢复上一回合。'); } $('#board').focus({ preventScroll: true }); }
-function restart() { closeDialogs(); session.restart(); hintRequest++; hintPending = false; previewState = null; previous = null; render(); $('#board').focus({ preventScroll: true }); }
-function cycleView() { view = ['primal', 'dual', 'combined'][(['primal', 'dual', 'combined'].indexOf(view) + 1) % 3]; renderMap(); document.querySelectorAll('[data-view]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === view))); }
-function cycleTopology() { const modes = level.modes; if (modes.length === 1) { message('本关的边界固定为平面。', 'error'); return; } act({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
-function previewAction(button) {
-  if (!button || button.disabled || session.state.status !== 'playing') return;
-  const action = button.dataset.preview === 'scale' ? { type: 'scale', value: Number(button.dataset.scale) } : { type: 'topology', value: button.dataset.topology };
-  previewState = preview(session.state, action, level);
-  renderMap();
-  if (!previewState) { message('无法缩小：角色或箱子仍在即将消失的地板上。', 'error'); return; }
-  const paths = shadowPaths(previewState, level), blocked = paths.length && paths.every(p => !p);
-  const extra = paths.length ? blocked ? ' · 暗影路径将被隔断' : ` · 暗影距信标 ${Math.min(...paths.filter(Boolean).map(p => p.length - 1))} 步` : '';
-  const hunterThreat = previewState.hunters.some(p => shortestPath(primalGraph(level, previewState), p, previewState.player)?.length <= 2);
-  message(`预览：尺度 ${previewState.scale} · ${names[previewState.topology]}${extra}${hunterThreat ? ' · 注意：猎手在相邻位置' : ''}。青色新增，红色关闭；预览不消耗回合。`, 'hint');
+const discoveries = {
+  scale: ['会生长的路', '有的道路要到更大的尺度才出现。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
+  cylinder: ['边界之外，还是这里', '环绕空间把左右同一行接在一起，像把纸卷成圆柱。你能过去，小兽也能。'],
+  mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
+  pieces: ['道路也可以拼起来', '碎片的方向决定四边的接口。相邻接口都打开，路才接通。旋转与放置改变的是真实网络，也会改变怪物的路。'],
+  duality: ['我的路，是你的墙', '影子走在格子角点之间。它的每条路都穿过你的一条路：一条打开，另一条关闭。这就是原始图与对偶图的互补。'],
+};
+function showDialog(id) {
+  if (advancing) return;
+  actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
+  if (id === 'levels-dialog') renderLevels();
+  if (id === 'discoveries-dialog') {
+    $('#discovery-dot').hidden = true;
+    $('#discovery-cards').innerHTML = Object.entries(discoveries).map(([key, [title, description]]) => `<article class="discovery-card ${progress.discoveries.includes(key) ? '' : 'locked'}"><h3>${progress.discoveries.includes(key) ? title : '尚未发现'}</h3><p>${progress.discoveries.includes(key) ? description : '继续走一走，世界会告诉你。'}</p></article>`).join('');
+  }
+  $(`#${id}`).showModal();
 }
-function clearPreview() { if (!previewState) return; previewState = null; renderMap(); message(session.state.events.join(' ')); }
-const actionLabel = action => ({ move: `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}移动`, scale: `切换到尺度 ${action.value}`, topology: `切换到${names[action.value]}`, interact: '按 F 激活封印', wait: '等待一回合' })[action.type];
-async function requestHint() {
-  if (session.state.status !== 'playing' || hintPending) return;
-  hintPending = true; const request = ++hintRequest, signature = stateHash(session.state, level), levelId = level.id;
-  renderControls(); message('正在搜索当前局面的合法通关路线…', 'hint');
+function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
+function cycleView() { view = ['primal', 'combined', 'dual'][(['primal', 'combined', 'dual'].indexOf(view) + 1) % 3]; renderMap(); }
+function cycleTopology() { const modes = level.modes; if (modes.length > 1) actionQueue.push({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
+function actionLabel(action) {
+  if (action.type === 'move') return `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}走一步`;
+  if (action.type === 'scale') return `把尺度改为 ${action.value}`;
+  if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
+  if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
+  if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进同纹样空位`;
+  if (action.type === 'remove') return '收回这块碎片再试试';
+  return '等一回合，看看小兽的下一步';
+}
+function hint() {
+  if (session.state.status !== 'playing' || advancing) return;
+  hintCount++;
+  const tell = text => { toast(text, 'hint', 5500); $('#help-hint').textContent = text; };
+  if (hintCount <= 2) { tell(level.hints[hintCount - 1]); return; }
+  const request = ++hintRequest, signature = stateHash(session.state, level), id = level.id;
+  tell('让我看看，这一步可以怎么走…');
   const finish = action => {
-    if (request !== hintRequest || level.id !== levelId || signature !== stateHash(session.state, level)) return;
-    hintPending = false; renderControls();
-    message(action ? `建议下一步：${actionLabel(action)}。这条提示来自当前局面的实际求解。` : '搜索范围内未找到解。试试撤销箱子或空间操作，再重新提示。', action ? 'hint' : 'error');
+    if (request !== hintRequest || level.id !== id || signature !== stateHash(session.state, level)) return;
+    tell(action ? `下一步可以${actionLabel(action)}。` : '当前搜索没找到出口；试着收回碎片，或撤销几步。');
   };
   try {
-    if (!worker) worker = new Worker(new URL('./hint-worker.js', import.meta.url), { type: 'module' });
+    worker ||= new Worker(new URL('./hint-worker.js', import.meta.url), { type: 'module' });
     worker.onmessage = ({ data }) => { if (data.request === request) finish(data.action); };
     worker.onerror = () => { worker?.terminate(); worker = null; finish(null); };
-    worker.postMessage({ request, state: session.state, levelId });
+    worker.postMessage({ request, state: session.state, levelId: id });
   } catch {
-    const { solve } = await import('./solver.js');
-    setTimeout(() => finish(solve(level, session.state, { maxDepth: 70, maxExpanded: 15000 })?.actions[0]), 20);
+    import('./solver.js').then(({ solve }) => setTimeout(() => finish(solve(level, session.state, { maxDepth: 60, maxExpanded: 12000 })?.actions[0]), 0));
   }
 }
-
+function clearGesture() {
+  if (gesture) { try { $('#game').releasePointerCapture(gesture.id); } catch {} }
+  gesture = null; $('#drag-ghost').hidden = true;
+}
+function inside(bounds, x, y) { return x >= bounds.left && x <= bounds.right && y >= bounds.top && y <= bounds.bottom; }
+document.addEventListener('pointerdown', event => {
+  if (!event.isPrimary) { clearGesture(); return; }
+  if (event.button !== 0 || document.querySelector('dialog[open]') || advancing || session.state.status !== 'playing') return;
+  const source = event.target.closest('[data-piece],[data-map-piece]'), inBoard = event.target.closest('#board');
+  if (!source && !inBoard) return;
+  event.preventDefault();
+  const pieceId = source?.dataset.piece || source?.dataset.mapPiece;
+  gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, pieceId, placed: !!source?.dataset.mapPiece, selectedBefore: selected, dragged: false };
+  $('#game').setPointerCapture(event.pointerId);
+  if (pieceId) selectPiece(pieceId); else $('#board').focus({ preventScroll: true });
+});
+document.addEventListener('pointermove', event => {
+  if (!gesture || event.pointerId !== gesture.id) return;
+  if (gesture.pieceId && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 9) {
+    gesture.dragged = true;
+    const piece = session.state.pieces.find(p => p.id === gesture.pieceId), definition = level.pieces.find(p => p.id === gesture.pieceId);
+    $('#drag-ghost').innerHTML = pieceIcon(piece, definition); $('#drag-ghost').hidden = false;
+    $('#drag-ghost').style.left = `${event.clientX}px`; $('#drag-ghost').style.top = `${event.clientY}px`;
+  }
+});
+document.addEventListener('pointerup', event => {
+  clearTimeout(longPressTimer);
+  if (!gesture || event.pointerId !== gesture.id) return;
+  const g = gesture; clearGesture(); ignorePieceClickUntil = performance.now() + 400;
+  if (g.pieceId) {
+    if (g.dragged) {
+      const svg = $('#board svg'), p = svg && cellFromClient(svg, event.clientX, event.clientY, CELL, PADDING), slot = p && slotAt(level, p);
+      if (slot) actionQueue.push({ type: 'place', pieceId: g.pieceId, slotId: slot.id });
+      else if (inside($('#puzzle-tray').getBoundingClientRect(), event.clientX, event.clientY)) actionQueue.push({ type: 'remove', pieceId: g.pieceId });
+      else flashInvalid('拖到同纹样空位，或放回碎片栏。');
+    } else if (g.placed || g.selectedBefore === g.pieceId) actionQueue.push({ type: 'rotate', pieceId: g.pieceId });
+    else toast('点同纹样的空位放下；再点碎片旋转。');
+  } else {
+    const direction = swipeDirection({ x: g.x, y: g.y }, { x: event.clientX, y: event.clientY });
+    if (direction) actionQueue.push({ type: 'move', direction });
+    else {
+      const svg = $('#board svg'), p = svg && cellFromClient(svg, event.clientX, event.clientY, CELL, PADDING), slot = p && slotAt(level, p);
+      if (slot && selected) actionQueue.push({ type: 'place', pieceId: selected, slotId: slot.id });
+      else if (slot) toast('先从下方选一块碎片。');
+    }
+  }
+});
+document.addEventListener('pointercancel', () => { clearTimeout(longPressTimer); clearGesture(); });
+$('#hint-button').addEventListener('pointerdown', () => { suppressHintClick = false; longPressTimer = setTimeout(() => { suppressHintClick = true; showDialog('help-dialog'); }, 500); });
+$('#hint-button').addEventListener('pointerleave', () => clearTimeout(longPressTimer));
 document.addEventListener('click', event => {
-  const button = event.target.closest('button, a'); if (!button) return;
+  if (event.target.closest('#clear-overlay')) { advance(); return; }
+  const button = event.target.closest('button'); if (!button || button.disabled) return;
+  if (button.hasAttribute('data-close')) { closeDialogs(); $('#board').focus({ preventScroll: true }); return; }
   if (button.dataset.level) { chooseLevel(button.dataset.level); return; }
-  if (button.dataset.direction) { act({ type: 'move', direction: button.dataset.direction }); return; }
-  if (button.dataset.scale) { act({ type: 'scale', value: Number(button.dataset.scale) }); return; }
-  if (button.dataset.topology) { act({ type: 'topology', value: button.dataset.topology }); return; }
-  if (button.dataset.view) { view = button.dataset.view; render(); return; }
-  if (button.dataset.result) {
-    const action = button.dataset.result;
-    if (action === 'next') chooseLevel(level.id + 1); else if (action === 'menu') showMenu(); else if (action === 'undo') undo(); else restart();
+  if (button.dataset.piece) {
+    if (performance.now() < ignorePieceClickUntil) return;
+    if (selected === button.dataset.piece) actionQueue.push({ type: 'rotate', pieceId: selected }); else selectPiece(button.dataset.piece);
     return;
   }
-  if (button.id === 'menu-button' || button.id === 'back-menu') { event.preventDefault(); showMenu(); }
-  else if (button.id === 'undo-button') undo();
-  else if (button.id === 'restart-button') restart();
-  else if (button.id === 'hint-button') requestHint();
-  else if (button.id === 'wait-button') act({ type: 'wait' });
-  else if (button.id === 'interact-button') act({ type: 'interact' });
-  else if (button.id === 'help-button') { closeDialogs(); $('#help-dialog').showModal(); }
-  else if (button.id === 'close-help') { $('#help-dialog').close(); $('#board').focus({ preventScroll: true }); }
+  if (button.dataset.direction) { actionQueue.push({ type: 'move', direction: button.dataset.direction }); return; }
+  if (button.dataset.scale) { actionQueue.push({ type: 'scale', value: Number(button.dataset.scale) }); return; }
+  if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
+  const actions = {
+    'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
+    'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
+    'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
+    'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; }, 'help-hint-button': hint,
+    'wait-button': () => actionQueue.push({ type: 'wait' }),
+    'rotate-button': () => selected && actionQueue.push({ type: 'rotate', pieceId: selected }),
+    'remove-button': () => selected && actionQueue.push({ type: 'remove', pieceId: selected }),
+    'ending-levels': () => showDialog('levels-dialog'), 'ending-replay': () => chooseLevel(5),
+  };
+  actions[button.id]?.();
 });
-document.addEventListener('pointerover', event => { const button = event.target.closest('[data-preview]'); if (button && !button.contains(event.relatedTarget)) previewAction(button); });
-document.addEventListener('pointerout', event => { const button = event.target.closest('[data-preview]'); if (button && !button.contains(event.relatedTarget)) clearPreview(); });
-document.addEventListener('focusin', event => { if (event.target.matches('[data-preview]')) previewAction(event.target); });
-document.addEventListener('focusout', event => { if (event.target.matches('[data-preview]')) clearPreview(); });
+function showPreview(button) {
+  if (!button || button.disabled || session.state.status !== 'playing' || advancing) return;
+  const action = button.dataset.scale ? { type: 'scale', value: Number(button.dataset.scale) } : { type: 'topology', value: button.dataset.topology };
+  previewState = preview(session.state, action, level); renderMap();
+}
+document.addEventListener('pointerover', event => {
+  if (event.pointerType !== 'mouse') return;
+  const button = event.target.closest('[data-scale],[data-topology]'); if (button && !button.contains(event.relatedTarget)) showPreview(button);
+});
+document.addEventListener('pointerout', event => {
+  if (event.pointerType !== 'mouse') return;
+  const button = event.target.closest('[data-scale],[data-topology]');
+  if (button && !button.contains(event.relatedTarget) && previewState) { previewState = null; renderMap(); }
+});
+let lastKey = 0;
 document.addEventListener('keydown', event => {
-  if (event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
-  if (document.querySelector('dialog[open]')) return;
+  if (event.ctrlKey || event.metaKey || event.altKey || document.querySelector('dialog[open]')) return;
   const key = event.key.toLowerCase();
+  if (advancing) { if (['enter', ' '].includes(key)) { event.preventDefault(); advance(); } return; }
+  if (event.target.matches('[data-map-piece],[data-slot]') && ['enter', ' '].includes(key)) {
+    event.preventDefault(); const pieceId = event.target.dataset.mapPiece;
+    if (pieceId) { selected = pieceId; actionQueue.push({ type: 'rotate', pieceId }); }
+    else if (selected) actionQueue.push({ type: 'place', pieceId: selected, slotId: event.target.dataset.slot });
+    return;
+  }
+  if (event.target.closest('button,a') && ['enter', ' ', 'tab'].includes(key)) return;
+  if (event.repeat && (performance.now() - lastKey < 75 || !['arrowup', 'arrowdown', 'arrowleft', 'arrowright', 'w', 'a', 's', 'd'].includes(key))) return;
+  lastKey = performance.now();
   const movement = { arrowup: 'up', w: 'up', arrowright: 'right', d: 'right', arrowdown: 'down', s: 'down', arrowleft: 'left', a: 'left' };
-  // Preserve normal keyboard navigation when a native control has focus.
-  if (['button', 'summary', 'a'].includes(event.target.tagName.toLowerCase()) && [' ', 'enter', 'tab'].includes(key)) return;
-  if (movement[key]) { event.preventDefault(); act({ type: 'move', direction: movement[key] }); }
-  else if (['1', '2', '3'].includes(key)) { event.preventDefault(); act({ type: 'scale', value: Number(key) }); }
+  if (movement[key]) { event.preventDefault(); actionQueue.push({ type: 'move', direction: movement[key] }); }
+  else if (['1', '2', '3'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
   else if (key === 't') { event.preventDefault(); cycleTopology(); }
-  else if (key === 'f') { event.preventDefault(); act({ type: 'interact' }); }
-  else if (key === ' ') { event.preventDefault(); act({ type: 'wait' }); }
-  else if (key === 'tab') { event.preventDefault(); cycleView(); }
+  else if (key === ' ') { event.preventDefault(); actionQueue.push({ type: 'wait' }); }
   else if (key === 'z') { event.preventDefault(); undo(); }
   else if (key === 'r') { event.preventDefault(); restart(); }
-  else if (key === 'h') { event.preventDefault(); requestHint(); }
-  else if (key === 'escape') { event.preventDefault(); showMenu(); }
-  else if (key === '?') { event.preventDefault(); $('#help-dialog').showModal(); }
+  else if (key === 'h') { event.preventDefault(); hint(); }
+  else if (key === 'tab' && (event.target.id === 'board' || event.target === document.body)) { event.preventDefault(); cycleView(); }
+  else if (key === 'escape') showDialog('levels-dialog');
+  else if (key === '?') showDialog('help-dialog');
 });
-// Prevent an Escape from closing the only usable result controls accidentally.
-$('#result-dialog').addEventListener('cancel', event => { event.preventDefault(); undo(); });
-render();
-$('#menu-dialog').showModal();
+window.addEventListener('pagehide', () => { if (!advancing) persist(); });
+hydrateIcons(); render();
+if (session.state.status === 'won' && level.id === 5) {
+  $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / 15 颗星。`;
+  $('#ending-dialog').showModal();
+} else { persist(); teachOnce(); }
