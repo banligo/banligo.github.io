@@ -194,6 +194,7 @@ collections:
 exclude:
   - .private
   - tools
+  - dist
   - CHANGELOG.md
   - HOW_TO_RELEASE.md
   - Gemfile

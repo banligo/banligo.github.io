@@ -1,0 +1,12 @@
+{
+  "name": "logsite-seamshift",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node tools/seamshift/dev-server.mjs",
+    "build": "node tools/seamshift/build.mjs",
+    "test": "node --test tools/seamshift/*.test.mjs"
+  },
+  "engines": { "node": ">=20" }
+}
