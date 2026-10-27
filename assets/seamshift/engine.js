@@ -53,7 +53,7 @@ const copyState = state => ({...state,pieces:state.pieces.map(p=>({...p})),hunte
 function geometryChange(state, action, level) {
   const next = copyState(state);
   if (action.type === 'scale') {
-    if (!level.scales.includes(action.value) || state.scale === action.value || Math.abs(state.scale - action.value) > 1) return rejected(state, '这一档还不能用。');
+    if (!level.scales.includes(action.value) || state.scale === action.value || Math.abs(state.scale - action.value) > 1) return rejected(state, '这个桥梁状态还不能用。');
     if ([state.player, ...state.hunters].some(p => !active(level, p, action.value, state))) return rejected(state, '先离开将要消失的道路。');
     next.scale = action.value;
   } else if (action.type === 'topology') {
@@ -99,7 +99,7 @@ export function transition(state, action, level, { feedback = true } = {}) {
   else {
     const result = geometryChange(state, action, level); if (!result.valid) return result;
     next = result.state;
-    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '桥长改变了；桥板接上才能通过。', topology: '世界的边缘改变了。' })[action.type]);
+    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '桥梁状态改变了。', topology: '世界的边缘改变了。' })[action.type]);
   }
   if(feedback && state.shadows.length && ['place','rotate','remove','scale'].includes(action.type)) {
     const old=dualGraph(level,state).crossings,changed=dualGraph(level,next).crossings;

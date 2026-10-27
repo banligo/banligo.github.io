@@ -1,4 +1,6 @@
 const paths = {
+  bridgeOff: '<path d="M3 7v10m18-10v10M3 10h6m6 0h6M3 14h6m6 0h6m-10-5-2 6m6-6-2 6"/>',
+  bridgeOn: '<path d="M3 7v10m18-10v10M3 10h18M3 14h18M7 10v4m5-4v4m5-4v4"/>',
   levels: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/>',
   undo: '<path d="M8 5 3 10l5 5M3 10h11a6 6 0 0 1 0 12"/>',
   restart: '<path d="M4 10a8 8 0 1 1 1 9M4 3v7h7"/>',

@@ -23,10 +23,6 @@
         "direction": "down"
       },
       {
-        "type": "scale",
-        "value": 3
-      },
-      {
         "type": "move",
         "direction": "down"
       },
@@ -35,6 +31,7 @@
         "direction": "down"
       }
     ],
+    "normalExpanded": 12,
     "star": [
       {
         "type": "move",
@@ -57,10 +54,6 @@
         "value": 2
       },
       {
-        "type": "scale",
-        "value": 3
-      },
-      {
         "type": "move",
         "direction": "down"
       },
@@ -77,7 +70,7 @@
         "direction": "right"
       }
     ],
-    "expanded": 35
+    "starExpanded": 19
   },
   {
     "id": 2,
@@ -110,6 +103,7 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 24,
     "star": [
       {
         "type": "move",
@@ -147,20 +141,11 @@
         "direction": "right"
       }
     ],
-    "expanded": 23
+    "starExpanded": 23
   },
   {
     "id": 3,
     "normal": [
-      {
-        "type": "place",
-        "pieceId": "fork",
-        "slotId": "middle"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
       {
         "type": "rotate",
         "pieceId": "reed"
@@ -168,6 +153,15 @@
       {
         "type": "place",
         "pieceId": "reed",
+        "slotId": "middle"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "fork",
         "slotId": "bridge"
       },
       {
@@ -192,7 +186,7 @@
       },
       {
         "type": "place",
-        "pieceId": "fork",
+        "pieceId": "reed",
         "slotId": "bend"
       },
       {
@@ -204,6 +198,7 @@
         "direction": "left"
       }
     ],
+    "normalExpanded": 5231,
     "star": [
       {
         "type": "move",
@@ -265,7 +260,7 @@
         "direction": "left"
       }
     ],
-    "expanded": 13405
+    "starExpanded": 11755
   },
   {
     "id": 4,
@@ -304,6 +299,7 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 36,
     "star": [
       {
         "type": "place",
@@ -347,7 +343,7 @@
         "direction": "right"
       }
     ],
-    "expanded": 14
+    "starExpanded": 14
   },
   {
     "id": 5,
@@ -390,16 +386,8 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 333,
     "star": [
-      {
-        "type": "scale",
-        "value": 2
-      },
-      {
-        "type": "place",
-        "pieceId": "reed",
-        "slotId": "bridge"
-      },
       {
         "type": "move",
         "direction": "down"
@@ -409,12 +397,17 @@
         "direction": "right"
       },
       {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bridge"
+      },
+      {
         "type": "move",
         "direction": "up"
       },
       {
         "type": "scale",
-        "value": 3
+        "value": 2
       },
       {
         "type": "move",
@@ -445,7 +438,7 @@
         "direction": "right"
       }
     ],
-    "expanded": 4590
+    "starExpanded": 1034
   },
   {
     "id": 6,
@@ -488,6 +481,7 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 50,
     "star": [
       {
         "type": "move",
@@ -543,7 +537,7 @@
         "direction": "right"
       }
     ],
-    "expanded": 86
+    "starExpanded": 86
   },
   {
     "id": 7,
@@ -582,6 +576,7 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 198,
     "star": [
       {
         "type": "move",
@@ -633,7 +628,7 @@
         "direction": "right"
       }
     ],
-    "expanded": 366
+    "starExpanded": 366
   },
   {
     "id": 8,
@@ -680,6 +675,7 @@
         "direction": "right"
       }
     ],
+    "normalExpanded": 474,
     "star": [
       {
         "type": "move",
@@ -727,80 +723,11 @@
         "direction": "right"
       }
     ],
-    "expanded": 1225
+    "starExpanded": 1026
   },
   {
     "id": 9,
     "normal": [
-      {
-        "type": "rotate",
-        "pieceId": "reed"
-      },
-      {
-        "type": "place",
-        "pieceId": "reed",
-        "slotId": "west"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "scale",
-        "value": 2
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "scale",
-        "value": 3
-      },
-      {
-        "type": "topology",
-        "value": "torus"
-      },
-      {
-        "type": "place",
-        "pieceId": "reed",
-        "slotId": "east"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "topology",
-        "value": "mobius"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      }
-    ],
-    "normalExpanded": 3693,
-    "star": [
       {
         "type": "place",
         "pieceId": "fork",
@@ -823,17 +750,78 @@
         "direction": "left"
       },
       {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
         "type": "place",
         "pieceId": "fork",
         "slotId": "east"
       },
       {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "normalExpanded": 1369,
+    "star": [
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "west"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
         "type": "scale",
-        "value": 3
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "left"
       },
       {
         "type": "topology",
         "value": "cylinder"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "east"
       },
       {
         "type": "move",
@@ -865,7 +853,7 @@
       },
       {
         "type": "scale",
-        "value": 2
+        "value": 1
       },
       {
         "type": "move",
@@ -888,14 +876,14 @@
         "direction": "right"
       }
     ],
-    "starExpanded": 5969
+    "starExpanded": 2977
   },
   {
     "id": 10,
     "normal": [
       {
-        "type": "rotate",
-        "pieceId": "shield"
+        "type": "move",
+        "direction": "left"
       },
       {
         "type": "place",
@@ -905,23 +893,19 @@
       {
         "type": "scale",
         "value": 2
-      },
-      {
-        "type": "move",
-        "direction": "left"
       },
       {
         "type": "topology",
         "value": "cylinder"
       },
       {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
         "type": "place",
         "pieceId": "bend",
         "slotId": "turn"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "bend"
       },
       {
         "type": "move",
@@ -976,28 +960,20 @@
         "direction": "up"
       }
     ],
-    "normalExpanded": 55751,
+    "normalExpanded": 22511,
     "star": [
       {
         "type": "move",
         "direction": "left"
       },
       {
-        "type": "scale",
-        "value": 2
-      },
-      {
-        "type": "scale",
-        "value": 3
-      },
-      {
-        "type": "rotate",
-        "pieceId": "shield"
-      },
-      {
         "type": "place",
         "pieceId": "bend",
         "slotId": "turn"
+      },
+      {
+        "type": "scale",
+        "value": 2
       },
       {
         "type": "place",
@@ -1006,7 +982,7 @@
       },
       {
         "type": "topology",
-        "value": "torus"
+        "value": "cylinder"
       },
       {
         "type": "move",
@@ -1022,6 +998,14 @@
       },
       {
         "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
         "direction": "right"
       },
       {
@@ -1037,20 +1021,12 @@
         "direction": "down"
       },
       {
-        "type": "move",
-        "direction": "down"
+        "type": "scale",
+        "value": 1
       },
       {
         "type": "move",
         "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "shield"
       },
       {
         "type": "move",
@@ -1065,34 +1041,19 @@
         "direction": "down"
       },
       {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "turn"
       },
       {
         "type": "move",
         "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "bend"
       },
       {
         "type": "move",
         "direction": "up"
       }
     ],
-    "starExpanded": 245491
+    "starExpanded": 33805
   }
 ]

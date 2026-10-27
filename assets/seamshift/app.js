@@ -52,7 +52,7 @@ function renderTray() {
 function renderControls() {
   const state = session.state;
   if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
-  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="桥长 ${level.radii[value-1].toFixed(1)}" title="桥的最大总长度 ${level.radii[value-1].toFixed(1)}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value || Math.abs(state.scale-value)>1 ? 'disabled' : ''}>${level.radii[value-1].toFixed(1)}</button>`).join(''));
+  setMarkupIfChanged($('#scale-buttons'), [1,2].map(value => `<button data-scale="${value}" aria-label="${value===1?'断桥':'连桥'}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${icon(value===1?'bridgeOff':'bridgeOn')}<span>${value===1?'断桥':'连桥'}</span></button>`).join(''));
   setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
@@ -164,7 +164,7 @@ function renderLevels() {
   $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
 const discoveries = {
-  scale: ['会生长的路', '桥的最大总长度决定两岸能否接上。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
+  scale: ['路与桥', '连接桥梁会为道路网络添加边，断开桥梁会移除这些边。这是一种几何过滤。'],
   cylinder: ['边界之外，还是这里', '环绕空间把左右同一行接在一起，像把纸卷成圆柱。你能过去，小兽也能。'],
   mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
   torus: ['四边之外', '环面将左右和上下分别接起来。原来的屏障可能有另一条绕行路，影子也会沿周期裂隙绕过去。'],
@@ -176,6 +176,7 @@ function showDialog(id) {
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
   if (id === 'level-dialog') renderLevelInfo();
+  if (id === 'help-dialog') setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level)));
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
     $('#discovery-cards').innerHTML = Object.entries(discoveries).map(([key, [title, description]]) => `<article class="discovery-card ${progress.discoveries.includes(key) ? '' : 'locked'}"><h3>${progress.discoveries.includes(key) ? title : '尚未发现'}</h3><p>${progress.discoveries.includes(key) ? description : '继续走一走，世界会告诉你。'}</p></article>`).join('');
@@ -194,7 +195,7 @@ function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap()
 function cycleTopology() { const modes = level.modes; if (modes.length > 1) actionQueue.push({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
 function actionLabel(action) {
   if (action.type === 'move') return `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}走一步`;
-  if (action.type === 'scale') return `把桥长改为 ${level.radii[action.value-1]}`;
+  if (action.type === 'scale') return `${action.value===1?'断开桥梁':'连接桥梁'}`;
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
   if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进任意空位`;
@@ -204,7 +205,7 @@ function actionLabel(action) {
 function hint() {
   if (session.state.status !== 'playing' || advancing) return;
   hintCount++;
-  const tell = text => { toast(text, 'hint', 5500); $('#help-hint').textContent = text; };
+  const tell = text => { toast(text, 'hint', 5500);  };
   if (hintCount <= 2) { tell(level.hints[hintCount - 1]); return; }
   const request = ++hintRequest, hintState = session.state, id = level.id;
   tell('让我看看，这一步可以怎么走…');
@@ -234,13 +235,15 @@ document.addEventListener('pointerdown', event => {
   if (!source && !inBoard) return;
   event.preventDefault();
   const pieceId = source?.dataset.piece || source?.dataset.mapPiece;
-  gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, pieceId, placed: !!source?.dataset.mapPiece, selectedBefore: selected, dragged: false };
+  const replaceWith = source?.dataset.mapPiece && selected && selected !== pieceId ? selected : null;
+  gesture = { id: event.pointerId, x: event.clientX, y: event.clientY, pieceId, replaceWith, placed: !!source?.dataset.mapPiece, selectedBefore: selected, dragged: false };
   $('#game').setPointerCapture(event.pointerId);
-  if (pieceId) selectPiece(pieceId); else $('#board').focus({ preventScroll: true });
+  if (pieceId && !replaceWith) selectPiece(pieceId); else $('#board').focus({ preventScroll: true });
 });
 document.addEventListener('pointermove', event => {
   if (!gesture || event.pointerId !== gesture.id) return;
   if (gesture.pieceId && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 9) {
+    if (!gesture.dragged && gesture.replaceWith) { selectPiece(gesture.pieceId); gesture.replaceWith = null; }
     gesture.dragged = true;
     if (!gesture.ghostReady) {
       const piece = session.state.pieces.find(p => p.id === gesture.pieceId), definition = level.pieces.find(p => p.id === gesture.pieceId);
@@ -264,6 +267,9 @@ document.addEventListener('pointerup', event => {
       if (slot) actionQueue.push({ type: 'place', pieceId: g.pieceId, slotId: slot.id });
       else if (inside($('#puzzle-tray').getBoundingClientRect(), event.clientX, event.clientY)) actionQueue.push({ type: 'remove', pieceId: g.pieceId });
       else flashInvalid('拖到任意空位，或放回碎片栏。');
+    } else if (g.replaceWith) {
+      const slotId = session.state.pieces.find(p=>p.id===g.pieceId)?.slot;
+      if (slotId) actionQueue.push({type:'place',pieceId:g.replaceWith,slotId});
     } else if (g.placed || g.selectedBefore === g.pieceId) actionQueue.push({ type: 'rotate', pieceId: g.pieceId });
     else toast('点任意的空位放下；再点碎片旋转。');
   } else {
@@ -295,10 +301,10 @@ document.addEventListener('click', event => {
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
-    'level-info': () => showDialog('level-dialog'), 'help-rules-button': () => showDialog('level-dialog'),
+    'level-info': () => showDialog('level-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
-    'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; }, 'help-hint-button': hint,
+    'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; },
     'desktop-wait': () => actionQueue.push({type:'wait'}),
     'wait-button': () => actionQueue.push({ type: 'wait' }),
     'rotate-button': () => selected && actionQueue.push({ type: 'rotate', pieceId: selected }),
@@ -328,7 +334,8 @@ document.addEventListener('keydown', event => {
   if (advancing) { if (['enter', ' '].includes(key)) { event.preventDefault(); advance(); } return; }
   if (event.target.matches('[data-map-piece],[data-slot]') && ['enter', ' '].includes(key)) {
     event.preventDefault(); const pieceId = event.target.dataset.mapPiece;
-    if (pieceId) { selected = pieceId; actionQueue.push({ type: 'rotate', pieceId }); }
+    if (pieceId && selected && selected !== pieceId) actionQueue.push({type:'place',pieceId:selected,slotId:event.target.dataset.slot});
+    else if (pieceId) { selected = pieceId; actionQueue.push({ type: 'rotate', pieceId }); }
     else if (selected) actionQueue.push({ type: 'place', pieceId: selected, slotId: event.target.dataset.slot });
     return;
   }
@@ -337,7 +344,7 @@ document.addEventListener('keydown', event => {
   lastKey = performance.now();
   const movement = { arrowup: 'up', w: 'up', arrowright: 'right', d: 'right', arrowdown: 'down', s: 'down', arrowleft: 'left', a: 'left' };
   if (movement[key]) { event.preventDefault(); actionQueue.push({ type: 'move', direction: movement[key] }); }
-  else if (['1', '2', '3'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
+  else if (['1', '2'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
   else if (key === 't') { event.preventDefault(); cycleTopology(); }
   else if (key === ' ') { event.preventDefault(); actionQueue.push({ type: 'wait' }); }
   else if (key === 'z') { event.preventDefault(); undo(); }

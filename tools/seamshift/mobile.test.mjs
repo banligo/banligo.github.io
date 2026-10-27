@@ -63,3 +63,7 @@ test('phone scenery is simplified and cached without altering paths or actors', 
   assert.equal(renderBoardLayers(l, s).walls, full.walls);
   assert.equal(renderBoardLayers(l, s, { lightweight: true }).walls, light.walls);
 });
+
+test('tablets use their full visible height instead of the long-phone cap',()=>{
+ assert.equal(gameHeight({width:768,innerHeight:1024,mobile:true}),1024);assert.equal(gameHeight({width:834,innerHeight:1194,visualHeight:1120,mobile:true}),1120);assert.equal(gameHeight({width:1024,innerHeight:1366,mobile:true}),1366);assert.equal(gameHeight({width:1194,innerHeight:834,mobile:true}),834);
+});

@@ -2,7 +2,7 @@
 // and limit long portrait screens so the controls remain within thumb reach.
 export function gameHeight({ width, innerHeight, visualHeight = innerHeight, mobile = false }) {
   const visible = Math.floor(Math.min(innerHeight, visualHeight > 0 ? visualHeight : innerHeight));
-  return mobile && visible > width ? Math.min(visible, Math.min(820, Math.max(560, width * 2))) : visible;
+  return mobile && width <= 600 && visible > width ? Math.min(visible, Math.min(820, Math.max(560, width * 2))) : visible;
 }
 export function fitViewport(win, root, onModeChange = () => {}) {
   const mobile = win.matchMedia('(pointer: coarse), (max-width: 700px)');

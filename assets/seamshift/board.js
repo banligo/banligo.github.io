@@ -77,7 +77,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     }
   }
   if (!state.starCollected) {
-    markings.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard" opacity="${starActive(state,level) ? 1 : .28}"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
+    actors.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard" opacity="${starActive(state,level) ? 1 : .28}"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
   }
   const { graph, crossings } = view !== 'primal' || state.shadows.length ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
   if (view !== 'primal' || state.shadows.length) {
@@ -136,13 +136,13 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;
     const on = primalOpen(level,shown,{x:edge.from[0],y:edge.from[1]},{x:edge.to[0],y:edge.to[1]});
     const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d;
-    const contact=radius*2+1e-9>=d,reach=Math.min(radius,d/2),ends=[{x:a.x+ux*reach,y:a.y+uy*reach},{x:b.x-ux*reach,y:b.y-uy*reach}];
+    const contact=radius*2+1e-9>=d,reach=contact?d/2:Math.min(CELL*.18,d/4),ends=[{x:a.x+ux*reach,y:a.y+uy*reach},{x:b.x-ux*reach,y:b.y-uy*reach}];
     const halves=[[a,ends[0]],[b,ends[1]]].map(([start,end],i)=>{
       const length=Math.hypot(end.x-start.x,end.y-start.y),planks=[];
       for(let t=5;t<length;t+=7) { const sign=i===0?1:-1,c={x:start.x+ux*t*sign,y:start.y+uy*t*sign};planks.push(line({x:c.x-uy*5,y:c.y+ux*5},{x:c.x+uy*5,y:c.y-ux*5},'#a28c62',1)); }
       return `<g class="bridge-arm">${bridgeBeam(start,end,'#8c7959',14)}${bridgeBeam(start,end,'#e4cf9d',10)}${planks.join('')}</g>`;
     }).join('');
-    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥臂相接，可以通过':contact?'桥臂已相接，还需对齐碎片接口':'桥臂还够不到，断口不可通过'}">${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
+    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥已连接，可以通过':contact?'桥已连接，还需对齐碎片接口':'桥已断开，不能通过'}">${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
   }
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };
@@ -155,7 +155,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (cachedWalls === undefined) wallCache.set(level, { ...wallCache.get(level), [wallVariant]: walls.join('') });
   return {
     viewBox: `0 0 ${width} ${height}`, role: level.pieces.length ? 'group' : 'img',
-    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，尺度 ${state.scale}，${state.topology}`,
+    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，${state.scale === 2 ? '连桥' : '断桥'}，${state.topology}`,
     opacity: view === 'dual' ? '.45' : '1',
     walls: wallCache.get(level)[wallVariant], terrain: ground.join('') + markings.join(''),
     overlay: overlay.join('') + borders.join(''), actors: actors.join(''),
