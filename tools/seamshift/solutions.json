@@ -462,5 +462,287 @@
       }
     ],
     "expanded": 4590
+  },
+  {
+    "id": 6,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 86
+  },
+  {
+    "id": 7,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "ring"
+      },
+      {
+        "type": "place",
+        "pieceId": "ring",
+        "slotId": "ring"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "ring"
+      },
+      {
+        "type": "place",
+        "pieceId": "ring",
+        "slotId": "ring"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 366
+  },
+  {
+    "id": 8,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 1225
   }
 ]

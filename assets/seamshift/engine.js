@@ -7,7 +7,7 @@ export function initialState(level) {
     shadows: level.shadow ? [{ x: level.shadow[0], y: level.shadow[1] }] : [],
     pieces: level.pieces.map(p => ({ id: p.id, rotation: p.rotation, slot: null })),
     scale: level.initialScale, topology: level.initialTopology, hasKey: false, starCollected: false,
-    shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
+    lampLit: false, shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
 }
 export const beaconPosition = (state, level) => { const target=state.shadowReturning ? level.shadow : level.beacon; return target ? remapDual({x:target[0],y:target[1]},level,state.topology) : null; };
 const pathCache = new WeakMap();
@@ -18,6 +18,14 @@ export function shadowPaths(state, level) {
   return state.shadows.map(p => { const id=`${p.x},${p.y}:${!!state.shadowReturning}`; if(!cache.has(id)) cache.set(id,shortestPath(graph,p,beaconPosition(state,level))); return cache.get(id); });
 }
 export const disconnected = (state, level) => !!state.shadows.length && shadowPaths(state, level).every(p => !p);
+export function lampProtected(state,level) {
+  if(!level.circuit || !state.shadows.length) return false;
+  const target=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),{graph}=dualGraph(level,state);
+  return state.shadows.every(p=>!shortestPath(graph,p,target));
+}
+function chargeLamp(state,level,events) {
+  if(level.circuit && !state.lampLit && lampProtected(state,level)) {state.lampLit=true;events.push('灯安全亮起，终点门获得能量了。');}
+}
 export const isLevelComplete = (state, level) => state.status !== 'lost' && tile(level, state.player) === 'E';
 export function score(state, level) {
   if (state.status !== 'won') return 0;
@@ -82,7 +90,7 @@ export function transition(state, action, level) {
   let next; const events = [];
   if (action.type === 'move') {
     const dir = directions.find(d => d.name === action.direction), target = dir && neighbor(state.player, dir, level, state.topology);
-    if (!target || !primalOpen(level, state, state.player, target)) return rejected(state, tile(level, target || state.player) === 'D' ? '那扇门需要钥匙。' : '路还没接上。试试另一种办法。');
+    if (!target || !primalOpen(level, state, state.player, target)) return rejected(state, tile(level,target || state.player)==='E' && level.circuit && !state.lampLit ? '门连着守护灯；修好道路，挡住通向灯的紫色裂隙。' : tile(level, target || state.player) === 'D' ? '那扇门需要钥匙。' : '路还没接上。试试另一种办法。');
     next = copyState(state); next.player = target;
     if (Math.abs(target.x - state.player.x) > 1) events.push(state.topology === 'mobius' ? '另一边，上下倒了过来。' : '原来两边连在一起。');
     if (tile(level, target) === 'K' && !state.hasKey) { next.hasKey = true; events.push('钥匙找到了。'); }
@@ -93,6 +101,11 @@ export function transition(state, action, level) {
     next = result.state;
     events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '连接范围改变了；实线桥可以通过。', topology: '世界的边缘改变了。' })[action.type]);
   }
+  if(state.shadows.length && ['place','rotate','remove','scale'].includes(action.type)) {
+    const old=dualGraph(level,state).crossings,changed=dualGraph(level,next).crossings;
+    if(changed.some(e=>!e.open&&old.some(o=>o.open&&same(o.a,e.a)&&same(o.b,e.b))))events.push('你的路接通了，交叉的紫色裂隙被挡住了。');
+  }
+  chargeLamp(next,level,events);
   next.turn++;
   if (state.shadows.length && disconnected(state, level) !== disconnected(next, level)) events.push(disconnected(next, level) ? '影子停住了。' : '影子又找到路了。');
   if (next.hunters.some(p => same(p, next.player))) next.status = 'lost';
@@ -110,10 +123,12 @@ export function transition(state, action, level) {
   }
   if(next.shadows.some(p=>same(p,beaconPosition(next,level)))) next.shadowReturning=!next.shadowReturning;
   if(shadowDanger(next,level).some(p=>same(p,next.player))) {next.status='lost';events.push('紫色地板有危险；看看虚线预告，再等待或绕行。');}
+  chargeLamp(next,level,events);
   if(next.status !== 'lost') collectStar(next,level,events);
   if (next.status === 'lost') events.push('没关系，撤销一步就好。');
   else if (isLevelComplete(next, level)) { next.status = 'won'; events.push('找到路了。'); }
 
+  if(next.status==='playing' && !state.lampLit && next.lampLit) events.push('守护灯亮了，金线接通，终点门打开。');
   next.events = events;
   return { state: next, valid: true, message: events.at(-1) || '' };
 }

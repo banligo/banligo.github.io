@@ -35,13 +35,35 @@ const definitions = [
     hunterSpeed:1,alertRadius:5,shadow:[4,4],beacon:[6,5],shadowSpeed:3,
     lesson:'有危险时，可以等待，也可以织出另一条路。',goalText:'避开紫色地板，走到终点。',
     hints:['下方的缺口需要一块路和更大的连接范围。','星光就在上下相连的另一边；留意影子的下一步。'] },
+  { id:6,title:'Keep the Light',subtitle:'守住灯火',seed:607,
+    map:['###.###','#P....#','#.#.###','#...#.#','###J###','#...E.#','###.###'],
+    scales:[1],modes:['plane'],star:{x:5,y:1},shadow:[2,4],beacon:[5,4],shadowSpeed:4,
+    circuit:{lamp:[5,4]},slots:[{id:'shield',x:3,y:4}],pieces:[{id:'shield',shape:'straight',rotation:1,color:'sage'}],
+    lesson:'影子沿紫线吸走灯的能量。修路护灯，灯亮门开。',goalText:'保护守护灯，让终点门亮起来。',
+    hints:['金线给门供能，紫色裂隙却让能量流向影子。','补上贯穿地图的道路，通向灯的紫线就会被截断。'] },
+  { id:7,title:'A Loop Is Not a Wall',subtitle:'绕过屏障',seed:709,
+    map:['###.###','#P....#','###.###','#J..#.#','#..J###','#...E.#','###.###'],
+    scales:[1],modes:['torus'],initialTopology:'torus',star:{x:5,y:1},shadow:[2,4],beacon:[5,4],shadowSpeed:4,
+    circuit:{lamp:[5,4]},slots:[{id:'shield',x:3,y:4},{id:'ring',x:1,y:3}],
+    pieces:[{id:'shield',shape:'straight',rotation:0,color:'sage'},{id:'ring',shape:'corner',rotation:0,color:'clay'}],
+    lesson:'四边相连，长屏障也可能被绕过。试试小小的围栏。',goalText:'把影子留在小环内，点亮守护灯。',
+    hints:['紫线从边界绕过了长屏障。','用拐角闭合影子周围的小方环；直路留给出口前的缺口。'] },
+  { id:8,title:'Light Across the Seam',subtitle:'带着光穿过缝隙',seed:811,
+    map:['###.####','#P...M.#','#.#.####','#J..#..#','#..J####','###KDE.#','###.####','###.####'],
+    scales:[1,2,3],modes:['plane','cylinder','mobius','torus'],star:{x:3,y:7},
+    shadow:[2,4],beacon:[5,4],shadowSpeed:4,hunterSpeed:1,wakeOnKey:true,circuit:{lamp:[5,4]},
+    slots:[{id:'shield',x:3,y:4},{id:'ring',x:1,y:3}],
+    pieces:[{id:'shield',shape:'straight',rotation:0,color:'sage'},{id:'ring',shape:'corner',rotation:0,color:'clay'}],
+    bridges:[{from:[3,3],to:[3,4],distance:1.05},{from:[1,4],to:[2,4],distance:1.05}],
+    lesson:'先保护灯，再带着钥匙离开。空间折叠能帮你找回星光。',goalText:'点亮守护灯，取钥匙穿过门。',
+    hints:['长屏障适合平面，小围栏适合折叠的空间。','范围接通后再看紫线；先护灯，再取钥匙，最后走金线通向的门。'] },
 ];
 export const levels = definitions.map(level => ({
   revision: level.id >= 3 ? 2 : 1, initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
   levelObjectives: [{ type: 'reachGoal' }], ...level, width: level.map[0].length, height: level.map.length,
 }));
 for (const level of levels) {
-  level.n3Opt ??= [10,9,14,13,13][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
+  level.n3Opt ??= [10,9,14,13,13,13,12,11][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
   const random = seededRandom(level.seed);
   level.bridges = level.bridges.map(e => { const dx=e.to[0]-e.from[0],dy=e.to[1]-e.from[1],d=Math.hypot(dx,dy),r=e.distance ?? level.radii[(e.birth ?? 1)-1]; const mx=(e.from[0]+e.to[0])/2,my=(e.from[1]+e.to[1])/2; return {...e,nodes:[{x:mx-dx/d*r/2+(random()-.5)*.008,y:my-dy/d*r/2+(random()-.5)*.008},{x:mx+dx/d*r/2+(random()-.5)*.008,y:my+dy/d*r/2+(random()-.5)*.008}]}; });
   level.pieces = level.pieces.map(p => ({...p, allowedSlots:level.slots.map(s=>s.id)}));

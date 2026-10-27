@@ -240,3 +240,8 @@ body[data-world="torus"] { background:#d9dfd1; }
 .desktop-wait { display:none; }
 @media(min-width:701px) and (pointer:fine) and (min-height:521px) { .desktop-wait { display:flex; flex-direction:column; font-size:9px; } }
 @media(pointer:coarse),(max-width:700px) { .mode-buttons { display:flex; } .mode-buttons[data-count="4"] { display:grid;grid-template-columns:repeat(2,44px); } }
+
+.shadow-info { position:absolute;top:0;left:50%;transform:translateX(-50%);font-size:10px;color:#82718a;min-height:44px;z-index:2;white-space:nowrap; }
+.shadow-info:active { transform:translateX(-50%); }
+.dual-lesson { display:block;max-width:100%;width:100%;margin:16px 0; }
+.lamp-circuit { pointer-events:none; }

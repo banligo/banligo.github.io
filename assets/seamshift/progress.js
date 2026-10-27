@@ -3,7 +3,7 @@ import { initialState, collectStar } from './engine.js';
 import { levels as campaign } from './levels.js';
 const LAST = campaign.length;
 export const SAVE_KEY = 'seamloom.adventure.v4';
-export const freshProgress = () => ({ version: 4, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });
+export const freshProgress = () => ({ version: 4, campaignLength:LAST, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });
 export function unlockedLevel(progress) {
   let id = 1; while (id < LAST && progress.results[id]?.stars >= 1) id++; return id;
 }
@@ -39,7 +39,7 @@ export function validSnapshot(snapshot, level) {
   if (!snapshot?.state || !Array.isArray(snapshot.history)) return false;
   const valid = state => {
     if (!state || state.version !== 4 || state.layoutRevision !== level.revision || state.levelId !== level.id || !level.scales.includes(state.scale) || !level.modes.includes(state.topology)) return false;
-    if (!Number.isInteger(state.turn) || state.turn < 0 || !['playing', 'won', 'lost'].includes(state.status) || typeof state.shadowReturning !== 'boolean' || typeof state.hunterAwake !== 'boolean' || typeof state.hasKey !== 'boolean' || typeof state.starCollected !== 'boolean') return false;
+    if (!Number.isInteger(state.turn) || state.turn < 0 || !['playing', 'won', 'lost'].includes(state.status) || typeof state.lampLit !== 'boolean' || typeof state.shadowReturning !== 'boolean' || typeof state.hunterAwake !== 'boolean' || typeof state.hasKey !== 'boolean' || typeof state.starCollected !== 'boolean') return false;
     if (!Array.isArray(state.pieces) || state.pieces.length !== level.pieces.length || !Array.isArray(state.hunters) || !Array.isArray(state.shadows) || !Array.isArray(state.events)) return false;
     if (state.hunters.length !== initialState(level).hunters.length || state.shadows.length !== (level.shadow ? 1 : 0)) return false;
     if (new Set(state.pieces.map(p => p.id)).size !== state.pieces.length) return false;
@@ -64,11 +64,13 @@ export function loadProgress(storage, levels) {
         state.version=4; state.layoutRevision=level.revision; state.shadowReturning=false; state.hunterAwake=!!state.hunterAwake;
       }
     }
+    if(result.snapshot?.state && Array.isArray(result.snapshot.history)) for(const s of [result.snapshot.state,...result.snapshot.history]) s.lampLit ??= false;
     if (!validSnapshot(result.snapshot, level)) {
       if(result.snapshot) result.archivedAttempts[level.id]=result.snapshot;
       result.snapshot = null;
     }
     if(result.snapshot?.state.status === 'playing') collectStar(result.snapshot.state,level);
+    if(!raw?.campaignLength && raw?.currentLevel===5 && raw?.results?.[5]?.stars && !result.snapshot && LAST>5) result.currentLevel=6;
     if (result.snapshot?.state.status === 'won' && result.currentLevel < LAST) { result.currentLevel++; result.snapshot = null; }
     return result;
   } catch { return freshProgress(); }

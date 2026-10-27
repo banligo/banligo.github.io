@@ -25,6 +25,7 @@ export function primalOpen(level, state, a, b) {
   if (!a || !b || !active(level, a, state.scale, state) || !active(level, b, state.scale, state)) return false;
   const direction = directions.findIndex(d => same(neighbor(a, d, level, state.topology), b));
   if (direction < 0 || !portOpen(level, state, a, direction) || !portOpen(level, state, b, (direction + 2) % 4)) return false;
+  if (!state.lampLit && level.circuit && (tile(level,a)==='E'||tile(level,b)==='E')) return false;
   if (!state.hasKey && (tile(level, a) === 'D' || tile(level, b) === 'D')) return false;
   return !level.bridges.some(edge => (
     (same(a, { x: edge.from[0], y: edge.from[1] }) && same(b, { x: edge.to[0], y: edge.to[1] })) ||
@@ -34,7 +35,7 @@ export function primalOpen(level, state, a, b) {
 
 const primalCache = new WeakMap();
 export function primalGraph(level, state) {
-  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${pieceSignature(state)}`;
+  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${pieceSignature(state)}`;
   if (!primalCache.has(level)) primalCache.set(level,new Map());
   const cache = primalCache.get(level); if (cache.has(signature)) return cache.get(signature);
   const graph = new Map();
@@ -72,7 +73,7 @@ export function remapDual(p, level, topology) {
 
 const dualCache = new WeakMap();
 export function dualGraph(level, state) {
-  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${pieceSignature(state)}`;
+  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${pieceSignature(state)}`;
   if (!dualCache.has(level)) dualCache.set(level, new Map());
   const cached = dualCache.get(level);
   if (cached.has(signature)) return cached.get(signature);

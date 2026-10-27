@@ -35,6 +35,7 @@ function setWorld(topology) {
 }
 function renderMap(previous = null) {
   patchBoard($('#board'), renderBoardLayers(level, session.state, { selected, view, previewState, lightweight, previous: reduceMotion || lightweight ? null : previous }));
+  $('#shadow-info').hidden = !session.state.shadows.length;
   $('#view-button').setAttribute('aria-pressed', String(view !== 'primal'));
 }
 function renderTray() {
@@ -134,7 +135,7 @@ function advance() {
   if (!advancing) return;
   clearTimeout(advanceTimer); advancing = false; $('#clear-overlay').hidden = true;
   if (level.id < levels.length) chooseLevel(level.id + 1);
-  else { persist(); $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((sum, r) => sum + r.stars, 0)} / 15 颗星。`; $('#ending-dialog').showModal(); render(); }
+  else { persist(); $('#ending-score').textContent = `共 ${levels.length} 段旅程，收集 ${Object.values(progress.results).reduce((sum, r) => sum + r.stars, 0)} / ${levels.length*3} 颗星。`; $('#ending-dialog').showModal(); render(); }
 }
 function closeDialogs() { document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close()); }
 function chooseLevel(id) {
@@ -167,7 +168,7 @@ const discoveries = {
   mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
   torus: ['四边之外', '环面将左右和上下分别接起来。原来的屏障可能有另一条绕行路，影子也会沿周期裂隙绕过去。'],
   pieces: ['道路也可以拼起来', '碎片的方向决定四边的接口。相邻接口都打开，路才接通。旋转与放置改变的是真实网络，也会改变怪物的路。'],
-  duality: ['我的路，是你的墙', '影子住在道路之间的裂隙。每条紫色通道都穿过一条玩家道路：一条打开，另一条关闭。影子附近的四块地板会受影响；虚线框预告下回合。'],
+  duality: ['我的路，是你的墙', '对偶不是另一个宇宙，而是同一张地图的另一种走法：你走格子中心，影子走格子角点。两条交叉的路，一条接通会挡住另一条。守护灯与门之间的金线，显示了控制影子的实际用途。'],
 };
 function showDialog(id) {
   if (advancing) return;
@@ -285,6 +286,7 @@ document.addEventListener('click', event => {
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
+    'shadow-info': () => showDialog('shadow-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; }, 'help-hint-button': hint,
@@ -340,7 +342,7 @@ window.addEventListener('pagehide', () => { if (!advancing) flushPersistence(); 
 document.addEventListener('visibilitychange', () => { if (document.hidden && !advancing) flushPersistence(); });
 hydrateIcons(); render();
 if (session.state.status === 'won' && level.id === levels.length) {
-  $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / 15 颗星。`;
+  $('#ending-score').textContent = `共 ${levels.length} 段旅程，收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / ${levels.length*3} 颗星。`;
   $('#ending-dialog').showModal();
 } else { persist(); teachOnce(); }
 

@@ -11,7 +11,7 @@ Yingqiu 的个人网站，使用 Jekyll 构建。
 - `_sass/custom.scss`：旧版归档等遗留页面的样式，日记已不再使用。
 - `/study/` 为详细学习与研究记录；`/about.html` 跳转到首页个人介绍。
 - `assets/documents/CV-贺迎秋.pdf`：公开简历；替换同名文件即可更新。
-- `/seamshift/`：五关随机几何与拓扑解谜游戏，入口位于首页“实习与项目经历”；开发、测试和数学规则见 [README-SEAMLOOM.md](README-SEAMLOOM.md)。
+- `/seamshift/`：八关随机几何与拓扑解谜游戏，入口位于首页“实习与项目经历”；开发、测试和数学规则见 [README-SEAMLOOM.md](README-SEAMLOOM.md)。
 
 ## Diary 入口与更新
 

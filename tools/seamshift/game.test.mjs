@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {levels} from '../../assets/seamshift/levels.js';
-import {initialState,transition,applyAction,createSession,isLevelComplete,score,disconnected,starActive,shadowDanger} from '../../assets/seamshift/engine.js';
+import {initialState,transition,applyAction,createSession,isLevelComplete,score,disconnected,starActive,shadowDanger,lampProtected} from '../../assets/seamshift/engine.js';
 import {neighbor,directions,dualNode,dualGraph,shortestPath,primalGraph,primalOpen,same,tile} from '../../assets/seamshift/graphs.js';
 import {freshProgress,recordWin,SAVE_KEY,saveProgress,loadProgress,resetProgress,validSnapshot} from '../../assets/seamshift/progress.js';
 import {solve,search} from '../../assets/seamshift/solver.js';
@@ -89,3 +89,23 @@ test('intro is nonblocking and scores are absent from level entry UI',()=>{
 });
 test('predicted Shadow floor matches the actual next wait turn across patrol reversals',()=>{for(const l of levels.slice(3)){let s=initialState(l);for(const a of proofs[l.id-1].star){const predicted=shadowDanger(s,l,true).map(p=>`${p.x},${p.y}`).sort(),wait=applyAction(s,{type:'wait'},l);assert.deepEqual(predicted,shadowDanger(wait,l).map(p=>`${p.x},${p.y}`).sort());s=applyAction(s,a,l);}}});
 test('Torus corner danger wraps geometrically and does not invent arbitrary cells',()=>{const l=levels[4],s={...initialState(l),topology:'torus',shadows:[{x:0,y:0}]};const danger=shadowDanger(s,l);assert.deepEqual(danger,[]);const full={...l,map:Array.from({length:8},()=>'.'.repeat(8))};assert.deepEqual(shadowDanger(s,full).map(p=>`${p.x},${p.y}`).sort(),['0,0','0,7','7,0','7,7']);});
+
+test('three new lamp missions begin unprotected with a physically locked exit',()=>{
+ for(const l of levels.slice(5)){const s=initialState(l);assert(!lampProtected(s,l));assert(!s.lampLit);const goal=l.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0];for(const d of directions){const q=neighbor(goal,d,l,s.topology);if(q)assert(!primalOpen(l,s,q,goal));}assert(renderBoard(l,s).includes('data-lamp-lit="false"'));}
+});
+test('repairing a real primal barrier charges the lamp, powers the exit and is reversible',()=>{
+ const l=levels[5],session=createSession(l);session.act({type:'rotate',pieceId:'shield'});const before=session.snapshot();session.act({type:'place',pieceId:'shield',slotId:'shield'});assert(session.state.lampLit);assert(lampProtected(session.state,l));assert(primalOpen(l,session.state,{x:3,y:5},{x:4,y:5}));assert(renderBoard(l,session.state).includes('data-lamp-lit="true"'));session.undo();assert.deepEqual(session.snapshot(),before);
+});
+test('on the Torus, the long barrier fails but a contractible ring protects the lamp',()=>{
+ const l=levels[6],initial=initialState(l);const long={...initial,pieces:initial.pieces.map(p=>p.id==='shield'?{...p,slot:'shield'}:p)};assert(!lampProtected(long,l));
+ const ring={...initial,pieces:initial.pieces.map(p=>p.id==='ring'?{...p,slot:'ring',rotation:1}:p)};assert(lampProtected(ring,l));
+});
+test('every new level actually powers its lamp along its replayed winning route',()=>{
+ for(const l of levels.slice(5)){const s=replay(l,proofs[l.id-1].star);assert(s.lampLit);assert.equal(s.status,'won');assert(proofs[l.id-1].star.some(a=>a.type==='place'));const p=recordWin(freshProgress(),l.id,3,s.turn);assert.equal(p.results[l.id].stars,3);}
+});
+test('eight-level progression preserves finished five-level saves and advances to Level 6',()=>{
+ assert.equal(levels.length,8);let p=freshProgress();for(let id=1;id<=5;id++)p=recordWin(p,id,3,12);assert.equal(p.currentLevel,6);
+ const old={...p,currentLevel:5,snapshot:null};delete old.campaignLength;
+ const loaded=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(old):null},levels);assert.equal(loaded.currentLevel,6);assert.equal(loaded.results[5].stars,3);
+ for(let id=6;id<=8;id++)p=recordWin(p,id,1,20);assert.equal(p.currentLevel,8);assert.equal(Object.keys(p.results).length,8);
+});

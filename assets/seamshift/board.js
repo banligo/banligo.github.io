@@ -1,4 +1,4 @@
-import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, seededRandom, shortestPath, tile } from './graphs.js';
+import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
 import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
 import { starPath } from './icons.js';
@@ -71,7 +71,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     if (t === 'D') markings.push(actor(p, `<path d="M-20-19h40v38h-40Z" fill="${state.hasKey ? '#b0b28a' : '#8c775b'}" stroke="#66563f" stroke-width="2"/><path d="M-13-18v36M0-18v36M13-18v36" stroke="#d7bd89" stroke-width="2"/>${state.hasKey ? '<path d="M-10 0h20" stroke="#607758" stroke-width="3"/>' : '<rect x="-6" y="-5" width="12" height="13" rx="2" fill="#deb25d" stroke="#765c36"/><path d="M-4-5v-4a4 4 0 0 1 8 0v4" fill="none" stroke="#deb25d" stroke-width="2"/>'}`));
     if (t === 'K' && !state.hasKey) markings.push(actor(p, '<g fill="none" stroke="#8c6234" stroke-width="3"><circle cx="-5" cy="-5" r="6" fill="#e9c475"/><path d="m-1-1 12 12m-5-5 4-4m-8 0 4-4"/></g>'));
     if (t === 'E') {
-      const ready = true;
+      const ready = !level.circuit || state.lampLit;
       markings.push(actor(p, `<ellipse cy="9" rx="21" ry="13" fill="#a1b18a"/><path d="M-15 11V-6a15 15 0 0 1 30 0v17Z" fill="${ready ? '#6d8b6c' : '#a0a789'}" stroke="#53644a" stroke-width="2"/><path d="M-8 11V-5a8 8 0 0 1 16 0v16Z" fill="${ready ? '#ebdbaa' : '#c5c4a2'}"/>${ready ? '<path d="M-4 1h8m-3-3 3 3-3 3" fill="none" stroke="#7e966a" stroke-width="2"/>' : '<circle r="3" fill="#7c7e60"/>'}<path d="M-20 13h40" stroke="#5d7052" stroke-width="3" stroke-linecap="round"/>`));
     }
   }
@@ -101,6 +101,11 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" stroke-dasharray="2 3"/>`); }
       actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
     });
+  }
+  if(level.circuit) {
+    const p=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),c=corner(p);
+    const goal=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0],g=center(goal),lit=!!state.lampLit;
+    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2.5" ${lit?'':'stroke-dasharray="5 4"'}/><circle cx="${c.x}" cy="${c.y}" r="12" fill="${lit?'#f4d58c':'#b6a5b2'}" stroke="${lit?'#a77b35':'#79617c'}" stroke-width="2"/><path d="M${c.x-5} ${c.y+7}h10M${c.x} ${c.y-6}v9" stroke="${lit?'#ad7d37':'#715a73'}" stroke-width="2"/><text x="${c.x}" y="${c.y-18}" text-anchor="middle" font-size="10" fill="${lit?'#97743d':'#79617c'}">${lit?'灯亮 · 门开':'守护灯 · 能量流失'}</text></g>`);
   }
   const hunterGraph = state.hunters.length ? primalGraph(level, shown) : null;
   state.hunters.forEach((p, i) => {
