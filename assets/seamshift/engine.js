@@ -4,11 +4,12 @@ export function positions(level, symbol) {
   return level.map.flatMap((row, y) => [...row].flatMap((t, x) => t === symbol ? [{ x, y }] : []));
 }
 export function initialState(level) {
-  const state={ version: 5, world:'primal', anchor:positions(level,'P')[0], bridgeStates:Object.fromEntries(level.bridges.map(b=>[b.id,!!b.initialOpen])), triggered:[], rooms:Object.fromEntries((level.rooms??[]).map(r=>[r.id,r.rotation??0])), lampStarted:!!level.circuit?.initialStarted, lampCharge:0, energy:level.circuit?.initialEnergy??2, lampStatus:level.circuit?'ready':'unpowered', layoutRevision:level.revision, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
+  const state={ version: 6, world:'primal', anchor:positions(level,'P')[0], bridgeStates:Object.fromEntries(level.bridges.map(b=>[b.id,!!b.initialOpen])), triggered:[], rooms:Object.fromEntries((level.rooms??[]).map(r=>[r.id,r.rotation??0])), lampStarted:!!level.circuit?.initialStarted, lampCharge:0, energy:0, lampStatus:level.circuit?'ready':'unpowered', layoutRevision:level.revision, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
     shadows: level.shadow ? [{ x: level.shadow[0], y: level.shadow[1] }] : [],
     pieces: level.pieces.map(p => ({ id: p.id, rotation: p.rotation, slot: null })),
     scale: level.initialScale, topology: level.initialTopology, hasKey: false, starCollected: false,
-    lampLit: false, shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
+    hunterStates:positions(level,'M').map(()=>level.hunterInitial??'sleeping'),hunterWakeReasons:positions(level,'M').map(()=>level.hunterInitial?'guard':null),lampLit: false, shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
+  state.hunterAwake=state.hunterStates.some(mode=>mode!=='sleeping');
   if(level.circuit){const powered=!level.circuit.source||!!shortestPath(primalGraph(level,state),level.circuit.source,level.circuit.receiver);state.lampStatus=!lampProtected(state,level)?'shorted':!powered?'unpowered':'ready';}
   return state;
 }
@@ -22,20 +23,25 @@ export function shadowPaths(state, level) {
 }
 export const disconnected = (state, level) => !!state.shadows.length && shadowPaths(state, level).every(p => !p);
 export function lampProtected(state,level) {
-  if(!level.circuit || !state.shadows.length) return false;
+  if(!level.circuit)return false;
+  if(!state.shadows.length)return true;
   const target=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),{graph}=dualGraph(level,state);
   return state.shadows.every(p=>!shortestPath(graph,p,target));
 }
+export function lampSupply(state,level){
+  if(!level.circuit)return {started:false,powered:false,shorted:false,path:null,maxCharge:2};
+  const c=level.circuit,path=c.source?shortestPath(primalGraph(level,state),c.source,c.receiver):null;
+  return {started:state.lampStarted,powered:!c.source||!!path,shorted:!lampProtected(state,level),path,maxCharge:c.maxCharge??2};
+}
 export function updateLamp(state,level,events=[]) {
   if(!level.circuit)return;
-  const c=level.circuit,shorted=!lampProtected(state,level);
-  const powered=!c.source || !!shortestPath(primalGraph(level,state),c.source,c.receiver);
-  const old=state.lampStatus;
-  if(shorted) {state.lampStatus='shorted';state.lampLit=false;state.lampCharge=0;state.energy=Math.max(0,state.energy-1);}
-  else if(!powered){state.lampStatus='unpowered';state.lampLit=false;state.lampCharge=0;state.energy=Math.max(0,state.energy-1);}
-  else if(!state.lampStarted){state.lampStatus='ready';state.lampLit=false;state.lampCharge=0;}
-  else {state.energy=Math.min(3,state.energy+1);state.lampCharge=Math.min(2,state.lampCharge+1);state.lampLit=state.lampCharge>=2;state.lampStatus=state.lampLit?'lit':'charging';}
-  if(old!==state.lampStatus)events.push(({shorted:'紫线接通，灯短路熄灭，储能流失。',unpowered:'供能道路断开了。',ready:'供能接好了，踩点火机关启动。',charging:'能源启动，保持安全连接两回合。',lit:'灯亮了，黑暗地板恢复安全。'})[state.lampStatus]);
+  const {started,powered,shorted,maxCharge}=lampSupply(state,level),old=state.lampStatus;
+  if(shorted){state.lampStatus='shorted';state.lampCharge=0;}
+  else if(!powered)state.lampStatus='unpowered';
+  else if(!started)state.lampStatus='ready';
+  else {state.lampCharge=Math.min(maxCharge,state.lampCharge+1);state.lampStatus=state.lampCharge===maxCharge?'lit':'charging';}
+  state.lampLit=state.lampStatus==='lit';state.energy=state.lampCharge;
+  if(old!==state.lampStatus)events.push(({shorted:'紫线短路：灯熄灭，电量归零。',unpowered:'供能道路断开，停止充电。',ready:'供能已连接，发电机 OFF；踩火纹地板启动。',charging:`有效回合充电一格：${state.lampCharge}/${maxCharge}。`,lit:`电量 ${state.lampCharge}/${maxCharge}，灯光照亮灰灯印地板。`})[state.lampStatus]);
 }
 export function darkDanger(state,level){return state.lampLit?[]:[...positions(level,'N'),...(level.circuit?.darkCells??[])];}
 export const isLevelComplete = (state, level) => state.status !== 'lost' && state.world!=='dual' && tile(level, state.player) === 'E';
@@ -57,11 +63,31 @@ export function shadowDanger(state,level,predict=false) {
   }
   return [...cells.values()];
 }
+export function dangerCells(state,level){
+  const cells=new Map();
+  for(const [kind,positions]of [['dark',darkDanger(state,level)],['shadow',shadowDanger(state,level)]])for(const p of positions){const id=key(p),old=cells.get(id);cells.set(id,{...p,kind,kinds:old?[...old.kinds,kind]:[kind]});}
+  return [...cells.values()];
+}
+export const hunterMode=(state,index)=>state.hunterStates?.[index]??(state.hunterAwake?'chasing':'sleeping');
+export function hunterAlertCells(state,level,index){
+  const graph=primalGraph(level,state),start=state.hunters[index];if(!start||!graph.has(key(start)))return [];
+  const queue=[{...start,distance:0}],seen=new Set([key(start)]),radius=level.alertRadius??2;
+  for(let i=0;i<queue.length;i++){const p=queue[i];if(p.distance>=radius)continue;for(const id of graph.get(key(p))??[])if(!seen.has(id)){seen.add(id);const [x,y]=id.split(',').map(Number);queue.push({x,y,distance:p.distance+1});}}
+  return queue;
+}
+export function riftAccess(state,level){
+  const rift=level.rifts.find(r=>same(state.player,state.world==='dual'?r.dual:r.primal));
+  if(!rift)return {available:false,message:'只有站在双色裂隙上才能切换世界。'};
+  if(state.world==='dual'){
+    if(!active(level,rift.primal,state.scale,state)||state.hunters.some(p=>same(p,rift.primal))||dangerCells(state,level).some(p=>same(p,rift.primal)))return {available:false,message:'另一侧出口被占据或有危险，先等待或改变道路。'};
+  }else if(!dualGraph(level,state).graph.has(key(rift.dual))||state.shadows.some(p=>same(p,rift.dual)))return {available:false,message:'裂隙另一端无效或被影子占据。'};
+  return {available:true,rift,message:state.world==='dual'?'返回道路世界':'进入紫色裂隙'};
+}
 export function collectStar(state,level,events=[]) {
   if(state.world!=='dual' && !state.starCollected && same(state.player,level.star) && starActive(state,level)) {state.starCollected=true;events.push('捡到一片星光。');}
 }
 export const rejected = (state, message) => ({ state, valid: false, message });
-const copyState = state => ({...state,pieces:state.pieces.map(p=>({...p})),hunters:[...state.hunters],shadows:[...state.shadows],bridgeStates:{...state.bridgeStates},triggered:[...state.triggered],rooms:{...state.rooms},events:[]});
+const copyState = state => ({...state,pieces:state.pieces.map(p=>({...p})),hunters:[...state.hunters],shadows:[...state.shadows],bridgeStates:{...state.bridgeStates},triggered:[...state.triggered],rooms:{...state.rooms},hunterStates:[...state.hunterStates],hunterWakeReasons:[...state.hunterWakeReasons],events:[]});
 function geometryChange(state, action, level) {
   const next = copyState(state);
   if(action.type==='topology') {
@@ -84,7 +110,7 @@ function geometryChange(state, action, level) {
         if(occupied(slot.id))return rejected(state,'上面还有角色。');
         if(piece.slot===slot.id)return rejected(state,'碎片已经在这里。');
         const other = next.pieces.find(p => p.id !== piece.id && p.slot === slot.id);
-        if (other) { if ([state.player, ...state.hunters].some(p => same(p, slot))) return rejected(state, '先离开这块碎片再交换。'); other.slot = piece.slot; }
+        if (other) other.slot = piece.slot;
         piece.slot = slot.id;
       }
     }
@@ -101,7 +127,7 @@ export function triggerFloor(state,level,p,events=[]) {
       const bridge=level.bridges.find(b=>b.id===control.bridge),open=bridgeIsOpen(state,bridge),desired=control.value??!open;
       if(!desired&&[state.player,...state.hunters].some(q=>bridge.cells.some(c=>same(q,at(c))))){events.push('桥上还有角色，机关没有断桥。');continue;}
       state.bridgeStates[bridge.id]=desired;events.push(desired?'同纹机关接通了桥。':'同纹机关切断了桥，小兽也无法通过。');
-    } else if(control.kind==='ignite') {state.lampStarted=true;events.push('点火机关已启动。');}
+    } else if(control.kind==='ignite') {state.lampStarted=true;events.push('火纹地板启动发电机：OFF → ON。');}
     else if(control.kind==='room') {
       const region=territoryAt(level,p),room=level.rooms.find(r=>r.id===control.room&&r.territory===region);
       if(!room){events.push('控制点不属于这间房的领地。');continue;}
@@ -113,22 +139,16 @@ export function triggerFloor(state,level,p,events=[]) {
 }
 export function predictTurn(state,level,action={type:'wait'}) {
   const result=transition(state,action,level,{feedback:false});
-  return {valid:result.valid,hunters:result.state.hunters,shadows:result.state.shadows,danger:shadowDanger(result.state,level),state:result.state};
+  return {valid:result.valid,hunters:result.state.hunters,shadows:result.state.shadows,danger:dangerCells(result.state,level),hunterStates:result.state.hunterStates,state:result.state};
 }
 export function transition(state, action, level, { feedback = true } = {}) {
   if (state.status !== 'playing') return rejected(state, '可撤销一步，或重来。');
   let next; const events = [];
   if(action.type==='shift') {
-    const rift=(level.rifts??[]).find(r=>same(state.player,state.world==='dual'?r.dual:r.primal));
-    if(!rift)return rejected(state,'只有双界裂隙能通往另一层。');
-    next=copyState(state);
-    if(state.world==='dual') {
-      if(!active(level,rift.primal,state.scale,state)||state.hunters.some(p=>same(p,rift.primal))||shadowDanger(state,level).some(p=>same(p,rift.primal))||darkDanger(state,level).some(p=>same(p,rift.primal)))return rejected(state,'另一侧出口不安全，先等等或改变道路。');
-      next.world='primal';next.player={...rift.primal};next.anchor={...rift.primal};
-    } else {
-      if(!dualGraph(level,state).graph.has(key(rift.dual))||state.shadows.some(p=>same(p,rift.dual)))return rejected(state,'裂隙的另一端被占据了。');
-      next.world='dual';next.player={...rift.dual};next.anchor={...state.player};
-    }
+    const access=riftAccess(state,level);if(!access.available)return rejected(state,access.message);
+    const {rift}=access;next=copyState(state);
+    if(state.world==='dual'){next.world='primal';next.player={...rift.primal};next.anchor={...rift.primal};}
+    else{next.world='dual';next.player={...rift.dual};next.anchor={...state.player};}
     events.push(next.world==='dual'?'进入裂隙，沿紫线移动。':'回到道路世界。');
   } else if (action.type === 'move') {
     const dir=directions.find(d=>d.name===action.direction);let target;
@@ -139,6 +159,7 @@ export function transition(state, action, level, { feedback = true } = {}) {
       target=dir&&neighbor(state.player,dir,level,state.topology);
       if(!target||!primalOpen(level,state,state.player,target))return rejected(state,tile(level,target??state.player)==='D'?'那扇门需要钥匙。':'路还没接上。试试机关、拼图或另一种空间。');
     }
+    if(state.world!=='dual'&&state.hunters.some(p=>same(p,target)))return rejected(state,'小兽占着这块地板，不能从它身上穿过。');
     next=copyState(state);next.player=target;
     if(state.world!=='dual') {
       next.anchor=target;
@@ -151,30 +172,37 @@ export function transition(state, action, level, { feedback = true } = {}) {
     next = result.state;
     events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', topology: '世界的边缘改变了。' })[action.type]);
   }
-  if(feedback && state.shadows.length && ['place','rotate','remove'].includes(action.type)) {
+  if(feedback && state.shadows.length && ['place','rotate','remove','topology','move'].includes(action.type)) {
     const old=dualGraph(level,state).crossings,changed=dualGraph(level,next).crossings;
     if(changed.some(e=>!e.open&&old.some(o=>o.open&&same(o.a,e.a)&&same(o.b,e.b))))events.push('你的路接通了，交叉的紫色裂隙被挡住了。');
   }
 
   next.turn++;
   if(feedback && state.shadows.length && disconnected(state, level) !== disconnected(next, level)) events.push(disconnected(next, level) ? '通向巡逻目标的紫线被截断了。' : '影子又找到巡逻路线了。');
-  if (next.world!=='dual' && next.hunters.some(p => same(p, next.player))) next.status = 'lost';
-  const hunterGraph = next.hunters.length ? primalGraph(level,next) : null;
-  const alertPath = !state.hunterAwake ? next.hunters.map(p => shortestPath(hunterGraph,p,next.world==='dual'?next.anchor:next.player)) : [];
-  next.hunterAwake = !!state.hunterAwake || (level.wakeOnKey&&next.hasKey || alertPath.some(p => p && p.length <= (level.alertRadius ?? 3) + 1));
-  if (!state.hunterAwake && next.hunterAwake && next.hunters.length) events.push('小兽醒了！此后每回合追一步。');
-  if (next.hunterAwake && next.hunters.length) {
-    const graph = hunterGraph;
-    next.hunters = next.hunters.map(p => shortestPath(graph, p, next.world==='dual'?next.anchor:next.player)?.[1] ?? p);
-    if (next.world!=='dual' && next.hunters.some(p => same(p, next.player))) next.status = 'lost';
-  }
+  const hunterGraph=next.hunters.length?primalGraph(level,next):null,target=next.world==='dual'?next.anchor:next.player;
+  next.hunters=next.hunters.map((p,i)=>{
+    const mode=hunterMode(state,i),path=shortestPath(hunterGraph,p,target);
+    if(mode==='sleeping'){
+      const inRange=next.world!=='dual'&&path&&path.length-1<=(level.alertRadius??2);
+      const keyNoise=!state.hasKey&&next.hasKey&&level.keyNoise;
+      const noisePath=keyNoise?shortestPath(hunterGraph,p,positions(level,'K')[0]):null;
+      const heard=noisePath&&noisePath.length-1<=level.keyNoise.radius;
+      if(inRange||heard){next.hunterStates[i]='alert';next.hunterWakeReasons[i]=heard?'keyNoise':'range';events.push(heard?'带铃钥匙发出声音：小兽警觉了，本回合不移动。':'进入警戒道路范围：小兽警觉了，本回合不移动。');}
+      return p;
+    }
+    next.hunterStates[i]='chasing';const destination=path?.[1]??p;
+    if(next.world!=='dual'&&same(destination,next.player))next.status='lost';
+    return destination;
+  });
+  next.hunterAwake=next.hunterStates.some(mode=>mode!=='sleeping');
   if (level.shadowSpeed && next.turn % level.shadowSpeed === 0) {
     const paths = shadowPaths(next, level); next.shadows = next.shadows.map((p, i) => paths[i]?.[1] ?? p);
   }
   if(next.shadows.some(p=>same(p,beaconPosition(next,level)))) next.shadowReturning=!next.shadowReturning;
-  if(next.world==='dual'?next.shadows.some(p=>same(p,next.player)):shadowDanger(next,level).some(p=>same(p,next.player))) {next.status='lost';events.push('地板裂痕有危险；看看菱形预告，再等待或绕行。');}
   updateLamp(next,level,events);
-  if(next.world!=='dual'&&darkDanger(next,level).some(p=>same(p,next.player))){next.status='lost';events.push('黑暗地板没有灯光保护；撤销并先点亮灯。');}
+  if(next.world==='dual'?next.shadows.some(p=>same(p,next.player)):dangerCells(next,level).some(p=>same(p,next.player))){
+    next.status='lost';events.push(next.world==='dual'?'影子与你在同一角点相遇了。':dangerCells(next,level).find(p=>same(p,next.player)).kind==='dark'?'灰灯印地板还没照亮，先给灯充电。':'紫色裂痕有危险；看下一回合的菱形预告，再绕行。');
+  }
   if(next.status !== 'lost') collectStar(next,level,events);
   if (next.status === 'lost') events.push('没关系，撤销一步就好。');
   else if (isLevelComplete(next, level)) { next.status = 'won'; events.push('找到路了。'); }

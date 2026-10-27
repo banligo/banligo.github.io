@@ -5,7 +5,7 @@ const gcd = (a, b) => b ? gcd(b, a % b) : a;
 export const period = level => ((level.hunterSpeed || 1) * (level.shadowSpeed || 1)) / gcd(level.hunterSpeed || 1, level.shadowSpeed || 1);
 export function stateHash(state,level) {
  const pieces=state.pieces.map(p=>{const d=level.pieces.find(d=>d.id===p.id);return `${d.shape}:${p.slot??'-'}:${p.rotation%(d.shape==='straight'?2:d.shape==='cross'?1:4)}`;}).sort().join(';');
- return [key(state.player),state.world,key(state.anchor),state.hunters.map(key).join(';'),state.shadows.map(key).join(';'),pieces,+state.hasKey,+state.starCollected,state.scale,state.topology,state.turn%period(level),+state.hunterAwake,+state.shadowReturning,+state.lampLit,+state.lampStarted,state.lampCharge,state.energy,JSON.stringify(state.bridgeStates),JSON.stringify(state.rooms),state.triggered.filter(id=>level.controls.find(c=>c.id===id)?.once).join(',')].join('|');
+ return [key(state.player),state.world,key(state.anchor),state.hunters.map(key).join(';'),state.shadows.map(key).join(';'),pieces,+state.hasKey,+state.starCollected,state.scale,state.topology,state.turn%period(level),state.hunterStates.join(','),+state.shadowReturning,+state.lampLit,+state.lampStarted,state.lampCharge,state.energy,JSON.stringify(state.bridgeStates),JSON.stringify(state.rooms),state.triggered.filter(id=>level.controls.find(c=>c.id===id)?.once).join(',')].join('|');
 }
 export function actionsFor(level) {
   return [...directions.map(d => ({ type: 'move', direction: d.name })),

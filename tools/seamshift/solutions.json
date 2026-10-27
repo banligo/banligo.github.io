@@ -110,35 +110,24 @@
   },
   {
     "id": 2,
-    "revision": 11,
+    "revision": 12,
     "title": "Monster & Boundaries",
     "normal": [
       {
         "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "topology",
-        "value": "cylinder"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "wait"
-      },
-      {
-        "type": "topology",
-        "value": "mobius"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "right"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "right"
+        "direction": "down"
       }
     ],
     "star": [
@@ -152,36 +141,25 @@
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "topology",
-        "value": "cylinder"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "wait"
-      },
-      {
-        "type": "topology",
-        "value": "mobius"
-      },
-      {
-        "type": "move",
         "direction": "right"
       },
       {
         "type": "move",
-        "direction": "right"
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       }
     ],
-    "n3Opt": 9,
+    "n3Opt": 6,
     "knownLimitations": [],
-    "threeStarLimit": 11,
-    "starExpanded": 38
+    "threeStarLimit": 8,
+    "starExpanded": 11
   },
   {
     "id": 3,
@@ -300,7 +278,7 @@
   },
   {
     "id": 4,
-    "revision": 11,
+    "revision": 12,
     "title": "Shadow Maze",
     "normal": [
       {
@@ -357,15 +335,11 @@
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "right"
+        "direction": "down"
       },
       {
         "type": "move",
@@ -373,29 +347,25 @@
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "topology",
-        "value": "torus"
+        "direction": "right"
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "down"
       },
       {
         "type": "move",
         "direction": "right"
       }
     ],
-    "n3Opt": 12,
+    "n3Opt": 10,
     "knownLimitations": [],
-    "threeStarLimit": 14,
-    "starExpanded": 140
+    "threeStarLimit": 12,
+    "starExpanded": 15
   },
   {
     "id": 5,
-    "revision": 11,
+    "revision": 12,
     "title": "The Broken Escape",
     "normal": [
       {
@@ -466,7 +436,7 @@
   },
   {
     "id": 6,
-    "revision": 11,
+    "revision": 12,
     "title": "Keep the Light",
     "normal": [
       {
@@ -557,11 +527,11 @@
     "n3Opt": 12,
     "knownLimitations": [],
     "threeStarLimit": 14,
-    "starExpanded": 51
+    "starExpanded": 53
   },
   {
     "id": 7,
-    "revision": 11,
+    "revision": 12,
     "title": "Shadow & Light",
     "normal": [
       {
@@ -627,12 +597,12 @@
         "direction": "up"
       },
       {
-        "type": "topology",
-        "value": "plane"
-      },
-      {
         "type": "move",
         "direction": "up"
+      },
+      {
+        "type": "topology",
+        "value": "plane"
       },
       {
         "type": "move",
@@ -642,11 +612,11 @@
     "n3Opt": 11,
     "knownLimitations": [],
     "threeStarLimit": 13,
-    "starExpanded": 110
+    "starExpanded": 97
   },
   {
     "id": 8,
-    "revision": 11,
+    "revision": 12,
     "title": "Light Across the Seam",
     "normal": [
       {
@@ -733,67 +703,13 @@
     "n3Opt": 10,
     "knownLimitations": [],
     "threeStarLimit": 12,
-    "starExpanded": 224
+    "starExpanded": 414
   },
   {
     "id": 9,
-    "revision": 11,
+    "revision": 12,
     "title": "Star Hunt",
     "normal": [
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "topology",
-        "value": "torus"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      }
-    ],
-    "star": [
       {
         "type": "move",
         "direction": "left"
@@ -815,40 +731,16 @@
         "direction": "down"
       },
       {
-        "type": "topology",
-        "value": "mobius"
-      },
-      {
         "type": "move",
         "direction": "right"
       },
       {
         "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "topology",
-        "value": "plane"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "topology",
-        "value": "mobius"
-      },
-      {
-        "type": "move",
-        "direction": "right"
+        "direction": "down"
       },
       {
         "type": "move",
@@ -871,20 +763,14 @@
         "direction": "right"
       }
     ],
-    "n3Opt": 19,
-    "knownLimitations": [],
-    "threeStarLimit": 21,
-    "starExpanded": 11815
-  },
-  {
-    "id": 10,
-    "revision": 11,
-    "title": "First Mastery",
-    "normal": [
+    "star": [
       {
-        "type": "place",
-        "pieceId": "shield",
-        "slotId": "4,4"
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "topology",
@@ -904,6 +790,82 @@
       },
       {
         "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "n3Opt": 15,
+    "knownLimitations": [],
+    "threeStarLimit": 17,
+    "starExpanded": 1146
+  },
+  {
+    "id": 10,
+    "revision": 12,
+    "title": "First Mastery",
+    "normal": [
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "4,4"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
         "direction": "right"
       },
       {
@@ -913,14 +875,6 @@
       {
         "type": "topology",
         "value": "plane"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
       },
       {
         "type": "move",
@@ -994,18 +948,6 @@
         "direction": "up"
       },
       {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "up"
-      },
-      {
         "type": "topology",
         "value": "plane"
       },
@@ -1016,12 +958,24 @@
       {
         "type": "move",
         "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       }
     ],
     "n3Opt": 17,
     "knownLimitations": [],
     "threeStarLimit": 19,
-    "starExpanded": 24534
+    "starExpanded": 25235
   },
   {
     "id": 11,
@@ -1216,7 +1170,7 @@
   },
   {
     "id": 12,
-    "revision": 11,
+    "revision": 12,
     "title": "First Light",
     "normal": [
       {
@@ -1228,13 +1182,29 @@
         "direction": "right"
       },
       {
-        "type": "move",
-        "direction": "down"
-      },
-      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "3,4"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
@@ -1263,6 +1233,78 @@
         "direction": "right"
       },
       {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "3,4"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "4,3"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "wait"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "wait"
+      },
+      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "3,4"
@@ -1270,48 +1312,16 @@
       {
         "type": "move",
         "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
       }
     ],
-    "n3Opt": 12,
+    "n3Opt": 22,
     "knownLimitations": [],
-    "threeStarLimit": 15,
-    "starExpanded": 52
+    "threeStarLimit": 25,
+    "starExpanded": 2936
   },
   {
     "id": 13,
-    "revision": 11,
+    "revision": 12,
     "title": "Moving Territories",
     "normal": [
       {
@@ -1344,7 +1354,15 @@
       },
       {
         "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
         "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       },
       {
         "type": "move",
@@ -1361,6 +1379,10 @@
       {
         "type": "move",
         "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       }
     ],
     "star": [
@@ -1398,6 +1420,10 @@
       },
       {
         "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
         "direction": "right"
       },
       {
@@ -1418,13 +1444,13 @@
       },
       {
         "type": "move",
-        "direction": "down"
+        "direction": "right"
       }
     ],
-    "n3Opt": 14,
+    "n3Opt": 15,
     "knownLimitations": [],
-    "threeStarLimit": 17,
-    "starExpanded": 17
+    "threeStarLimit": 18,
+    "starExpanded": 19
   },
   {
     "id": 14,
@@ -1592,175 +1618,45 @@
     "n3Opt": 26,
     "knownLimitations": [],
     "threeStarLimit": 29,
-    "starExpanded": 924,
-    "normalPlans": [
-      {
-        "label": "周期边界绕行",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "topology",
-            "value": "torus"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "rotate",
-            "pieceId": "bend"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "6,7"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      },
-      {
-        "label": "平面双界绕行",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "6,7"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      }
-    ]
+    "starExpanded": 924
   },
   {
     "id": 15,
-    "revision": 11,
+    "revision": 12,
     "title": "The Last Seam",
     "normal": [
       {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
         "type": "place",
-        "pieceId": "shield",
-        "slotId": "7,6"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
+        "pieceId": "bend",
+        "slotId": "5,6"
       },
       {
         "type": "move",
@@ -1773,128 +1669,16 @@
       {
         "type": "move",
         "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
       }
     ],
     "star": [
       {
-        "type": "place",
-        "pieceId": "shield",
-        "slotId": "7,6"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
         "type": "move",
         "direction": "left"
       },
       {
-        "type": "rotate",
-        "pieceId": "spare"
-      },
-      {
-        "type": "place",
-        "pieceId": "spare",
-        "slotId": "7,5"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "shield"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "shield"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "shield"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
+        "type": "topology",
+        "value": "mobius"
       },
       {
         "type": "move",
@@ -1902,242 +1686,41 @@
       },
       {
         "type": "move",
-        "direction": "down"
+        "direction": "left"
       },
       {
         "type": "move",
-        "direction": "right"
+        "direction": "up"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "5,6"
       },
       {
         "type": "move",
-        "direction": "right"
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
       }
     ],
-    "n3Opt": 26,
+    "n3Opt": 11,
     "knownLimitations": [],
-    "threeStarLimit": 29,
-    "starExpanded": 206290,
-    "normalPlans": [
-      {
-        "label": "平面裂隙与旋转房间",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "place",
-            "pieceId": "shield",
-            "slotId": "7,6"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      },
-      {
-        "label": "环面对偶周期绕行",
-        "actions": [
-          {
-            "type": "topology",
-            "value": "torus"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "place",
-            "pieceId": "shield",
-            "slotId": "7,6"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      }
-    ]
+    "threeStarLimit": 14,
+    "starExpanded": 3469
   }
 ]
