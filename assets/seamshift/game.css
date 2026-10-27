@@ -216,3 +216,7 @@ dd { margin:3px 0 0; color:#948366; }
 .lightweight *, .lightweight *:before, .lightweight *:after { animation:none!important; transition:none!important; }
 .lightweight .clear-stars .earned { fill:#d9ac51; }
 .lightweight .board { contain:layout style; }
+
+.radius-link circle { transition:r .18s ease; pointer-events:none; }
+.radius-link { pointer-events:none; }
+#reset-dialog p { margin:16px 0; line-height:1.7; }

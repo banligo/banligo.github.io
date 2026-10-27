@@ -5,7 +5,7 @@ const gcd = (a, b) => b ? gcd(b, a % b) : a;
 export const period = level => ((level.hunterSpeed || 1) * (level.shadowSpeed || 1)) / gcd(level.hunterSpeed || 1, level.shadowSpeed || 1);
 export function stateHash(state, level) {
   return [key(state.player), state.hunters.map(key).join(';'), state.shadows.map(key).join(';'),
-    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level)].join('|');
+    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level), +!!state.hunterAwake].join('|');
 }
 export function actionsFor(level) {
   return [...directions.map(d => ({ type: 'move', direction: d.name })),
@@ -47,27 +47,16 @@ function makeHeuristic(level, requireStar) {
     return distanceCache.get(id);
   };
   const goal = positions(level, 'E')[0], item = positions(level, 'K')[0];
-  const desired = new Map(level.pieces.map(definition => {
-    const slot = level.slots.find(s => s.id === definition.allowedSlots[0]);
-    const neighbors = directions.flatMap((d, i) => tile(level, { x: slot.x + d.x, y: slot.y + d.y }) !== '#' ? [i] : []);
-    return [definition.id, Array.from({ length: 4 }, (_, rotation) => rotation).filter(rotation => neighbors.every(i => ports({ rotation }, definition).includes(i)))];
-  }));
   return state => {
-    let puzzleCost = 0;
-    state.pieces.forEach(p => {
-      puzzleCost += p.slot ? 0 : 1;
-      puzzleCost += Math.min(...desired.get(p.id).map(r => (r - p.rotation + 4) % 4), 4);
-    });
-    let target = goal, missing = 0;
-    if (item && !state.hasKey) { target = item; missing += 12; }
-    if (requireStar && !state.starCollected) { target = level.star; missing += 12; }
-    const shadowCost = state.shadows.length && !disconnected(state, level) ? 12 + 2 * (dualGraph(level, state).graph.get(key(state.shadows[0]))?.length || 0) : 0;
-    return distance(state.player, target) + puzzleCost * 2 + missing + shadowCost;
+    const needStar = requireStar && !state.starCollected, needKey = item && !state.hasKey;
+    if (needStar && needKey) return Math.min(distance(state.player,level.star)+distance(level.star,item)+distance(item,goal),distance(state.player,item)+distance(item,level.star)+distance(level.star,goal));
+    const target = needStar ? level.star : needKey ? item : goal;
+    return distance(state.player,target) + (target === goal ? 0 : distance(target,goal));
   };
 }
-// Weighted A* searches real game states. It finds verified routes, not necessarily
-// shortest routes. Tests derive Par from a replayed star-collecting solution.
-export function search(level, start = initialState(level), { maxExpanded = 200000, maxDepth = 48, requireStar = false, forbid = () => false } = {}) {
+// A* with an admissible relaxed-union movement lower bound. Geometry,
+// monsters and locks are relaxed only in the heuristic, never in transitions.
+export function search(level, start = initialState(level), { maxExpanded = 200000, maxDepth = 48, requireStar = false, weight = 1, forbid = () => false } = {}) {
   const heuristic = makeHeuristic(level, requireStar), open = new Heap(), best = new Map(), actions = actionsFor(level).filter(a => !forbid(a));
   open.push({ state: start, depth: 0, parent: null, action: null, priority: 0 }); best.set(stateHash(start, level), 0);
   let expanded = 0;
@@ -86,7 +75,8 @@ export function search(level, start = initialState(level), { maxExpanded = 20000
       const hash = stateHash(next, level), depth = node.depth + 1;
       if ((best.get(hash) ?? Infinity) <= depth) continue;
       best.set(hash, depth);
-      open.push({ state: next, depth, parent: node, action, priority: depth + 3 * heuristic(next) - (next.status === 'won' ? 1000 : 0) });
+      if (depth + heuristic(next) > maxDepth) continue;
+      open.push({ state: next, depth, parent: node, action, priority: depth + weight * heuristic(next) });
     }
   }
   return { actions: null, expanded, exhausted: !open.data.length };

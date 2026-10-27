@@ -29,10 +29,14 @@ export function primalOpen(level, state, a, b) {
   return !level.bridges.some(edge => (
     (same(a, { x: edge.from[0], y: edge.from[1] }) && same(b, { x: edge.to[0], y: edge.to[1] })) ||
     (same(b, { x: edge.from[0], y: edge.from[1] }) && same(a, { x: edge.to[0], y: edge.to[1] }))
-  ) && state.scale < edge.birth);
+  ) && (edge.nodes ? level.radii[state.scale - 1] + 1e-9 < Math.hypot(edge.nodes[0].x-edge.nodes[1].x,edge.nodes[0].y-edge.nodes[1].y) : state.scale < edge.birth));
 }
 
+const primalCache = new WeakMap();
 export function primalGraph(level, state) {
+  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${pieceSignature(state)}`;
+  if (!primalCache.has(level)) primalCache.set(level,new Map());
+  const cache = primalCache.get(level); if (cache.has(signature)) return cache.get(signature);
   const graph = new Map();
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const p = { x, y };
@@ -43,7 +47,7 @@ export function primalGraph(level, state) {
     const p = point(id), q = neighbor(p, dir, level, state.topology);
     if (q && graph.has(key(q)) && primalOpen(level, state, p, q)) neighbors.push(key(q));
   }
-  return graph;
+  if(cache.size > 2048) cache.clear(); cache.set(signature,graph); return graph;
 }
 
 // Dual coordinates are CELL CORNERS, not room centers. Only interior y values
@@ -96,7 +100,7 @@ export function dualGraph(level, state) {
   // Sort once to make all BFS ties deterministic, including seam corners.
   for (const neighbors of graph.values()) neighbors.sort();
   const result = { graph, crossings };
-  if (cached.size > 600) cached.clear();
+  if (cached.size > 2048) cached.clear();
   cached.set(signature, result);
   return result;
 }

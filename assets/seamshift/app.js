@@ -6,12 +6,12 @@ import { patchBoard, setMarkupIfChanged } from './renderer.js';
 import { fitViewport } from './viewport.js';
 import { icon } from './icons.js';
 import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
-import { loadProgress, recordWin, saveProgress, unlockedLevel } from './progress.js';
+import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js';
 const $ = selector => document.querySelector(selector);
 const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转' };
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
-const storage = { getItem: name => localStorage.getItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
+const storage = { getItem: name => localStorage.getItem(name), removeItem: name => localStorage.removeItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
 let progress = loadProgress(storage, levels), level = getLevel(progress.currentLevel);
 let session = createSession(level, progress.snapshot), selected = null, view = 'primal', previewState = null;
 let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false, saveTimer = null, lightweight = false;
@@ -41,7 +41,7 @@ function renderTray() {
   $('#puzzle-tray').hidden = !level.pieces.length;
   setMarkupIfChanged($('#pieces'), session.state.pieces.map((piece, i) => {
     const definition = level.pieces.find(p => p.id === piece.id);
-    return `<button class="piece-button ${piece.slot ? 'placed' : ''}" data-piece="${piece.id}" aria-pressed="${piece.id === selected}" aria-label="${shapeNames[definition.shape]}碎片 ${i + 1}${piece.slot ? '，已放置' : '，选择后点击空位'}" title="${piece.id === selected ? '再点旋转' : '选择碎片'}">${pieceIcon(piece, definition)}<small>${['Ⅰ', 'Ⅱ', 'Ⅲ'][i]}</small></button>`;
+    return `<button class="piece-button ${piece.slot ? 'placed' : ''}" data-piece="${piece.id}" aria-pressed="${piece.id === selected}" aria-label="${shapeNames[definition.shape]}碎片 ${i + 1}${piece.slot ? '，已放置' : '，选择后点击空位'}" title="${piece.id === selected ? '再点旋转' : '选择碎片'}">${pieceIcon(piece, definition)}</button>`;
   }).join(''));
   const piece = session.state.pieces.find(p => p.id === selected);
   $('#rotate-button').disabled = !piece || session.state.status !== 'playing';
@@ -49,7 +49,7 @@ function renderTray() {
 }
 function renderControls() {
   const state = session.state;
-  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${value}</button>`).join(''));
+  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value || Math.abs(state.scale-value)>1 ? 'disabled' : ''}>${level.radii[value-1].toFixed(1)}</button>`).join(''));
   setMarkupIfChanged($('#mode-buttons'), ['plane', 'cylinder', 'mobius'].map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
@@ -57,7 +57,7 @@ function render() {
   const state = session.state;
   setWorld(state.topology);
   $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `0${level.id} / 05`;
-  $('#moves').textContent = `${state.turn} 步`; $('#par').textContent = `推荐 ${level.par} 步`;
+  $('#moves').textContent = `${state.turn} 步`; $('#par').textContent = `三星 ≤${level.threeStarLimit}步`; $('#par').title = `三星理论最优 ${level.n3Opt} 步；历史最佳三星 ${progress.results[level.id]?.bestThreeStarTurns ?? '—'} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
   $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id]?.stars || 0} 星`);
   $('#held-star').classList.toggle('collected', state.starCollected);
@@ -76,7 +76,7 @@ function checkDiscoveries(before, action) {
   if (action.type === 'scale') discover('scale');
   if (['place', 'rotate'].includes(action.type)) discover('pieces');
   if (Math.abs(before.player.x - state.player.x) > 1) discover(state.topology);
-  if (state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
+  if (level.id !== 4 && state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
 }
 function flashInvalid(text) {
   toast(text, 'error'); if (lightweight) return; const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
@@ -104,18 +104,18 @@ function perform(action) {
   persist();
   if (session.state.status === 'lost') { actionQueue.clear(); $('#lost-overlay').hidden = false; toast('没关系，撤销一步就好。', 'error'); }
   else if (result.message) toast(result.message);
-  else if (level.hunterSpeed && (session.state.turn + 1) % level.hunterSpeed === 0) toast('小兽下一回合会移动。');
+  else if (session.state.hunterAwake) toast('小兽追击中；虚线是下一步，无路时停留。');
 }
 function finishLevel() {
   clearTimeout(saveTimer); saveTimer = null;
-  actionQueue.clear(); advancing = true; const count = score(session.state, level);
+  actionQueue.clear(); if(level.id === 4) discover('duality'); advancing = true; const count = score(session.state, level);
   progress = recordWin(progress, level.id, count, session.state.turn); saveProgress(storage, progress);
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id].stars);
   $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id].stars} 星`);
-  $('#clear-title').textContent = level.id === 5 ? '最后一条路，也接上了。' : '找到路了。';
+  $('#clear-title').textContent = level.id === 5 ? '这段旅程完成了。' : '找到路了。';
   $('#clear-stars').innerHTML = [1, 2, 3].map(n => icon('star', `class="${n <= count ? 'earned' : ''}"`)).join('');
   $('#clear-stars').setAttribute('aria-label', `获得 ${count} 星`);
-  $('#clear-score').textContent = `${session.state.turn} 步 · 最佳 ${progress.results[level.id].bestTurns} 步`;
+  $('#clear-score').textContent = `${session.state.turn} 步 · 最佳三星 ${progress.results[level.id].bestThreeStarTurns ?? '—'} 步`;
   $('#clear-overlay').hidden = false; toast(); advanceTimer = setTimeout(advance, reduceMotion ? 900 : 1850);
 }
 function advance() {
@@ -136,13 +136,18 @@ function undo() {
   if (session.undo()) { previewState = null; hintRequest++; render(); persist(); toast('回到上一步。'); }
   $('#board').focus({ preventScroll: true });
 }
+function resetAll() {
+  clearTimeout(saveTimer); clearTimeout(advanceTimer);
+  try { progress = resetProgress(storage); } catch { toast('存储无法清除，请检查浏览器设置。','error'); return; }
+  chooseLevel(1); flushPersistence();
+}
 function restart() {
   clearTimeout(advanceTimer); advancing = false; actionQueue.clear(); closeDialogs(); $('#clear-overlay').hidden = true;
   session.restart(); selected = null; previewState = null; hintRequest++; render(); persist(); toast('再走一次，路还在。'); $('#board').focus({ preventScroll: true });
 }
 function renderLevels() {
   const unlocked = unlockedLevel(progress);
-  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
+  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title} · 三星最优 ${l.n3Opt} / 目标 ${l.threeStarLimit} / 个人 ${progress.results[l.id]?.bestThreeStarTurns ?? '—'}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
 const discoveries = {
   scale: ['会生长的路', '有的道路要到更大的尺度才出现。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
@@ -169,7 +174,7 @@ function actionLabel(action) {
   if (action.type === 'scale') return `把尺度改为 ${action.value}`;
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
-  if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进同纹样空位`;
+  if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进任意空位`;
   if (action.type === 'remove') return '收回这块碎片再试试';
   return '等一回合，看看小兽的下一步';
 }
@@ -235,9 +240,9 @@ document.addEventListener('pointerup', event => {
       const svg = $('#board svg'), p = svg && cellFromClient(svg, event.clientX, event.clientY, CELL, PADDING), slot = p && slotAt(level, p);
       if (slot) actionQueue.push({ type: 'place', pieceId: g.pieceId, slotId: slot.id });
       else if (inside($('#puzzle-tray').getBoundingClientRect(), event.clientX, event.clientY)) actionQueue.push({ type: 'remove', pieceId: g.pieceId });
-      else flashInvalid('拖到同纹样空位，或放回碎片栏。');
+      else flashInvalid('拖到任意空位，或放回碎片栏。');
     } else if (g.placed || g.selectedBefore === g.pieceId) actionQueue.push({ type: 'rotate', pieceId: g.pieceId });
-    else toast('点同纹样的空位放下；再点碎片旋转。');
+    else toast('点任意的空位放下；再点碎片旋转。');
   } else {
     const direction = swipeDirection({ x: g.x, y: g.y }, { x: event.clientX, y: event.clientY });
     if (direction) actionQueue.push({ type: 'move', direction });
@@ -265,6 +270,7 @@ document.addEventListener('click', event => {
   if (button.dataset.scale) { actionQueue.push({ type: 'scale', value: Number(button.dataset.scale) }); return; }
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
+    'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,

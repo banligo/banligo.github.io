@@ -1,0 +1,551 @@
+[
+  {
+    "id": 1,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 35
+  },
+  {
+    "id": 2,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "wait"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "wait"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 23
+  },
+  {
+    "id": 3,
+    "normal": [
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bridge"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "bend"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bridge"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "expanded": 712
+  },
+  {
+    "id": 4,
+    "normal": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "barrier"
+      },
+      {
+        "type": "place",
+        "pieceId": "barrier",
+        "slotId": "barrier"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "barrier"
+      },
+      {
+        "type": "place",
+        "pieceId": "barrier",
+        "slotId": "barrier"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "expanded": 95
+  },
+  {
+    "id": 5,
+    "normal": [
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bridge"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "star": [
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "ring"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bridge"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "expanded": 229939
+  }
+]

@@ -1,5 +1,5 @@
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, disconnected, objectiveMet, shadowPaths } from './engine.js';
+import { beaconPosition, disconnected, starActive, shadowPaths } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
 import { starPath } from './icons.js';
 export const CELL = 56, PADDING = 23;
@@ -46,8 +46,8 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
     const piece = pieceAt(level, state, p), slot = level.slots.find(s => same(s, p));
     if (slot && !piece) {
-      const highlighted = selected && level.pieces.find(d => d.id === selected)?.allowedSlots.includes(slot.id);
-      ground.push(`<g data-slot="${slot.id}" role="button" tabindex="0" aria-label="拼图空位 ${level.slots.indexOf(slot) + 1}" class="puzzle-slot ${highlighted ? 'slot-highlight' : ''}"><rect x="${c.x - 25}" y="${c.y - 25}" width="50" height="50" rx="4" fill="${highlighted ? '#f1da9b' : '#b4ac95'}" stroke="${highlighted ? '#876338' : '#8a8069'}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M${c.x - 9} ${c.y}h18M${c.x} ${c.y - 9}v18" stroke="#897f65" opacity=".55"/><text x="${c.x + 17}" y="${c.y + 19}" font-size="9" text-anchor="middle" fill="#6d654f">${['Ⅰ', 'Ⅱ', 'Ⅲ'][level.slots.indexOf(slot)]}</text></g>`);
+      const highlighted = !!selected;
+      ground.push(`<g data-slot="${slot.id}" role="button" tabindex="0" aria-label="拼图空位 ${level.slots.indexOf(slot) + 1}" class="puzzle-slot ${highlighted ? 'slot-highlight' : ''}"><rect x="${c.x - 25}" y="${c.y - 25}" width="50" height="50" rx="4" fill="${highlighted ? '#f1da9b' : '#b4ac95'}" stroke="${highlighted ? '#876338' : '#8a8069'}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M${c.x - 9} ${c.y}h18M${c.x} ${c.y - 9}v18" stroke="#897f65" opacity=".55"/><text x="${c.x + 17}" y="${c.y + 19}" font-size="9" text-anchor="middle" fill="#6d654f"></text></g>`);
       continue;
     }
     const changed = previous && on !== oldOn;
@@ -67,15 +67,15 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     if (t === 'D') markings.push(actor(p, `<path d="M-20-19h40v38h-40Z" fill="${state.hasKey ? '#b0b28a' : '#8c775b'}" stroke="#66563f" stroke-width="2"/><path d="M-13-18v36M0-18v36M13-18v36" stroke="#d7bd89" stroke-width="2"/>${state.hasKey ? '<path d="M-10 0h20" stroke="#607758" stroke-width="3"/>' : '<rect x="-6" y="-5" width="12" height="13" rx="2" fill="#deb25d" stroke="#765c36"/><path d="M-4-5v-4a4 4 0 0 1 8 0v4" fill="none" stroke="#deb25d" stroke-width="2"/>'}`));
     if (t === 'K' && !state.hasKey) markings.push(actor(p, '<g fill="none" stroke="#8c6234" stroke-width="3"><circle cx="-5" cy="-5" r="6" fill="#e9c475"/><path d="m-1-1 12 12m-5-5 4-4m-8 0 4-4"/></g>'));
     if (t === 'E') {
-      const ready = level.levelObjectives.filter(o => o.type !== 'reachGoal').every(o => objectiveMet(o, state, level));
+      const ready = true;
       markings.push(actor(p, `<ellipse cy="9" rx="21" ry="13" fill="#a1b18a"/><path d="M-15 11V-6a15 15 0 0 1 30 0v17Z" fill="${ready ? '#6d8b6c' : '#a0a789'}" stroke="#53644a" stroke-width="2"/><path d="M-8 11V-5a8 8 0 0 1 16 0v16Z" fill="${ready ? '#ebdbaa' : '#c5c4a2'}"/>${ready ? '<path d="M-4 1h8m-3-3 3 3-3 3" fill="none" stroke="#7e966a" stroke-width="2"/>' : '<circle r="3" fill="#7c7e60"/>'}<path d="M-20 13h40" stroke="#5d7052" stroke-width="3" stroke-linecap="round"/>`));
     }
   }
-  if (!state.starCollected && Math.abs(state.player.x - level.star.x) + Math.abs(state.player.y - level.star.y) <= 3) {
-    markings.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
+  if (!state.starCollected) {
+    markings.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard" opacity="${starActive(state,level) ? 1 : .28}"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
   }
   const { graph, crossings } = view !== 'primal' || state.shadows.length ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
-  if (view !== 'primal') {
+  if (view !== 'primal' || state.shadows.length) {
     for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#79637b', 1.3, 'opacity=".42"'));
     for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="1.8" fill="#8d738d" opacity=".5"/>`); }
   }
@@ -92,7 +92,8 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   }
   const hunterGraph = state.hunters.length ? primalGraph(level, shown) : null;
   state.hunters.forEach((p, i) => {
-    const next = shortestPath(hunterGraph, p, state.player)?.[1];
+    const next = state.hunterAwake ? shortestPath(hunterGraph, p, state.player)?.[1] : null;
+    overlay.push(actor(p, `<text y="-22" text-anchor="middle" font-size="11" fill="#9b5745">${!state.hunterAwake ? 'z' : next ? '!' : '受阻'}</text>`));
     if (next) {
       const c = center(next); overlay.push(segment(p, next, level, center, '#a1604d', 1.3, 'stroke-dasharray="2 4" opacity=".6"') + `<path d="M${c.x - 3} ${c.y + 4}l3-5 3 5" fill="none" stroke="#a1604d" opacity=".65"/>`);
     }
@@ -104,6 +105,11 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     if (!primalOpen(level, shown, a, b)) continue;
     const l = center(a), r = center(b), label = String.fromCharCode(65 + y);
     borders.push(`<g class="seam-port"><path d="M${PADDING - 3} ${l.y - 15}q-15 15 0 30M${width - PADDING + 3} ${r.y - 15}q15 15 0 30" fill="none" stroke="${shown.topology === 'mobius' ? '#a6746a' : '#728967'}" stroke-width="2"/><text x="${PADDING - 14}" y="${l.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text><text x="${width - PADDING + 14}" y="${r.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text></g>`);
+  }
+  for (const edge of level.bridges) {
+    const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;
+    const on = primalOpen(level,shown,{x:edge.from[0],y:edge.from[1]},{x:edge.to[0],y:edge.to[1]});
+    overlay.push(`<g class="radius-link">${line(a,b,on ? '#648880' : '#8c9589',on ? 7 : 2,on ? '' : 'stroke-dasharray="4 5"')}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#709b98" fill-opacity=".06" stroke="#6c9690" stroke-opacity=".28"/><circle cx="${c.x}" cy="${c.y}" r="4" fill="#537b74"/>`).join('')}</g>`);
   }
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };
