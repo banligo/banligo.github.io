@@ -8,6 +8,7 @@ const corner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
 const wallCache = new WeakMap();
 const palette = { ochre: ['#c9a368', '#80613e'], clay: ['#be846a', '#86523e'], sage: ['#92a485', '#5d735e'] };
 const line = (a, b, stroke, width = 2, extra = '') => `<path d="M${a.x} ${a.y}L${b.x} ${b.y}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
+const bridgeBeam = (a,b,color,width) => line(a,b,color,width).replace('stroke-linecap="round"','stroke-linecap="butt"');
 export function pieceDrawing(piece, definition, previous = null) {
   const [fill, stroke] = palette[definition.color] ?? palette.ochre;
   const arms = ports({ ...piece, rotation: 0 }, definition).map(i => `M0 0L${directions[i].x * 25} ${directions[i].y * 25}`).join(' ');
@@ -85,11 +86,10 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   }
   if (state.shadows.length) {
     const paths = shadowPaths(shown, level);
-    paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#79607e', 2, 'stroke-dasharray="3 5" class="shadow-trail"')); });
-    overlay.push('<defs><pattern id="shadow-hatch" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M-2 2 2-2M0 10 10 0M8 12 12 8" stroke="#765779" stroke-width="2" opacity=".6"/></pattern></defs>');
+    if(level.shadowSpeed) paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#79607e', 2, 'opacity=".65" class="shadow-trail"')); });
     const danger=shadowDanger(shown,level), future=shadowDanger(shown,level,true);
-    for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}"><rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" rx="3" fill="#77547b" opacity=".24"/><rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="url(#shadow-hatch)"/></g>`); }
-    for(const p of future) { const c=center(p); overlay.push(`<rect class="shadow-zone" data-next-danger="${key(p)}" x="${c.x-23}" y="${c.y-23}" width="46" height="46" rx="3" fill="none" stroke="#87588c" stroke-width="2" stroke-dasharray="5 4"/>`); }
+    for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}" aria-label="裂痕陷阱"><path d="M${c.x-12} ${c.y-7}l8 5-3 7 9-2 7 8M${c.x-4} ${c.y-2}l7-8M${c.x+2} ${c.y+3}l-7 8" fill="none" stroke="#897789" stroke-width="1.7" opacity=".65"/><path d="M${c.x-20} ${c.y-15}v-5h5M${c.x+20} ${c.y+15}v5h-5" fill="none" stroke="#938291" stroke-width="1.2" opacity=".38"/></g>`); }
+    for(const p of future) if(!danger.some(d=>same(d,p))) { const c=center(p); overlay.push(`<path class="shadow-zone" data-next-danger="${key(p)}" d="M${c.x} ${c.y-10}l9 10-9 10-9-10Z" fill="none" stroke="#96799b" stroke-width="1.5" opacity=".7"/>`); }
     if(previous) {
       const old=dualGraph(level,previous).crossings;
       for(const e of crossings) if(!e.open && old.some(o=>o.open && same(o.a,e.a) && same(o.b,e.b))) {
@@ -97,8 +97,8 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       }
     }
     shown.shadows.forEach((p, i) => {
-      const next = paths[i]?.[1];
-      if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" stroke-dasharray="2 3"/>`); }
+      const next = level.shadowSpeed ? paths[i]?.[1] : null;
+      if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" />`); }
       actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
     });
   }
@@ -131,7 +131,14 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   for (const edge of level.bridges) {
     const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;
     const on = primalOpen(level,shown,{x:edge.from[0],y:edge.from[1]},{x:edge.to[0],y:edge.to[1]});
-    overlay.push(`<g class="radius-link">${line(a,b,on ? '#648880' : '#8c9589',on ? 7 : 2,on ? '' : 'stroke-dasharray="4 5"')}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#709b98" fill-opacity=".06" stroke="#6c9690" stroke-opacity=".28"/><circle cx="${c.x}" cy="${c.y}" r="4" fill="#537b74"/>`).join('')}</g>`);
+    const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d;
+    const contact=radius*2+1e-9>=d,reach=Math.min(radius,d/2),ends=[{x:a.x+ux*reach,y:a.y+uy*reach},{x:b.x-ux*reach,y:b.y-uy*reach}];
+    const halves=[[a,ends[0]],[b,ends[1]]].map(([start,end],i)=>{
+      const length=Math.hypot(end.x-start.x,end.y-start.y),planks=[];
+      for(let t=5;t<length;t+=7) { const sign=i===0?1:-1,c={x:start.x+ux*t*sign,y:start.y+uy*t*sign};planks.push(line({x:c.x-uy*5,y:c.y+ux*5},{x:c.x+uy*5,y:c.y-ux*5},'#a28c62',1)); }
+      return `<g class="bridge-arm">${bridgeBeam(start,end,'#8c7959',14)}${bridgeBeam(start,end,'#e4cf9d',10)}${planks.join('')}</g>`;
+    }).join('');
+    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥臂相接，可以通过':contact?'桥臂已相接，还需对齐碎片接口':'桥臂还够不到，断口不可通过'}">${line(a,b,'#78928c',24)}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#709b98" fill-opacity=".045" stroke="#6c9690" stroke-opacity=".25"/>`).join('')}${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
   }
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };

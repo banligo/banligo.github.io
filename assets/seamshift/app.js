@@ -58,6 +58,7 @@ function renderControls() {
 function render() {
   const state = session.state;
   setWorld(state.topology);
+  $('#level-tip').textContent = level.topTip;
   $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `${String(level.id).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
   $('#moves').textContent = `${state.turn} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
@@ -74,8 +75,8 @@ function teachWait() {
 }
 function teachOnce() {
   if(!progress.seenTips.includes('first-rules')) {
-    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false;
-    setTimeout(()=>{ $('#intro-rules').hidden=true; teachWait(); },4400); persist(); return;
+    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false; $('#level-tip').hidden=true;
+    setTimeout(()=>{ $('#intro-rules').hidden=true; $('#level-tip').hidden=false; teachWait(); },4400); persist(); return;
   }
   const id=`lesson-${level.id}`;
   if(!progress.seenTips.includes(id)) {progress.seenTips.push(id);persist();toast(level.lesson);}

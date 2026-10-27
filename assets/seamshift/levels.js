@@ -4,8 +4,8 @@ const definitions = [
     map: ['######', '#P...#', '#..#.#', '#.##.#', '#...E#', '######'],
     bridges: [{from:[1,1],to:[1,2],distance:1.05}, { from: [3,1], to: [4,1], distance: 1.05 }, { from: [4,2], to: [4,3], distance: 1.32 }, { from:[1,3], to:[1,4], distance:1.32 }],
     scales: [1, 2, 3], modes: ['plane'], star: { x: 2, y: 2 },
-    lesson: '改变连接范围，让道路相遇。', goalText: '找到通往终点的路。',
-    hints: ['留意那块半透明的道路。', '试着把尺度放大一档。'], par: 9 },
+    lesson: '圆圈是桥臂能伸到的范围；两侧桥板接上，才能走过去。', goalText: '找到通往终点的路。',
+    hints: ['断口里的两段桥板还没有碰到。', '增大连接范围，桥臂会向中间伸长；接上才可通行。'], par: 9 },
   { id: 2, title: 'Other Side', subtitle: '另一边', seed: 211,
     map: ['#######', '.P####K', '.######', '.######', 'M######', 'DE#####', '#######'],
     scales: [1], modes: ['plane', 'cylinder', 'mobius'], hunterSpeed: 1, wakeOnKey: true, star: { x: 0, y: 2 },
@@ -21,11 +21,11 @@ const definitions = [
     hints:['每块碎片都能放在任意槽位。','看看虚线桥两侧的范围；碎片可以收回，再用一次。'] },
   { id:4,title:'Between the Paths',subtitle:'裂隙里的邻居',seed:409,
     map:['####.##','#PJ..##','##.#.##','#....##','#..#.##','##...##','####.E#'],
-    scales:[1],modes:['plane','cylinder','mobius','torus'],star:{x:3,y:3},
-    slots:[{id:'barrier',x:2,y:1}],pieces:[{id:'barrier',shape:'straight',rotation:0,color:'sage'}],
-    shadow:[4,3],beacon:[1,4],shadowSpeed:3,
-    lesson:'紫色地板有危险，虚线框预告下一回合。',goalText:'避开裂隙的影子，找到终点。',
-    hints:['影子只影响它周围的地板，走远一点就安全。','转动碎片会改动紫色通道；环面也能从上下边界绕行。'] },
+    scales:[1],modes:['plane','cylinder','mobius','torus'],star:{x:2,y:3},
+    slots:[{id:'barrier',x:2,y:1}],pieces:[{id:'barrier',shape:'tee',rotation:2,color:'sage'}],
+    shadow:[4,3],beacon:[1,4],shadowSpeed:0,
+    lesson:'这只影子不移动。避开地板裂痕，慢慢找到另一条路。',goalText:'避开裂隙的影子，找到终点。',
+    hints:['影子是静止的，地板上的细裂痕是陷阱。','转动碎片会改动紫色通道；环面也能从上下边界绕行。'] },
   { id:5,title:'Seamloom',subtitle:'织出另一条路',seed:503,
     map:['###.####','.#PJ###.','##..###.','##J....M','##.##..#','##...E.#','###.####','###.####'],
     scales:[1,2,3],modes:['plane','cylinder','mobius','torus'],star:{x:3,y:7},
@@ -59,11 +59,21 @@ const definitions = [
     hints:['长屏障适合平面，小围栏适合折叠的空间。','范围接通后再看紫线；先护灯，再取钥匙，最后走金线通向的门。'] },
 ];
 export const levels = definitions.map(level => ({
-  revision: level.id >= 3 ? 2 : 1, initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
+  revision: level.id === 4 ? 3 : level.id >= 3 ? 2 : 1, initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
   levelObjectives: [{ type: 'reachGoal' }], ...level, width: level.map[0].length, height: level.map.length,
 }));
 for (const level of levels) {
-  level.n3Opt ??= [10,9,14,13,13,13,12,11][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
+  level.n3Opt ??= [10,9,14,10,13,13,12,11][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
+  level.topTip = [
+    '圆圈标出桥臂的伸展范围；桥板相接，路才连通。',
+    '边界可以折叠；拿到钥匙后，小兽每回合追一步。',
+    '接口对齐还不够：桥臂要够长。碎片可以换位置。',
+    '影子不移动。地板裂痕是陷阱，可以从别的路绕开。',
+    '小兽走道路，影子走裂隙；空心菱形预告新陷阱。',
+    '修路截断通向灯的裂隙，灯亮后，金线连接的门才会打开。',
+    '环面能绕过长屏障；小围栏也许能把影子留住。',
+    '先让灯亮起来，再拿钥匙；点亮的灯会保存能量。',
+  ][level.id-1];
   const random = seededRandom(level.seed);
   level.bridges = level.bridges.map(e => { const dx=e.to[0]-e.from[0],dy=e.to[1]-e.from[1],d=Math.hypot(dx,dy),r=e.distance ?? level.radii[(e.birth ?? 1)-1]; const mx=(e.from[0]+e.to[0])/2,my=(e.from[1]+e.to[1])/2; return {...e,nodes:[{x:mx-dx/d*r/2+(random()-.5)*.008,y:my-dy/d*r/2+(random()-.5)*.008},{x:mx+dx/d*r/2+(random()-.5)*.008,y:my+dy/d*r/2+(random()-.5)*.008}]}; });
   level.pieces = level.pieces.map(p => ({...p, allowedSlots:level.slots.map(s=>s.id)}));

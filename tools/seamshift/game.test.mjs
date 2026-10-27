@@ -28,7 +28,7 @@ test('every dual edge complements its actual crossing primal edge in all geometr
 test('Shadow patrol is geometrically local and road rotation changes its real dual route',()=>{
  const l=levels[3],s=initialState(l),placed=applyAction(s,{type:'place',pieceId:'barrier',slotId:'barrier'},l),rotated=applyAction(placed,{type:'rotate',pieceId:'barrier'},l);
  assert.notDeepEqual(dualGraph(l,placed).graph,dualGraph(l,rotated).graph);
- assert(renderBoard(l,s).includes('data-danger='));assert(renderBoard(l,s).includes('data-next-danger='));
+ assert(renderBoard(l,s).includes('data-danger='));assert(!renderBoard(l,s).includes('data-next-danger='));
  const n=applyAction(s,{type:'wait'},l);assert.equal(n.turn,1);assert.equal(n.status,'playing');
  for(const p of shadowDanger(s,l))assert(Math.abs(p.x-s.shadows[0].x)<=1&&Math.abs(p.y-s.shadows[0].y)<=1);
 });
@@ -42,7 +42,7 @@ test('HTML controls exist, new name, reset confirmation, no start gate',()=>{con
 test('awake pursuit responds to move, range, topology and wait each turn; rejected inputs do not advance',()=>{const l={...levels[1],scales:[1,2,3]},s={...initialState(l),hunterAwake:true};for(const action of [move('left'),{type:'scale',value:2},{type:'topology',value:'cylinder'},{type:'wait'}]){const r=transition(s,action,l);assert(r.valid);assert.equal(r.state.turn,1);assert.deepEqual(r.state.hunters,[{x:0,y:3}]);}assert.equal(transition(s,move('up'),l).state,s);});
 test('key doors are physical graph obstacles and direct collision always loses',()=>{const l=levels[1],s=initialState(l),door={x:0,y:5},goal={x:1,y:5};assert(!primalOpen(l,s,door,goal));assert(primalOpen(l,{...s,hasKey:true},door,goal));const hit={...s,player:{x:0,y:3}};assert.equal(applyAction(hit,move('down'),l).status,'lost');});
 test('Shadow reaching a patrol waypoint turns around rather than ending the level',()=>{
- const l=levels[3],s={...initialState(l),turn:2,shadows:[{x:1,y:3}]};const n=applyAction(s,{type:'wait'},l);
+ const l={...levels[3],shadowSpeed:3},s={...initialState(l),turn:2,shadows:[{x:1,y:3}]};const n=applyAction(s,{type:'wait'},l);
  assert.deepEqual(n.shadows,[{x:1,y:4}]);assert(n.shadowReturning);assert.equal(n.status,'playing');
 });
 
@@ -108,4 +108,18 @@ test('eight-level progression preserves finished five-level saves and advances t
  const old={...p,currentLevel:5,snapshot:null};delete old.campaignLength;
  const loaded=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(old):null},levels);assert.equal(loaded.currentLevel,6);assert.equal(loaded.results[5].stars,3);
  for(let id=6;id<=8;id++)p=recordWin(p,id,1,20);assert.equal(p.currentLevel,8);assert.equal(Object.keys(p.results).length,8);
+});
+
+test('Level 4 remains stationary through waits, geometry and its entire legal star route',()=>{
+ const l=levels[3];assert.equal(l.shadowSpeed,0);let s=initialState(l);const start=structuredClone(s.shadows);
+ for(let i=0;i<8;i++){s=applyAction(s,{type:'wait'},l);assert.deepEqual(s.shadows,start);}
+ s=initialState(l);for(const a of proofs[3].star){s=applyAction(s,a,l);assert.deepEqual(s.shadows,start);}assert.equal(s.status,'won');assert(s.starCollected);assert.equal(l.n3Opt,10);
+});
+test('bridges have physical reaching arms and traps do not use duplicate dashed floor frames',()=>{
+ const l=levels[0],a=renderBoard(l,initialState(l)),b=renderBoard(l,{...initialState(l),scale:3});assert(a.includes('bridge-arm'));assert(a.includes('data-bridge-open="false"'));assert(!b.includes('data-bridge-open="false"'));
+ const shadow=renderBoard(levels[3],initialState(levels[3]));assert(!shadow.includes('shadow-hatch'));assert(!shadow.includes('data-next-danger='));assert(!shadow.includes('stroke-dasharray="3 5" class="shadow-trail"'));
+});
+test('all eight levels have concise persistent top hints independent of toasts',()=>{
+ for(const l of levels){assert.equal(typeof l.topTip,'string');assert(l.topTip.length>8&&l.topTip.length<60);}
+ const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');assert(html.includes('id="level-tip"'));assert(app.includes("$('#level-tip').textContent = level.topTip"));
 });
