@@ -43,9 +43,9 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const p = { x, y }, t = tile(level, p), c = center(p), variation = random();
     if (t === '#') {
       if (cachedWalls !== undefined) continue;
-      const fill = variation < .35 ? '#b8b097' : variation < .7 ? '#c3bba3' : '#bdb59c';
-      if (lightweight) { walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#aaa28a" stroke-width=".6"/>`); continue; }
-      walls.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#98927c"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#dbd3bb" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#7d8d6c" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
+      const fill = variation < .35 ? '#d4cebc' : variation < .7 ? '#ddd6c4' : '#d8d1bf';
+      if (lightweight) { walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#c9c2ae" stroke-width=".6"/>`); continue; }
+      walls.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#c2bba7"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#eee8d7" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#a8b29a" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
       continue;
     }
     const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
@@ -81,12 +81,12 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   }
   const { graph, crossings } = view !== 'primal' || state.shadows.length ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
   if (view !== 'primal' || state.shadows.length) {
-    for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#79637b', 1.3, 'opacity=".42"'));
-    for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="1.8" fill="#8d738d" opacity=".5"/>`); }
+    for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#795c85', view === 'primal' ? 1.7 : 2.6, `opacity="${view === 'primal' ? '.25' : '.9'}" class="dual-channel"`));
+    for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="2" fill="#795c85" opacity="${view === 'primal' ? .25 : .75}"/>`); }
   }
   if (state.shadows.length) {
     const paths = shadowPaths(shown, level);
-    if(level.shadowSpeed) paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#79607e', 2, 'opacity=".65" class="shadow-trail"')); });
+    if(level.shadowSpeed) paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#674571', 2.6, 'opacity=".9" class="shadow-trail"')); });
     const danger=shadowDanger(shown,level), future=shadowDanger(shown,level,true);
     for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}" aria-label="裂痕陷阱"><path d="M${c.x-12} ${c.y-7}l8 5-3 7 9-2 7 8M${c.x-4} ${c.y-2}l7-8M${c.x+2} ${c.y+3}l-7 8" fill="none" stroke="#897789" stroke-width="1.7" opacity=".65"/><path d="M${c.x-20} ${c.y-15}v-5h5M${c.x+20} ${c.y+15}v5h-5" fill="none" stroke="#938291" stroke-width="1.2" opacity=".38"/></g>`); }
     for(const p of future) if(!danger.some(d=>same(d,p))) { const c=center(p); overlay.push(`<path class="shadow-zone" data-next-danger="${key(p)}" d="M${c.x} ${c.y-10}l9 10-9 10-9-10Z" fill="none" stroke="#96799b" stroke-width="1.5" opacity=".7"/>`); }
@@ -98,7 +98,11 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     }
     shown.shadows.forEach((p, i) => {
       const next = level.shadowSpeed ? paths[i]?.[1] : null;
-      if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" />`); }
+      if (next) {
+        const c=corner(next),dx=next.x-p.x,dy=next.y-p.y;
+        const angle=Math.abs(dx)>1 ? (dx<0?0:180) : Math.abs(dy)>1 ? (dy<0?90:-90) : Math.atan2(dy,dx)*180/Math.PI;
+        overlay.push(`<g data-shadow-next="true" class="shadow-next-arrow" transform="translate(${c.x} ${c.y}) rotate(${angle})"><title>箭头：影子下次移动的方向与落点</title><path d="M-10 0H5M0-5l5 5-5 5" fill="none" stroke="#765080" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>`);
+      }
       actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
     });
   }
@@ -116,7 +120,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     }
     actors.push(actor(p, '<ellipse cy="13" rx="19" ry="5" fill="#786048" opacity=".25"/><path d="m-17 4-2-12 8 5 3-10 7 7 7-8 3 11 10-4-2 13Z" fill="#97674f" stroke="#77513e" stroke-width="1.5"/><ellipse cy="4" rx="16" ry="11" fill="#bb8060" stroke="#77513e" stroke-width="1.4"/><path d="M-9 11v5M9 11v5" stroke="#77513e" stroke-width="3" stroke-linecap="round"/><circle cx="-6" cy="1" r="2" fill="#443c30"/><circle cx="6" cy="1" r="2" fill="#443c30"/><ellipse cy="7" rx="4" ry="3" fill="#d29a79"/>', previous?.hunters[i]));
   });
-  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><path d="M-11-5a11 11 0 0 1 22 0v5h-22Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.5"/><path d="M-7-3h14v5H-7Z" fill="#eedfbe"/><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.player));
+  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><rect class="traveler-face" x="-8" y="-11" width="16" height="16" rx="6" fill="#eedfbe" stroke="#aa9066" stroke-width="1"/><g class="traveler-hat"><path d="M-10-10v-4a10 8 0 0 1 20 0v4Z" fill="#d5bd86" stroke="#8b7957" stroke-width="1.3"/><path d="M-10-11h20" stroke="#a48a59" stroke-width="2"/><path d="M-15-9q15-4 30 0l-1 3h-28Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.2"/></g><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.player));
   if (shown.topology !== 'plane') for (let y = 0; y < level.height; y++) {
     const a = { x: 0, y }, b = { x: level.width - 1, y: shown.topology === 'mobius' ? level.height - 1 - y : y };
     if (!primalOpen(level, shown, a, b)) continue;
@@ -138,7 +142,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       for(let t=5;t<length;t+=7) { const sign=i===0?1:-1,c={x:start.x+ux*t*sign,y:start.y+uy*t*sign};planks.push(line({x:c.x-uy*5,y:c.y+ux*5},{x:c.x+uy*5,y:c.y-ux*5},'#a28c62',1)); }
       return `<g class="bridge-arm">${bridgeBeam(start,end,'#8c7959',14)}${bridgeBeam(start,end,'#e4cf9d',10)}${planks.join('')}</g>`;
     }).join('');
-    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥臂相接，可以通过':contact?'桥臂已相接，还需对齐碎片接口':'桥臂还够不到，断口不可通过'}">${line(a,b,'#78928c',24)}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#709b98" fill-opacity=".045" stroke="#6c9690" stroke-opacity=".25"/>`).join('')}${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
+    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥臂相接，可以通过':contact?'桥臂已相接，还需对齐碎片接口':'桥臂还够不到，断口不可通过'}">${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
   }
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };

@@ -728,5 +728,371 @@
       }
     ],
     "expanded": 1225
+  },
+  {
+    "id": 9,
+    "normal": [
+      {
+        "type": "rotate",
+        "pieceId": "reed"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "west"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "east"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "normalExpanded": 3693,
+    "star": [
+      {
+        "type": "place",
+        "pieceId": "fork",
+        "slotId": "west"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "fork"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "fork",
+        "slotId": "east"
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "mobius"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "starExpanded": 5969
+  },
+  {
+    "id": 10,
+    "normal": [
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "topology",
+        "value": "cylinder"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "turn"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "normalExpanded": 55751,
+    "star": [
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "scale",
+        "value": 2
+      },
+      {
+        "type": "scale",
+        "value": 3
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "turn"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "shield"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "bend"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "starExpanded": 245491
   }
 ]

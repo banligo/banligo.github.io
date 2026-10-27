@@ -85,7 +85,7 @@ function geometryChange(state, action, level) {
 export function preview(state, action, level) {
   const result = geometryChange(state, action, level); return result.valid ? result.state : null;
 }
-export function transition(state, action, level) {
+export function transition(state, action, level, { feedback = true } = {}) {
   if (state.status !== 'playing') return rejected(state, '可撤销一步，或重来。');
   let next; const events = [];
   if (action.type === 'move') {
@@ -99,9 +99,9 @@ export function transition(state, action, level) {
   else {
     const result = geometryChange(state, action, level); if (!result.valid) return result;
     next = result.state;
-    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '连接范围改变了；实线桥可以通过。', topology: '世界的边缘改变了。' })[action.type]);
+    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '桥长改变了；桥板接上才能通过。', topology: '世界的边缘改变了。' })[action.type]);
   }
-  if(state.shadows.length && ['place','rotate','remove','scale'].includes(action.type)) {
+  if(feedback && state.shadows.length && ['place','rotate','remove','scale'].includes(action.type)) {
     const old=dualGraph(level,state).crossings,changed=dualGraph(level,next).crossings;
     if(changed.some(e=>!e.open&&old.some(o=>o.open&&same(o.a,e.a)&&same(o.b,e.b))))events.push('你的路接通了，交叉的紫色裂隙被挡住了。');
   }
@@ -122,7 +122,7 @@ export function transition(state, action, level) {
     const paths = shadowPaths(next, level); next.shadows = next.shadows.map((p, i) => paths[i]?.[1] ?? p);
   }
   if(next.shadows.some(p=>same(p,beaconPosition(next,level)))) next.shadowReturning=!next.shadowReturning;
-  if(shadowDanger(next,level).some(p=>same(p,next.player))) {next.status='lost';events.push('紫色地板有危险；看看虚线预告，再等待或绕行。');}
+  if(shadowDanger(next,level).some(p=>same(p,next.player))) {next.status='lost';events.push('地板裂痕有危险；看看菱形预告，再等待或绕行。');}
   chargeLamp(next,level,events);
   if(next.status !== 'lost') collectStar(next,level,events);
   if (next.status === 'lost') events.push('没关系，撤销一步就好。');
@@ -132,7 +132,7 @@ export function transition(state, action, level) {
   next.events = events;
   return { state: next, valid: true, message: events.at(-1) || '' };
 }
-export const applyAction = (state, action, level) => transition(state, action, level).state;
+export const applyAction = (state, action, level, options) => transition(state, action, level, options).state;
 export function createSession(level, snapshot = null) {
   let state = snapshot?.state ? structuredClone(snapshot.state) : initialState(level);
   const history = snapshot?.history ? structuredClone(snapshot.history) : [];

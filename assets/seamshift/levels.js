@@ -4,8 +4,8 @@ const definitions = [
     map: ['######', '#P...#', '#..#.#', '#.##.#', '#...E#', '######'],
     bridges: [{from:[1,1],to:[1,2],distance:1.05}, { from: [3,1], to: [4,1], distance: 1.05 }, { from: [4,2], to: [4,3], distance: 1.32 }, { from:[1,3], to:[1,4], distance:1.32 }],
     scales: [1, 2, 3], modes: ['plane'], star: { x: 2, y: 2 },
-    lesson: '圆圈是桥臂能伸到的范围；两侧桥板接上，才能走过去。', goalText: '找到通往终点的路。',
-    hints: ['断口里的两段桥板还没有碰到。', '增大连接范围，桥臂会向中间伸长；接上才可通行。'], par: 9 },
+    lesson: '调整桥长，让断口两侧的桥板接上。', goalText: '找到通往终点的路。',
+    hints: ['断口里的两段桥板还没有碰到。', '把桥长逐档调大，桥板会向中间伸长；接上才可通行。'], par: 9 },
   { id: 2, title: 'Other Side', subtitle: '另一边', seed: 211,
     map: ['#######', '.P####K', '.######', '.######', 'M######', 'DE#####', '#######'],
     scales: [1], modes: ['plane', 'cylinder', 'mobius'], hunterSpeed: 1, wakeOnKey: true, star: { x: 0, y: 2 },
@@ -17,8 +17,8 @@ const definitions = [
     bridges:[{from:[0,1],to:[1,1],distance:1.05}],
     slots:[{id:'bridge',x:1,y:1},{id:'middle',x:2,y:1},{id:'bend',x:5,y:5}],
     pieces:[{id:'reed',shape:'straight',rotation:0,color:'ochre'},{id:'bend',shape:'corner',rotation:3,color:'clay'},{id:'fork',shape:'tee',rotation:0,color:'sage'}],
-    lesson:'接口要对上，连接范围也要够。',goalText:'拼起道路，找到终点。',
-    hints:['每块碎片都能放在任意槽位。','看看虚线桥两侧的范围；碎片可以收回，再用一次。'] },
+    lesson:'接口要对上，桥也要足够长。',goalText:'拼起道路，找到终点。',
+    hints:['每块碎片都能放在任意槽位。','看看木桥中间的断口；碎片可以收回，再用一次。'] },
   { id:4,title:'Between the Paths',subtitle:'裂隙里的邻居',seed:409,
     map:['####.##','#PJ..##','##.#.##','#....##','#..#.##','##...##','####.E#'],
     scales:[1],modes:['plane','cylinder','mobius','torus'],star:{x:2,y:3},
@@ -33,8 +33,8 @@ const definitions = [
     slots:[{id:'bridge',x:3,y:1},{id:'bend',x:2,y:3}],
     pieces:[{id:'reed',shape:'straight',rotation:0,color:'ochre'},{id:'bend',shape:'corner',rotation:0,color:'clay'}],
     hunterSpeed:1,alertRadius:5,shadow:[4,4],beacon:[6,5],shadowSpeed:3,
-    lesson:'有危险时，可以等待，也可以织出另一条路。',goalText:'避开紫色地板，走到终点。',
-    hints:['下方的缺口需要一块路和更大的连接范围。','星光就在上下相连的另一边；留意影子的下一步。'] },
+    lesson:'有危险时，可以等待，也可以织出另一条路。',goalText:'避开地板裂痕，走到终点。',
+    hints:['下方的缺口需要一块路和更长的木桥。','星光就在上下相连的另一边；留意影子的下一步。'] },
   { id:6,title:'Keep the Light',subtitle:'守住灯火',seed:607,
     map:['###.###','#P....#','#.#.###','#...#.#','###J###','#...E.#','###.###'],
     scales:[1],modes:['plane'],star:{x:5,y:1},shadow:[2,4],beacon:[5,4],shadowSpeed:4,
@@ -56,24 +56,32 @@ const definitions = [
     pieces:[{id:'shield',shape:'straight',rotation:0,color:'sage'},{id:'ring',shape:'corner',rotation:0,color:'clay'}],
     bridges:[{from:[3,3],to:[3,4],distance:1.05},{from:[1,4],to:[2,4],distance:1.05}],
     lesson:'先保护灯，再带着钥匙离开。空间折叠能帮你找回星光。',goalText:'点亮守护灯，取钥匙穿过门。',
-    hints:['长屏障适合平面，小围栏适合折叠的空间。','范围接通后再看紫线；先护灯，再取钥匙，最后走金线通向的门。'] },
+    hints:['长屏障适合平面，小围栏适合折叠的空间。','桥接通后再看紫线；先护灯，再取钥匙，最后走金线通向的门。'] },
+  { id:9,title:'Across the Fold',subtitle:'折痕那一端',seed:907,revision:3,
+    map:['########','.JP.###K','###.###.','#######.','####.##M','####.###','.J..DE##','########'],
+    scales:[1,2,3],modes:['plane','cylinder','mobius','torus'],star:{x:4,y:4},
+    bridges:[{from:[0,1],to:[1,1],distance:1.05},{from:[3,6],to:[4,6],distance:1.32}],
+    slots:[{id:'west',x:1,y:1},{id:'east',x:1,y:6}],
+    pieces:[{id:'reed',shape:'straight',rotation:0,color:'ochre'},{id:'fork',shape:'tee',rotation:1,color:'sage'}],
+    hunterSpeed:1,wakeOnKey:true,
+    lesson:'拿到钥匙会惊醒守路的小兽。',goalText:'带钥匙穿过扭转的边界，躲开追击，抵达终点。',
+    hints:['钥匙在同一行的另一端，终点却在相反的一行。','先接好退路；取钥匙后用扭转穿过去，再关上接缝。'] },
+  { id:10,title:'The Last Lantern',subtitle:'最后一盏灯',seed:1009,revision:3,
+    map:['####.####','.P....M.K','#.##.####','#....#..#','#..#J#E##','####.DJ.#','####.#.##','####.#.##','####.#.##'],
+    scales:[1,2,3],modes:['plane','cylinder','mobius','torus'],star:{x:6,y:8},
+    shadow:[3,4],beacon:[6,4],shadowSpeed:3,circuit:{lamp:[6,4]},hunterSpeed:1,wakeOnKey:true,
+    slots:[{id:'shield',x:4,y:4},{id:'turn',x:6,y:5}],
+    pieces:[{id:'shield',shape:'straight',rotation:1,color:'sage'},{id:'bend',shape:'corner',rotation:2,color:'clay'}],
+    bridges:[{from:[4,3],to:[4,4],distance:1.05},{from:[4,0],to:[4,1],distance:1.32},{from:[6,6],to:[6,7],distance:1.32}],
+    lesson:'准备好道路，再惊醒守门者。',goalText:'修路护灯、取得钥匙，避开追击与裂隙，抵达终点。',
+    hints:['小兽守住了通往钥匙的直路；边界提供另一种接近方式。','先用直路护灯。终点前的弯路还可以转向星片，但回来要换方向。'] },
 ];
 export const levels = definitions.map(level => ({
   revision: level.id === 4 ? 3 : level.id >= 3 ? 2 : 1, initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
   levelObjectives: [{ type: 'reachGoal' }], ...level, width: level.map[0].length, height: level.map.length,
 }));
 for (const level of levels) {
-  level.n3Opt ??= [10,9,14,10,13,13,12,11][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
-  level.topTip = [
-    '圆圈标出桥臂的伸展范围；桥板相接，路才连通。',
-    '边界可以折叠；拿到钥匙后，小兽每回合追一步。',
-    '接口对齐还不够：桥臂要够长。碎片可以换位置。',
-    '影子不移动。地板裂痕是陷阱，可以从别的路绕开。',
-    '小兽走道路，影子走裂隙；空心菱形预告新陷阱。',
-    '修路截断通向灯的裂隙，灯亮后，金线连接的门才会打开。',
-    '环面能绕过长屏障；小围栏也许能把影子留住。',
-    '先让灯亮起来，再拿钥匙；点亮的灯会保存能量。',
-  ][level.id-1];
+  level.n3Opt ??= [10,9,14,10,13,13,12,11,21,28][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
   const random = seededRandom(level.seed);
   level.bridges = level.bridges.map(e => { const dx=e.to[0]-e.from[0],dy=e.to[1]-e.from[1],d=Math.hypot(dx,dy),r=e.distance ?? level.radii[(e.birth ?? 1)-1]; const mx=(e.from[0]+e.to[0])/2,my=(e.from[1]+e.to[1])/2; return {...e,nodes:[{x:mx-dx/d*r/2+(random()-.5)*.008,y:my-dy/d*r/2+(random()-.5)*.008},{x:mx+dx/d*r/2+(random()-.5)*.008,y:my+dy/d*r/2+(random()-.5)*.008}]}; });
   level.pieces = level.pieces.map(p => ({...p, allowedSlots:level.slots.map(s=>s.id)}));

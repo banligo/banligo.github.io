@@ -1,4 +1,5 @@
 import { levels, getLevel } from './levels.js';
+import { pendingLessons, referenceLessons, lessonCards } from './teaching.js';
 import { createSession, disconnected, preview, score } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
@@ -35,8 +36,8 @@ function setWorld(topology) {
 }
 function renderMap(previous = null) {
   patchBoard($('#board'), renderBoardLayers(level, session.state, { selected, view, previewState, lightweight, previous: reduceMotion || lightweight ? null : previous }));
-  $('#shadow-info').hidden = !session.state.shadows.length;
-  $('#view-button').setAttribute('aria-pressed', String(view !== 'primal'));
+  $('#view-button').setAttribute('aria-pressed', String(view === 'dual'));
+  $('#view-button').setAttribute('aria-label', `当前${view === 'dual' ? '裂隙' : '道路'}视图，点击切换`);
 }
 function renderTray() {
   $('#puzzle-tray').hidden = !level.pieces.length;
@@ -51,14 +52,15 @@ function renderTray() {
 function renderControls() {
   const state = session.state;
   if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
-  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value || Math.abs(state.scale-value)>1 ? 'disabled' : ''}>${level.radii[value-1].toFixed(1)}</button>`).join(''));
+  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="桥长 ${level.radii[value-1].toFixed(1)}" title="桥的最大总长度 ${level.radii[value-1].toFixed(1)}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value || Math.abs(state.scale-value)>1 ? 'disabled' : ''}>${level.radii[value-1].toFixed(1)}</button>`).join(''));
   setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
 function render() {
   const state = session.state;
   setWorld(state.topology);
-  $('#level-tip').textContent = level.topTip;
+  renderNewMechanisms();
+  $('#map-stage').style.setProperty('--map-aspect', (level.width * CELL + PADDING * 2) / (level.height * CELL + PADDING * 2));
   $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `${String(level.id).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
   $('#moves').textContent = `${state.turn} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
@@ -68,20 +70,18 @@ function render() {
   $('#current-goal').textContent = level.goalText; $('#lost-overlay').hidden = state.status !== 'lost';
   renderControls(); renderMap();
 }
-function teachWait() {
-  if((level.hunterSpeed || level.shadowSpeed) && !progress.seenTips.includes('wait')) {
-    progress.seenTips.push('wait');persist();toast('等待一回合，看看怪物会怎么行动。');
-  }
+function renderNewMechanisms() {
+  const fresh = pendingLessons(level,progress);
+  $('#level-info').hidden = !fresh.length;
+  $('#level-tip').textContent = fresh.length ? '新发现 · 点此看看' : '';
+  $('#map-stage').classList.toggle('has-new-rule', !!fresh.length);
 }
 function teachOnce() {
+  toast();
   if(!progress.seenTips.includes('first-rules')) {
-    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false; $('#level-tip').hidden=true;
-    setTimeout(()=>{ $('#intro-rules').hidden=true; $('#level-tip').hidden=false; teachWait(); },4400); persist(); return;
+    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false; $('#level-info').style.visibility='hidden';
+    setTimeout(()=>{ $('#intro-rules').hidden=true; $('#level-info').style.visibility='visible'; },4400); persist();
   }
-  const id=`lesson-${level.id}`;
-  if(!progress.seenTips.includes(id)) {progress.seenTips.push(id);persist();toast(level.lesson);}
-  else toast();
-  teachWait();
 }
 
 function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
@@ -164,7 +164,7 @@ function renderLevels() {
   $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
 const discoveries = {
-  scale: ['会生长的路', '有的道路要到更大的尺度才出现。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
+  scale: ['会生长的路', '桥的最大总长度决定两岸能否接上。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
   cylinder: ['边界之外，还是这里', '环绕空间把左右同一行接在一起，像把纸卷成圆柱。你能过去，小兽也能。'],
   mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
   torus: ['四边之外', '环面将左右和上下分别接起来。原来的屏障可能有另一条绕行路，影子也会沿周期裂隙绕过去。'],
@@ -175,18 +175,26 @@ function showDialog(id) {
   if (advancing) return;
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
+  if (id === 'level-dialog') renderLevelInfo();
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
     $('#discovery-cards').innerHTML = Object.entries(discoveries).map(([key, [title, description]]) => `<article class="discovery-card ${progress.discoveries.includes(key) ? '' : 'locked'}"><h3>${progress.discoveries.includes(key) ? title : '尚未发现'}</h3><p>${progress.discoveries.includes(key) ? description : '继续走一走，世界会告诉你。'}</p></article>`).join('');
   }
   $(`#${id}`).showModal();
 }
+function renderLevelInfo() {
+  const fresh = pendingLessons(level,progress);
+  $('#level-dialog-title').textContent = fresh.length ? '新的发现' : '图例与规则';
+  $('#rule-cards').innerHTML = lessonCards(fresh.length ? fresh : referenceLessons(level));
+  for(const rule of fresh) progress.seenTips.push(`mechanism:${rule.id}`);
+  renderNewMechanisms(); persist();
+}
 function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
-function cycleView() { view = ['primal', 'combined', 'dual'][(['primal', 'combined', 'dual'].indexOf(view) + 1) % 3]; renderMap(); }
+function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap(); }
 function cycleTopology() { const modes = level.modes; if (modes.length > 1) actionQueue.push({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
 function actionLabel(action) {
   if (action.type === 'move') return `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}走一步`;
-  if (action.type === 'scale') return `把尺度改为 ${action.value}`;
+  if (action.type === 'scale') return `把桥长改为 ${level.radii[action.value-1]}`;
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
   if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进任意空位`;
@@ -287,7 +295,7 @@ document.addEventListener('click', event => {
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
-    'shadow-info': () => showDialog('shadow-dialog'),
+    'level-info': () => showDialog('level-dialog'), 'help-rules-button': () => showDialog('level-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; }, 'help-hint-button': hint,

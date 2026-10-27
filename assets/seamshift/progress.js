@@ -13,7 +13,7 @@ export function normalizeProgress(raw, legacy = null) {
     for (let id = 1; id <= LAST; id++) {
       const r = raw.results?.[id];
       if (r && Number.isInteger(r.stars) && r.stars >= 1 && r.stars <= 3 && Number.isInteger(r.bestTurns) && r.bestTurns > 0) {
-        result.results[id] = { stars: r.stars, bestTurns: r.bestTurns, bestThreeStarTurns: r.stars === 3 && Number.isInteger(r.bestThreeStarTurns) && r.bestThreeStarTurns > 0 ? r.bestThreeStarTurns : null };
+        result.results[id] = { stars: r.stars, bestTurns: r.bestTurns, bestThreeStarTurns: r.stars === 3 && Number.isInteger(r.bestThreeStarTurns) && r.bestThreeStarTurns > 0 ? r.bestThreeStarTurns : null, layoutRevision: Number.isInteger(r.layoutRevision) ? r.layoutRevision : id>=9 ? 2 : campaign[id-1].revision, ...(r.priorBest && Number.isInteger(r.priorBest.bestTurns) ? {priorBest:r.priorBest} : {}) };
       }
     }
     result.seenTips = Array.isArray(raw.seenTips) ? raw.seenTips.filter(x => typeof x === 'string') : [];
@@ -30,8 +30,10 @@ export function normalizeProgress(raw, legacy = null) {
   return result;
 }
 export function recordWin(progress, levelId, stars, turns) {
-  const next = structuredClone(progress), old = next.results[levelId];
-  next.results[levelId] = { stars: Math.max(stars, old?.stars ?? 0), bestTurns: Math.min(turns, old?.bestTurns ?? Infinity), bestThreeStarTurns: stars === 3 ? Math.min(turns,old?.bestThreeStarTurns ?? Infinity) : old?.bestThreeStarTurns ?? null };
+  const next = structuredClone(progress), old = next.results[levelId], revision=campaign[levelId-1].revision;
+  const sameLayout = (old?.layoutRevision ?? (levelId>=9 ? 2 : revision)) === revision;
+  const priorBest = !sameLayout && old ? {layoutRevision:old.layoutRevision??2,stars:old.stars,bestTurns:old.bestTurns,bestThreeStarTurns:old.bestThreeStarTurns} : old?.priorBest;
+  next.results[levelId] = { stars: Math.max(stars, old?.stars ?? 0), bestTurns: Math.min(turns, sameLayout ? old?.bestTurns ?? Infinity : Infinity), bestThreeStarTurns: stars === 3 ? Math.min(turns,sameLayout ? old?.bestThreeStarTurns ?? Infinity : Infinity) : sameLayout ? old?.bestThreeStarTurns ?? null : null, layoutRevision:revision, ...(priorBest ? {priorBest} : {}) };
   next.currentLevel = Math.min(LAST, levelId + 1); next.snapshot = null;
   return next;
 }
@@ -70,7 +72,8 @@ export function loadProgress(storage, levels) {
       result.snapshot = null;
     }
     if(result.snapshot?.state.status === 'playing') collectStar(result.snapshot.state,level);
-    if(!raw?.campaignLength && raw?.currentLevel===5 && raw?.results?.[5]?.stars && !result.snapshot && LAST>5) result.currentLevel=6;
+    const previousLast = Number.isInteger(raw?.campaignLength) ? raw.campaignLength : 5;
+    if(previousLast < LAST && raw?.currentLevel === previousLast && result.results[previousLast]?.stars && !result.snapshot) result.currentLevel = Math.min(unlockedLevel(result),previousLast+1);
     if (result.snapshot?.state.status === 'won' && result.currentLevel < LAST) { result.currentLevel++; result.snapshot = null; }
     return result;
   } catch { return freshProgress(); }

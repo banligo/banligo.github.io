@@ -8,6 +8,7 @@ import {freshProgress,recordWin,SAVE_KEY,saveProgress,loadProgress,resetProgress
 import {solve,search} from '../../assets/seamshift/solver.js';
 import {renderBoard} from '../../assets/seamshift/board.js';
 import {ports} from '../../assets/seamshift/pieces.js';
+import {introducedLessons,pendingLessons,referenceLessons,lessonCards} from '../../assets/seamshift/teaching.js';
 import {createActionQueue,swipeDirection,cellFromClient} from '../../assets/seamshift/input.js';
 const proofs=JSON.parse(readFileSync(new URL('./solutions.json',import.meta.url)));
 const move=direction=>({type:'move',direction});
@@ -90,8 +91,8 @@ test('intro is nonblocking and scores are absent from level entry UI',()=>{
 test('predicted Shadow floor matches the actual next wait turn across patrol reversals',()=>{for(const l of levels.slice(3)){let s=initialState(l);for(const a of proofs[l.id-1].star){const predicted=shadowDanger(s,l,true).map(p=>`${p.x},${p.y}`).sort(),wait=applyAction(s,{type:'wait'},l);assert.deepEqual(predicted,shadowDanger(wait,l).map(p=>`${p.x},${p.y}`).sort());s=applyAction(s,a,l);}}});
 test('Torus corner danger wraps geometrically and does not invent arbitrary cells',()=>{const l=levels[4],s={...initialState(l),topology:'torus',shadows:[{x:0,y:0}]};const danger=shadowDanger(s,l);assert.deepEqual(danger,[]);const full={...l,map:Array.from({length:8},()=>'.'.repeat(8))};assert.deepEqual(shadowDanger(s,full).map(p=>`${p.x},${p.y}`).sort(),['0,0','0,7','7,0','7,7']);});
 
-test('three new lamp missions begin unprotected with a physically locked exit',()=>{
- for(const l of levels.slice(5)){const s=initialState(l);assert(!lampProtected(s,l));assert(!s.lampLit);const goal=l.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0];for(const d of directions){const q=neighbor(goal,d,l,s.topology);if(q)assert(!primalOpen(l,s,q,goal));}assert(renderBoard(l,s).includes('data-lamp-lit="false"'));}
+test('lamp missions begin unprotected with a physically locked exit',()=>{
+ for(const l of levels.filter(l=>l.circuit)){const s=initialState(l);assert(!lampProtected(s,l));assert(!s.lampLit);const goal=l.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0];for(const d of directions){const q=neighbor(goal,d,l,s.topology);if(q)assert(!primalOpen(l,s,q,goal));}assert(renderBoard(l,s).includes('data-lamp-lit="false"'));}
 });
 test('repairing a real primal barrier charges the lamp, powers the exit and is reversible',()=>{
  const l=levels[5],session=createSession(l);session.act({type:'rotate',pieceId:'shield'});const before=session.snapshot();session.act({type:'place',pieceId:'shield',slotId:'shield'});assert(session.state.lampLit);assert(lampProtected(session.state,l));assert(primalOpen(l,session.state,{x:3,y:5},{x:4,y:5}));assert(renderBoard(l,session.state).includes('data-lamp-lit="true"'));session.undo();assert.deepEqual(session.snapshot(),before);
@@ -101,13 +102,16 @@ test('on the Torus, the long barrier fails but a contractible ring protects the 
  const ring={...initial,pieces:initial.pieces.map(p=>p.id==='ring'?{...p,slot:'ring',rotation:1}:p)};assert(lampProtected(ring,l));
 });
 test('every new level actually powers its lamp along its replayed winning route',()=>{
- for(const l of levels.slice(5)){const s=replay(l,proofs[l.id-1].star);assert(s.lampLit);assert.equal(s.status,'won');assert(proofs[l.id-1].star.some(a=>a.type==='place'));const p=recordWin(freshProgress(),l.id,3,s.turn);assert.equal(p.results[l.id].stars,3);}
+ for(const l of levels.filter(l=>l.circuit)){const s=replay(l,proofs[l.id-1].star);assert(s.lampLit);assert.equal(s.status,'won');assert(proofs[l.id-1].star.some(a=>a.type==='place'));const p=recordWin(freshProgress(),l.id,3,s.turn);assert.equal(p.results[l.id].stars,3);}
 });
-test('eight-level progression preserves finished five-level saves and advances to Level 6',()=>{
- assert.equal(levels.length,8);let p=freshProgress();for(let id=1;id<=5;id++)p=recordWin(p,id,3,12);assert.equal(p.currentLevel,6);
+test('ten-level progression preserves old five- and eight-level saves',()=>{
+ assert.equal(levels.length,10);let p=freshProgress();for(let id=1;id<=5;id++)p=recordWin(p,id,3,12);assert.equal(p.currentLevel,6);
  const old={...p,currentLevel:5,snapshot:null};delete old.campaignLength;
  const loaded=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(old):null},levels);assert.equal(loaded.currentLevel,6);assert.equal(loaded.results[5].stars,3);
- for(let id=6;id<=8;id++)p=recordWin(p,id,1,20);assert.equal(p.currentLevel,8);assert.equal(Object.keys(p.results).length,8);
+ for(let id=6;id<=8;id++)p=recordWin(p,id,1,20);assert.equal(p.currentLevel,9);assert.equal(Object.keys(p.results).length,8);
+ const eight={...p,campaignLength:8,currentLevel:8,snapshot:null};const migrated=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(eight):null},levels);assert.equal(migrated.currentLevel,9);assert.deepEqual(migrated.results,p.results);
+ const active=createSession(levels[7]);active.act(move('right'));eight.snapshot=active.snapshot();assert.equal(loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(eight):null},levels).currentLevel,8);
+ for(let id=9;id<=10;id++)p=recordWin(p,id,3,15);assert.equal(p.currentLevel,10);
 });
 
 test('Level 4 remains stationary through waits, geometry and its entire legal star route',()=>{
@@ -119,7 +123,47 @@ test('bridges have physical reaching arms and traps do not use duplicate dashed 
  const l=levels[0],a=renderBoard(l,initialState(l)),b=renderBoard(l,{...initialState(l),scale:3});assert(a.includes('bridge-arm'));assert(a.includes('data-bridge-open="false"'));assert(!b.includes('data-bridge-open="false"'));
  const shadow=renderBoard(levels[3],initialState(levels[3]));assert(!shadow.includes('shadow-hatch'));assert(!shadow.includes('data-next-danger='));assert(!shadow.includes('stroke-dasharray="3 5" class="shadow-trail"'));
 });
-test('all eight levels have concise persistent top hints independent of toasts',()=>{
- for(const l of levels){assert.equal(typeof l.topTip,'string');assert(l.topTip.length>8&&l.topTip.length<60);}
- const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');assert(html.includes('id="level-tip"'));assert(app.includes("$('#level-tip').textContent = level.topTip"));
+test('new mechanism notices occur only once, without level-by-level introductions',()=>{
+ const p=freshProgress();assert.deepEqual(introducedLessons(levels[0]).map(l=>l.id),['bridge']);
+ for(const id of [7,8,9,10])assert.equal(pendingLessons(levels[id-1],p).length,0);
+ const fresh=pendingLessons(levels[3],p);assert(fresh.some(l=>l.id==='shadow'));assert(fresh.some(l=>l.id==='view'));
+ for(const l of fresh)p.seenTips.push(`mechanism:${l.id}`);assert.equal(pendingLessons(levels[3],p).length,0);
+ const values=new Map(),storage={getItem:k=>values.get(k),setItem:(k,v)=>values.set(k,v)};saveProgress(storage,p);assert.equal(pendingLessons(levels[3],loadProgress(storage,levels)).length,0);
+ p.results[1]={stars:1,bestTurns:8};assert.equal(pendingLessons(levels[0],p).length,0);
+ const cards=lessonCards(referenceLessons(levels[5]));assert(cards.includes('<svg'));assert(cards.includes('眼睛'));assert(!cards.includes('1. '));
+ const app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');assert(!app.includes('toast(level.lesson)'));assert(!app.includes('level.topTip'));
+});
+
+test('new fold level needs real bridge length, free puzzle and topology operations',()=>{
+ const l=levels[8];for(const type of ['scale','place','topology'])assert.equal(search(l,undefined,{forbid:a=>a.type===type,maxDepth:24}).actions,null);
+ assert(proofs[8].star.some(a=>a.type==='topology'&&a.value==='mobius'));assert(proofs[8].star.some(a=>a.type==='move'&&a.direction==='up'));
+});
+test('late levels have longer strategic routes and actually face awakened hunters',()=>{
+ for(const l of levels.slice(8)){assert(proofs[l.id-1].normal.length>proofs[7].normal.length);assert(l.n3Opt>levels[7].n3Opt);let s=initialState(l),steps=0;for(const a of proofs[l.id-1].star){const n=applyAction(s,a,l);if(n.hunterAwake&&!same(s.hunters[0],n.hunters[0]))steps++;s=n;}assert(steps>=3);assert(s.hasKey);assert.equal(s.status,'won');}
+ const l=levels[9],s=replay(l,proofs[9].star);assert(s.lampLit);assert.equal(l.pieces.length,2);assert(proofs[9].star.some(a=>a.type==='rotate'&&a.pieceId==='bend'));assert(proofs[9].star.some(a=>a.type==='scale'&&a.value===3));assert.equal(l.shadowSpeed,3);
+});
+test('clean bridge rendering omits range circles and water background; indicators have legends',()=>{
+ const svg=renderBoard(levels[0],initialState(levels[0]));assert(!svg.includes('#709b98'));assert(!svg.includes('#78928c'));assert(svg.includes('bridge-arm'));assert(svg.includes('traveler-hat'));assert(svg.includes('traveler-face'));
+ const shadow=renderBoard(levels[5],initialState(levels[5]));assert(shadow.includes('dual-channel'));assert(shadow.includes('data-shadow-next'));assert(shadow.includes('箭头：影子下次移动'));
+ const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');
+ assert(html.includes('id="level-info"'));assert(!html.includes('id="shadow-info"'));assert(!html.includes('id="shadow-dialog"'));assert(html.includes('>桥长</span>'));assert(!app.includes('combined'));assert(app.includes('lessonCards('));assert(app.includes('renderLevelInfo()'));
+});
+
+test('two view modes change network emphasis without changing the Shadow route or arrows',()=>{
+ const l=levels[5],s=initialState(l),road=renderBoard(l,s,{view:'primal'}),dual=renderBoard(l,s,{view:'dual'});
+ assert(road.includes('opacity=".25" class="dual-channel"'));assert(dual.includes('opacity=".9" class="dual-channel"'));
+ assert.deepEqual(road.match(/<path[^>]*class="shadow-trail"[^>]*>/g),dual.match(/<path[^>]*class="shadow-trail"[^>]*>/g));
+ assert(road.includes('class="shadow-next-arrow"'));assert(!road.includes('<circle data-shadow-next'));assert.deepEqual(road.match(/<g data-shadow-next[^]*?<\/g>/g),dual.match(/<g data-shadow-next[^]*?<\/g>/g));
+});
+test('solver feedback optimization preserves every rule and state field except explanatory events',()=>{
+ for(const l of levels){let a=initialState(l),b=initialState(l);for(const action of proofs[l.id-1].star){a=applyAction(a,action,l);b=applyAction(b,action,l,{feedback:false});assert.deepEqual({...a,events:[]},{...b,events:[]});}}
+});
+test('redesigned late attempts are archived while achievements remain',()=>{
+ const l=levels[8],old={...freshProgress(),currentLevel:9};for(let id=1;id<=9;id++)old.results[id]={stars:3,bestTurns:15,bestThreeStarTurns:15};old.snapshot={state:{...initialState(l),layoutRevision:2},history:[]};
+ const loaded=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(old):null},levels);assert.equal(loaded.currentLevel,9);assert.equal(loaded.snapshot,null);assert(loaded.archivedAttempts[9]);assert.equal(loaded.results[9].stars,3);
+});
+
+test('redesigned layouts retain old achievements without reporting impossible old best times',()=>{
+ const p={...freshProgress(),results:{9:{stars:3,bestTurns:15,bestThreeStarTurns:15}}};const updated=recordWin(p,9,3,21);assert.equal(updated.results[9].stars,3);assert.equal(updated.results[9].bestTurns,21);assert.equal(updated.results[9].bestThreeStarTurns,21);assert.equal(updated.results[9].priorBest.bestTurns,15);
+ const loaded=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify({...updated,currentLevel:1}):null},levels);assert.equal(loaded.results[9].priorBest.bestTurns,15);
 });

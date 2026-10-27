@@ -70,7 +70,7 @@ export function search(level, start = initialState(level), { maxExpanded = 20000
     if (node.depth >= maxDepth || node.state.status !== 'playing') continue;
     expanded++;
     for (const action of actions) {
-      const next = applyAction(node.state, action, level);
+      const next = applyAction(node.state, action, level, {feedback:false});
       if (next === node.state || next.status === 'lost' || (requireStar && next.status === 'won' && !next.starCollected)) continue;
       const hash = stateHash(next, level), depth = node.depth + 1;
       if ((best.get(hash) ?? Infinity) <= depth) continue;
