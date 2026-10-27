@@ -5,6 +5,7 @@ import { starPath } from './icons.js';
 export const CELL = 56, PADDING = 23;
 const center = p => ({ x: PADDING + (p.x + .5) * CELL, y: PADDING + (p.y + .5) * CELL });
 const corner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
+const wallCache = new WeakMap();
 const palette = { ochre: ['#c9a368', '#80613e'], clay: ['#be846a', '#86523e'], sage: ['#92a485', '#5d735e'] };
 const line = (a, b, stroke, width = 2, extra = '') => `<path d="M${a.x} ${a.y}L${b.x} ${b.y}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
 export function pieceDrawing(piece, definition, previous = null) {
@@ -28,16 +29,18 @@ function segment(a, b, level, coordinates, color, width, extra = '') {
   const left = a.x < b.x ? a : b, right = a.x > b.x ? a : b;
   return line(coordinates(right), { x: PADDING + level.width * CELL + 11, y: coordinates(right).y }, color, width, extra) + line({ x: PADDING - 11, y: coordinates(left).y }, coordinates(left), color, width, extra);
 }
-export function renderBoard(level, state, { previous = null, selected = null, view = 'primal', previewState = null } = {}) {
+export function renderBoardLayers(level, state, { previous = null, selected = null, view = 'primal', previewState = null, lightweight = false } = {}) {
   const width = level.width * CELL + PADDING * 2, height = level.height * CELL + PADDING * 2;
-  const random = seededRandom(level.seed), ground = [], markings = [], overlay = [], actors = [];
-  const shown = previewState ?? state;
+  const random = seededRandom(level.seed), walls = [], ground = [], markings = [], overlay = [], actors = [];
+  const shown = previewState ?? state, wallVariant = lightweight ? 'simple' : 'full', cachedWalls = wallCache.get(level)?.[wallVariant];
   const borders = [];
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const p = { x, y }, t = tile(level, p), c = center(p), variation = random();
     if (t === '#') {
+      if (cachedWalls !== undefined) continue;
       const fill = variation < .35 ? '#b8b097' : variation < .7 ? '#c3bba3' : '#bdb59c';
-      ground.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#98927c"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#dbd3bb" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#7d8d6c" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
+      if (lightweight) { walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#aaa28a" stroke-width=".6"/>`); continue; }
+      walls.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#98927c"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#dbd3bb" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#7d8d6c" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
       continue;
     }
     const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
@@ -71,7 +74,7 @@ export function renderBoard(level, state, { previous = null, selected = null, vi
   if (!state.starCollected && Math.abs(state.player.x - level.star.x) + Math.abs(state.player.y - level.star.y) <= 3) {
     markings.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
   }
-  const { graph, crossings } = dualGraph(level, shown);
+  const { graph, crossings } = view !== 'primal' || state.shadows.length ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
   if (view !== 'primal') {
     for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#79637b', 1.3, 'opacity=".42"'));
     for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="1.8" fill="#8d738d" opacity=".5"/>`); }
@@ -87,7 +90,7 @@ export function renderBoard(level, state, { previous = null, selected = null, vi
       actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
     });
   }
-  const hunterGraph = primalGraph(level, shown);
+  const hunterGraph = state.hunters.length ? primalGraph(level, shown) : null;
   state.hunters.forEach((p, i) => {
     const next = shortestPath(hunterGraph, p, state.player)?.[1];
     if (next) {
@@ -110,5 +113,18 @@ export function renderBoard(level, state, { previous = null, selected = null, vi
       if (old !== future) overlay.push(segment(a, b, level, center, future ? '#648461' : '#ae6f56', 3, 'stroke-dasharray="4 4"'));
     }
   }
-  return `<svg viewBox="0 0 ${width} ${height}" role="${level.pieces.length ? 'group' : 'img'}" aria-label="第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，尺度 ${state.scale}，${state.topology}" style="--map-width:${width};--map-height:${height}"><g opacity="${view === 'dual' ? .45 : 1}">${ground.join('')}${markings.join('')}</g>${overlay.join('')}${borders.join('')}${actors.join('')}</svg>`;
+  if (cachedWalls === undefined) wallCache.set(level, { ...wallCache.get(level), [wallVariant]: walls.join('') });
+  return {
+    viewBox: `0 0 ${width} ${height}`, role: level.pieces.length ? 'group' : 'img',
+    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，尺度 ${state.scale}，${state.topology}`,
+    opacity: view === 'dual' ? '.45' : '1',
+    walls: wallCache.get(level)[wallVariant], terrain: ground.join('') + markings.join(''),
+    overlay: overlay.join('') + borders.join(''), actors: actors.join(''),
+  };
+}
+export function boardMarkup(frame) {
+  return `<svg viewBox="${frame.viewBox}" role="${frame.role}" aria-label="${frame.label}"><g data-layer="walls" opacity="${frame.opacity}">${frame.walls}</g><g data-layer="terrain" opacity="${frame.opacity}">${frame.terrain}</g><g data-layer="overlay">${frame.overlay}</g><g data-layer="actors">${frame.actors}</g></svg>`;
+}
+export function renderBoard(level, state, options = {}) {
+  return boardMarkup(renderBoardLayers(level, state, options));
 }

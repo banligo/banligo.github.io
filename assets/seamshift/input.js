@@ -1,5 +1,5 @@
 // Inputs advance the pure engine in a short FIFO, independent of animation.
-export function createActionQueue(consume, { schedule = callback => setTimeout(callback, 28), cancel = clearTimeout, limit = 6 } = {}) {
+export function createActionQueue(consume, { schedule = callback => typeof requestAnimationFrame === 'function' ? requestAnimationFrame(callback) : setTimeout(callback, 0), cancel = id => typeof cancelAnimationFrame === 'function' ? cancelAnimationFrame(id) : clearTimeout(id), limit = 6 } = {}) {
   let actions = [], timer = null;
   const tick = () => {
     timer = null; const action = actions.shift(); if (action) consume(action);

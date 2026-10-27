@@ -1,11 +1,12 @@
 import { levels, getLevel } from './levels.js';
 import { createSession, disconnected, preview, score } from './engine.js';
 import { slotAt } from './pieces.js';
-import { renderBoard, pieceIcon, CELL, PADDING } from './board.js';
+import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
+import { patchBoard, setMarkupIfChanged } from './renderer.js';
+import { fitViewport } from './viewport.js';
 import { icon } from './icons.js';
 import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
 import { loadProgress, recordWin, saveProgress, unlockedLevel } from './progress.js';
-import { stateHash } from './solver.js';
 const $ = selector => document.querySelector(selector);
 const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转' };
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
@@ -13,7 +14,8 @@ const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const storage = { getItem: name => localStorage.getItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
 let progress = loadProgress(storage, levels), level = getLevel(progress.currentLevel);
 let session = createSession(level, progress.snapshot), selected = null, view = 'primal', previewState = null;
-let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false;
+let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false, saveTimer = null, lightweight = false;
+fitViewport(window, document.documentElement, enabled => { const changed = lightweight !== enabled; lightweight = enabled; if (changed && $('#board svg')) renderMap(); });
 const actionQueue = createActionQueue(perform);
 const starsMarkup = count => [1, 2, 3].map(n => icon('star', `class="${n <= count ? 'lit' : ''}"`)).join('');
 function hydrateIcons() { document.querySelectorAll('[data-icon]').forEach(node => { node.innerHTML = icon(node.dataset.icon); }); }
@@ -21,30 +23,39 @@ function toast(text = '', kind = '', duration = 2800) {
   clearTimeout(toastTimer); $('#message').textContent = text; $('#message').className = `message ${kind}`;
   if (text) toastTimer = setTimeout(() => $('#message').classList.add('faded'), duration);
 }
-function persist() { progress.currentLevel = level.id; progress.snapshot = session.snapshot(); saveProgress(storage, progress); }
+function flushPersistence() {
+  clearTimeout(saveTimer); saveTimer = null;
+  progress.currentLevel = level.id; progress.snapshot = session.snapshot({ clone: false });
+  saveProgress(storage, progress);
+}
+function persist() { clearTimeout(saveTimer); saveTimer = setTimeout(flushPersistence, 140); }
+function setWorld(topology) {
+  const game = $('#game'); if (game.className !== `game world-${topology}`) game.className = `game world-${topology}`;
+  if (document.body.dataset.world !== topology) document.body.dataset.world = topology;
+}
 function renderMap(previous = null) {
-  $('#board').innerHTML = renderBoard(level, session.state, { selected, view, previewState, previous: reduceMotion ? null : previous });
+  patchBoard($('#board'), renderBoardLayers(level, session.state, { selected, view, previewState, lightweight, previous: reduceMotion || lightweight ? null : previous }));
   $('#view-button').setAttribute('aria-pressed', String(view !== 'primal'));
 }
 function renderTray() {
   $('#puzzle-tray').hidden = !level.pieces.length;
-  $('#pieces').innerHTML = session.state.pieces.map((piece, i) => {
+  setMarkupIfChanged($('#pieces'), session.state.pieces.map((piece, i) => {
     const definition = level.pieces.find(p => p.id === piece.id);
     return `<button class="piece-button ${piece.slot ? 'placed' : ''}" data-piece="${piece.id}" aria-pressed="${piece.id === selected}" aria-label="${shapeNames[definition.shape]}碎片 ${i + 1}${piece.slot ? '，已放置' : '，选择后点击空位'}" title="${piece.id === selected ? '再点旋转' : '选择碎片'}">${pieceIcon(piece, definition)}<small>${['Ⅰ', 'Ⅱ', 'Ⅲ'][i]}</small></button>`;
-  }).join('');
+  }).join(''));
   const piece = session.state.pieces.find(p => p.id === selected);
   $('#rotate-button').disabled = !piece || session.state.status !== 'playing';
   $('#remove-button').disabled = !piece?.slot || session.state.status !== 'playing';
 }
 function renderControls() {
   const state = session.state;
-  $('#scale-buttons').innerHTML = [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${value}</button>`).join('');
-  $('#mode-buttons').innerHTML = ['plane', 'cylinder', 'mobius'].map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join('');
+  setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${value}</button>`).join(''));
+  setMarkupIfChanged($('#mode-buttons'), ['plane', 'cylinder', 'mobius'].map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
 function render() {
   const state = session.state;
-  $('#game').className = `game world-${state.topology}`;
+  setWorld(state.topology);
   $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `0${level.id} / 05`;
   $('#moves').textContent = `${state.turn} 步`; $('#par').textContent = `推荐 ${level.par} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
@@ -56,7 +67,7 @@ function render() {
 }
 function teachOnce() {
   const id = `lesson-${level.id}`;
-  if (!progress.seenTips.includes(id)) { progress.seenTips.push(id); saveProgress(storage, progress); toast(level.lesson, '', 3100); }
+  if (!progress.seenTips.includes(id)) { progress.seenTips.push(id); persist(); toast(level.lesson, '', 3100); }
   else toast();
 }
 function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
@@ -68,11 +79,11 @@ function checkDiscoveries(before, action) {
   if (state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
 }
 function flashInvalid(text) {
-  toast(text, 'error'); const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
+  toast(text, 'error'); if (lightweight) return; const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
   setTimeout(() => board.classList.remove('invalid'), 180);
 }
 function burst(position, color = '#c49b51') {
-  if (reduceMotion) return;
+  if (reduceMotion || lightweight) return;
   const svg = $('#board svg'), matrix = svg?.getScreenCTM(); if (!matrix) return;
   const point = svg.createSVGPoint(); point.x = PADDING + (position.x + .5) * CELL; point.y = PADDING + (position.y + .5) * CELL;
   const screen = point.matrixTransform(matrix), bounds = $('#arena').getBoundingClientRect();
@@ -83,12 +94,12 @@ function perform(action) {
   const before = session.state, result = session.act(action); previewState = null; hintRequest++;
   if (!result.valid) { flashInvalid(result.message); return; }
   checkDiscoveries(before, action); renderControls(); renderMap(before);
-  $('#game').className = `game world-${session.state.topology}`; $('#moves').textContent = `${session.state.turn} 步`;
+  setWorld(session.state.topology); $('#moves').textContent = `${session.state.turn} 步`;
   $('#held-star').classList.toggle('collected', session.state.starCollected);
   $('#held-star').setAttribute('aria-label', session.state.starCollected ? '已收集可选星片' : '尚未收集可选星片');
   if (action.type === 'place') burst(level.slots.find(s => s.id === action.slotId), '#a18e5d');
   if (!before.starCollected && session.state.starCollected) burst(level.star);
-  if (action.type === 'topology') { $('#arena').classList.remove('world-change'); void $('#arena').offsetWidth; $('#arena').classList.add('world-change'); }
+  if (action.type === 'topology' && !lightweight) { $('#arena').classList.remove('world-change'); void $('#arena').offsetWidth; $('#arena').classList.add('world-change'); }
   if (session.state.status === 'won') { finishLevel(); return; }
   persist();
   if (session.state.status === 'lost') { actionQueue.clear(); $('#lost-overlay').hidden = false; toast('没关系，撤销一步就好。', 'error'); }
@@ -96,6 +107,7 @@ function perform(action) {
   else if (level.hunterSpeed && (session.state.turn + 1) % level.hunterSpeed === 0) toast('小兽下一回合会移动。');
 }
 function finishLevel() {
+  clearTimeout(saveTimer); saveTimer = null;
   actionQueue.clear(); advancing = true; const count = score(session.state, level);
   progress = recordWin(progress, level.id, count, session.state.turn); saveProgress(storage, progress);
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id].stars);
@@ -166,10 +178,10 @@ function hint() {
   hintCount++;
   const tell = text => { toast(text, 'hint', 5500); $('#help-hint').textContent = text; };
   if (hintCount <= 2) { tell(level.hints[hintCount - 1]); return; }
-  const request = ++hintRequest, signature = stateHash(session.state, level), id = level.id;
+  const request = ++hintRequest, hintState = session.state, id = level.id;
   tell('让我看看，这一步可以怎么走…');
   const finish = action => {
-    if (request !== hintRequest || level.id !== id || signature !== stateHash(session.state, level)) return;
+    if (request !== hintRequest || level.id !== id || session.state !== hintState) return;
     tell(action ? `下一步可以${actionLabel(action)}。` : '当前搜索没找到出口；试着收回碎片，或撤销几步。');
   };
   try {
@@ -182,6 +194,7 @@ function hint() {
   }
 }
 function clearGesture() {
+  if (gesture?.dragFrame) cancelAnimationFrame(gesture.dragFrame);
   if (gesture) { try { $('#game').releasePointerCapture(gesture.id); } catch {} }
   gesture = null; $('#drag-ghost').hidden = true;
 }
@@ -201,9 +214,16 @@ document.addEventListener('pointermove', event => {
   if (!gesture || event.pointerId !== gesture.id) return;
   if (gesture.pieceId && Math.hypot(event.clientX - gesture.x, event.clientY - gesture.y) > 9) {
     gesture.dragged = true;
-    const piece = session.state.pieces.find(p => p.id === gesture.pieceId), definition = level.pieces.find(p => p.id === gesture.pieceId);
-    $('#drag-ghost').innerHTML = pieceIcon(piece, definition); $('#drag-ghost').hidden = false;
-    $('#drag-ghost').style.left = `${event.clientX}px`; $('#drag-ghost').style.top = `${event.clientY}px`;
+    if (!gesture.ghostReady) {
+      const piece = session.state.pieces.find(p => p.id === gesture.pieceId), definition = level.pieces.find(p => p.id === gesture.pieceId);
+      $('#drag-ghost').innerHTML = pieceIcon(piece, definition); $('#drag-ghost').hidden = false; gesture.ghostReady = true;
+    }
+    gesture.dragX = event.clientX; gesture.dragY = event.clientY;
+    if (!gesture.dragFrame) gesture.dragFrame = requestAnimationFrame(() => {
+      if (!gesture) return;
+      $('#drag-ghost').style.transform = `translate3d(${gesture.dragX}px,${gesture.dragY}px,0) translate(-50%,-65%)`;
+      gesture.dragFrame = null;
+    });
   }
 });
 document.addEventListener('pointerup', event => {
@@ -257,7 +277,7 @@ document.addEventListener('click', event => {
   actions[button.id]?.();
 });
 function showPreview(button) {
-  if (!button || button.disabled || session.state.status !== 'playing' || advancing) return;
+  if (lightweight || !button || button.disabled || session.state.status !== 'playing' || advancing) return;
   const action = button.dataset.scale ? { type: 'scale', value: Number(button.dataset.scale) } : { type: 'topology', value: button.dataset.topology };
   previewState = preview(session.state, action, level); renderMap();
 }
@@ -296,7 +316,8 @@ document.addEventListener('keydown', event => {
   else if (key === 'escape') showDialog('levels-dialog');
   else if (key === '?') showDialog('help-dialog');
 });
-window.addEventListener('pagehide', () => { if (!advancing) persist(); });
+window.addEventListener('pagehide', () => { if (!advancing) flushPersistence(); });
+document.addEventListener('visibilitychange', () => { if (document.hidden && !advancing) flushPersistence(); });
 hydrateIcons(); render();
 if (session.state.status === 'won' && level.id === 5) {
   $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / 15 颗星。`;

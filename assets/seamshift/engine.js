@@ -106,7 +106,7 @@ export function createSession(level, snapshot = null) {
   let state = snapshot?.state ? structuredClone(snapshot.state) : initialState(level);
   const history = snapshot?.history ? structuredClone(snapshot.history) : [];
   return { get state() { return state; }, get undoCount() { return history.length; },
-    snapshot: () => ({ state: structuredClone(state), history: structuredClone(history) }),
+    snapshot: ({ clone = true } = {}) => clone ? { state: structuredClone(state), history: structuredClone(history) } : { state, history },
     act(action) { const result = transition(state, action, level); if (result.valid) { history.push(state); state = result.state; } return result; },
     undo() { if (!history.length) return false; state = history.pop(); return true; },
     restart() { state = initialState(level); history.length = 0; } };
