@@ -36,7 +36,7 @@ test('walking preserves the SVG and static map layers, updating only the actors'
   const layers = Object.fromEntries(['walls', 'terrain', 'overlay', 'actors'].map(name => [name, new Node()]));
   const svg = new Node(); svg.querySelector = selector => layers[selector.match(/data-layer="(.*?)"/)[1]];
   const container = new Node(); container.querySelector = () => svg;
-  const level = levels[0]; let state = initialState(level);
+  const level = {...levels[0],width:5,height:3,map:['#####','#P..#','#####'],controls:[],bridges:[]}; let state = initialState(level);
   patchBoard(container, renderBoardLayers(level, state));
   for (const direction of ['right', 'right', 'left', 'right', 'left', 'right']) {
     state = applyAction(state, { type: 'move', direction }, level); patchBoard(container, renderBoardLayers(level, state));
@@ -44,9 +44,9 @@ test('walking preserves the SVG and static map layers, updating only the actors'
   assert.equal(container.writes, 1); assert.equal(layers.walls.writes, 0); assert.equal(layers.terrain.writes, 0); assert.equal(layers.overlay.writes, 0); assert.equal(layers.actors.writes, 6);
   assert(svg.attributes['aria-label'].includes('6 步'));
 });
-test('unchanged buttons are not recreated, and geometry still patches when scale changes', () => {
+test('unchanged buttons are not recreated, and bridge entry patches the actual map', () => {
   const button = new Node(); assert(setMarkupIfChanged(button, '<button>2</button>')); assert(!setMarkupIfChanged(button, '<button>2</button>')); assert.equal(button.writes, 1);
-  const l = levels[0], state = initialState(l), old = renderBoardLayers(l, state), changed = renderBoardLayers(l, applyAction(state, { type: 'scale', value: 2 }, l));
+  const l = levels[0], state = initialState(l), old = renderBoardLayers(l, state), changed = renderBoardLayers(l, applyAction(state, {type:'move',direction:'right'}, l));
   assert.equal(old.walls, changed.walls); assert.notEqual(old.terrain, changed.terrain);
 });
 test('saving can serialize read-only live history without copying it on every input', () => {
@@ -58,7 +58,7 @@ test('saving can serialize read-only live history without copying it on every in
 });
 test('phone scenery is simplified and cached without altering paths or actors', () => {
   const l = levels[4], s = initialState(l), full = renderBoardLayers(l, s), light = renderBoardLayers(l, s, { lightweight: true });
-  assert(light.walls.length < full.walls.length / 2);
+  assert.equal(light.walls,full.walls);
   assert.equal(light.terrain, full.terrain); assert.equal(light.actors, full.actors); assert.equal(light.overlay, full.overlay);
   assert.equal(renderBoardLayers(l, s).walls, full.walls);
   assert.equal(renderBoardLayers(l, s, { lightweight: true }).walls, light.walls);

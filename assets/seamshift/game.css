@@ -326,3 +326,9 @@ body[data-world="torus"] { background:#d9dfd1; }
  .puzzle-tray { align-content:start; }
  .map-stage { padding-top:44px; }
 }
+/* Without a range row, keep the phone console compact and continuous. */
+@media(max-width:600px) and (min-height:521px) {
+ .control-deck { grid-template-rows:44px 134px; }
+ .tools { grid-row:2;align-self:center;grid-template-columns:repeat(3,44px); }
+ .dpad { grid-row:2; }
+}

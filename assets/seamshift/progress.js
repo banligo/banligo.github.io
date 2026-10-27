@@ -13,11 +13,11 @@ export function normalizeProgress(raw, legacy = null) {
     for (let id = 1; id <= LAST; id++) {
       const r = raw.results?.[id];
       if (r && Number.isInteger(r.stars) && r.stars >= 0 && r.stars <= 3 && (r.bestTurns===null || Number.isInteger(r.bestTurns) && r.bestTurns > 0)) {
-        result.results[id] = { completed:!!r.completed || r.stars>0, stars: r.stars, bestTurns: r.bestTurns, bestThreeStarTurns: r.stars === 3 && Number.isInteger(r.bestThreeStarTurns) && r.bestThreeStarTurns > 0 ? r.bestThreeStarTurns : null, layoutRevision: Number.isInteger(r.layoutRevision) ? r.layoutRevision : campaign[id-1].legacyRevision ?? (id>=9 ? 2 : campaign[id-1].revision), ...(r.priorBest && Number.isInteger(r.priorBest.bestTurns) ? {priorBest:r.priorBest} : {}) };
+        result.results[id] = { completed:!!r.completed || r.stars>0, stars: r.stars, bestTurns: r.bestTurns, bestThreeStarTurns: r.stars === 3 && Number.isInteger(r.bestThreeStarTurns) && r.bestThreeStarTurns > 0 ? r.bestThreeStarTurns : null, layoutRevision: Number.isInteger(r.layoutRevision) ? r.layoutRevision : campaign[id-1].legacyRevision ?? (id>=9 ? 2 : campaign[id-1].revision), ...(r.priorBest && typeof r.priorBest==='object' ? {priorBest:r.priorBest} : {}) };
       }
     }
     for(const [id,r] of Object.entries(result.results)) if(r.layoutRevision!==campaign[id-1].revision){
-      result.results[id]={completed:r.completed,stars:0,bestTurns:null,bestThreeStarTurns:null,layoutRevision:campaign[id-1].revision,priorBest:{...r,...(r.priorBest?{earlier:r.priorBest}:{})}};
+      result.results[id]={completed:r.completed,stars:0,bestTurns:null,bestThreeStarTurns:null,layoutRevision:campaign[id-1].revision,...(r.bestTurns?{priorBest:{layoutRevision:r.layoutRevision,stars:r.stars,bestTurns:r.bestTurns,bestThreeStarTurns:r.bestThreeStarTurns,...(r.priorBest?{earlier:r.priorBest}:{})}}:r.priorBest?{priorBest:r.priorBest}:{})};
     }
     result.seenTips = Array.isArray(raw.seenTips) ? raw.seenTips.filter(x => typeof x === 'string') : [];
     result.discoveries = Array.isArray(raw.discoveries) ? raw.discoveries.filter(x => typeof x==='string') : [];
@@ -70,11 +70,6 @@ export function loadProgress(storage, levels) {
     const raw = [4,5].includes(latest?.version) ? latest : old;
     const result = normalizeProgress(raw, read('seamshift.progress.v1'));
     const level = levels.find(l => l.id === result.currentLevel);
-    if(false) {
-      for(const state of [result.snapshot.state,...(result.snapshot.history??[])]) {
-        state.version=4; state.layoutRevision=level.revision; state.shadowReturning=false; state.hunterAwake=!!state.hunterAwake;
-      }
-    }
     if(result.snapshot?.state && Array.isArray(result.snapshot.history)) for(const s of [result.snapshot.state,...result.snapshot.history]) s.lampLit ??= false;
     if (!validSnapshot(result.snapshot, level)) {
       if(result.snapshot) result.archivedAttempts[level.id]=result.snapshot;

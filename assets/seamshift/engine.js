@@ -4,11 +4,13 @@ export function positions(level, symbol) {
   return level.map.flatMap((row, y) => [...row].flatMap((t, x) => t === symbol ? [{ x, y }] : []));
 }
 export function initialState(level) {
-  return { version: 5, world:'primal', anchor:positions(level,'P')[0], bridgeStates:Object.fromEntries(level.bridges.map(b=>[b.id,!!b.initialOpen])), triggered:[], rooms:Object.fromEntries((level.rooms??[]).map(r=>[r.id,r.rotation??0])), lampStarted:!!level.circuit?.initialStarted, lampCharge:0, energy:level.circuit?.initialEnergy??2, lampStatus:level.circuit?'ready':'unpowered', layoutRevision:level.revision, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
+  const state={ version: 5, world:'primal', anchor:positions(level,'P')[0], bridgeStates:Object.fromEntries(level.bridges.map(b=>[b.id,!!b.initialOpen])), triggered:[], rooms:Object.fromEntries((level.rooms??[]).map(r=>[r.id,r.rotation??0])), lampStarted:!!level.circuit?.initialStarted, lampCharge:0, energy:level.circuit?.initialEnergy??2, lampStatus:level.circuit?'ready':'unpowered', layoutRevision:level.revision, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
     shadows: level.shadow ? [{ x: level.shadow[0], y: level.shadow[1] }] : [],
     pieces: level.pieces.map(p => ({ id: p.id, rotation: p.rotation, slot: null })),
     scale: level.initialScale, topology: level.initialTopology, hasKey: false, starCollected: false,
     lampLit: false, shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
+  if(level.circuit){const powered=!level.circuit.source||!!shortestPath(primalGraph(level,state),level.circuit.source,level.circuit.receiver);state.lampStatus=!lampProtected(state,level)?'shorted':!powered?'unpowered':'ready';}
+  return state;
 }
 export const beaconPosition = (state, level) => { const target=state.shadowReturning ? level.shadow : level.beacon; return target ? remapDual({x:target[0],y:target[1]},level,state.topology) : null; };
 const pathCache = new WeakMap();
@@ -62,11 +64,7 @@ export const rejected = (state, message) => ({ state, valid: false, message });
 const copyState = state => ({...state,pieces:state.pieces.map(p=>({...p})),hunters:[...state.hunters],shadows:[...state.shadows],bridgeStates:{...state.bridgeStates},triggered:[...state.triggered],rooms:{...state.rooms},events:[]});
 function geometryChange(state, action, level) {
   const next = copyState(state);
-  if (action.type === 'scale') {
-    if (!level.scales.includes(action.value) || state.scale === action.value || false) return rejected(state, '这个连接范围还不能用。');
-    if ([state.player, ...state.hunters].some(p => !active(level, p, action.value, state))) return rejected(state, '先离开将要消失的道路。');
-    next.scale = action.value;
-  } else if (action.type === 'topology') {
+  if(action.type==='topology') {
     if (!level.modes.includes(action.value) || state.topology === action.value) return rejected(state, '这条边界还不能改变。');
     if(state.world==='dual'&&!dualNode(state.player,level,action.value))return rejected(state,'先回到普通世界，再切开这条边界。');
     next.topology = action.value; next.shadows = next.shadows.map(p => remapDual(p, level, action.value));
@@ -77,10 +75,6 @@ function geometryChange(state, action, level) {
     if(occupied(piece.slot))return rejected(state,'上面还有角色。');
     if (action.type === 'rotate') piece.rotation = (piece.rotation + 1) % 4;
     else {
-      if (piece.slot) {
-        const oldSlot = level.slots.find(s => s.id === piece.slot);
-        if ([state.player, ...state.hunters].some(p => same(p, oldSlot))) return rejected(state, '上面还有角色。');
-      }
       if (action.type === 'remove') {
         if (!piece.slot) return rejected(state, '碎片已在背包里。');
         piece.slot = null;
@@ -155,15 +149,15 @@ export function transition(state, action, level, { feedback = true } = {}) {
   else {
     const result = geometryChange(state, action, level); if (!result.valid) return result;
     next = result.state;
-    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', scale: '连接范围改变了，节点间的距离决定道路是否相连。', topology: '世界的边缘改变了。' })[action.type]);
+    events.push(({ rotate: '道路转了一个方向。', place: '碎片落位。两端要对上才能走。', remove: '碎片收回了。', topology: '世界的边缘改变了。' })[action.type]);
   }
-  if(feedback && state.shadows.length && ['place','rotate','remove','scale'].includes(action.type)) {
+  if(feedback && state.shadows.length && ['place','rotate','remove'].includes(action.type)) {
     const old=dualGraph(level,state).crossings,changed=dualGraph(level,next).crossings;
     if(changed.some(e=>!e.open&&old.some(o=>o.open&&same(o.a,e.a)&&same(o.b,e.b))))events.push('你的路接通了，交叉的紫色裂隙被挡住了。');
   }
 
   next.turn++;
-  if (state.shadows.length && disconnected(state, level) !== disconnected(next, level)) events.push(disconnected(next, level) ? '影子停住了。' : '影子又找到路了。');
+  if(feedback && state.shadows.length && disconnected(state, level) !== disconnected(next, level)) events.push(disconnected(next, level) ? '通向巡逻目标的紫线被截断了。' : '影子又找到巡逻路线了。');
   if (next.world!=='dual' && next.hunters.some(p => same(p, next.player))) next.status = 'lost';
   const hunterGraph = next.hunters.length ? primalGraph(level,next) : null;
   const alertPath = !state.hunterAwake ? next.hunters.map(p => shortestPath(hunterGraph,p,next.world==='dual'?next.anchor:next.player)) : [];

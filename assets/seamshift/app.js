@@ -14,7 +14,7 @@ const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cro
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const storage = { getItem: name => localStorage.getItem(name), removeItem: name => localStorage.removeItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
 let progress = loadProgress(storage, levels), level = getLevel(progress.currentLevel);
-let session = createSession(level, progress.snapshot), selected = null, view = 'primal', previewState = null;
+let session = createSession(level, progress.snapshot), selected = null, view = session.state.world==='dual'?'dual':'primal', previewState = null;
 let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false, saveTimer = null, lightweight = false;
 fitViewport(window, document.documentElement, enabled => { const changed = lightweight !== enabled; lightweight = enabled; if (changed && $('#board svg')) renderMap(); });
 const actionQueue = createActionQueue(perform);
@@ -52,9 +52,7 @@ function renderTray() {
 function renderControls() {
   const state = session.state;
   if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
-  setMarkupIfChanged($('#scale-buttons'), level.scales.map(value => `<button data-scale="${value}" aria-label="连接范围 ${level.radii[value-1]}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${icon('radius')}<span>${level.radii[value-1]}</span></button>`).join(''));
   setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
-  $('#scale-buttons').closest('.scale-row').hidden=level.scales.length<2;
   $('#shift-button').hidden=!level.rifts.length;
   $('#shift-button').textContent=state.world==='dual'?'回到道路 · E':'进入裂隙 · E';
   $('#shift-button').disabled=!level.rifts.some(r=>{const p=state.world==='dual'?r.dual:r.primal;return p.x===state.player.x&&p.y===state.player.y;});
@@ -95,10 +93,7 @@ function checkDiscoveries(before, action) {
   for(const id of observeDiscoveries(level,session.state,action)) discover(id);
   renderNewMechanisms();
   const state = session.state;
-  if (action.type === 'scale') discover('scale');
-  if (['place', 'rotate'].includes(action.type)) discover('pieces');
-  if (Math.abs(before.player.x - state.player.x) > 1 || Math.abs(before.player.y-state.player.y)>1) discover(state.topology);
-  if (level.id !== 4 && state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
+
 }
 function flashInvalid(text) {
   toast(text, 'error'); if (lightweight) return; const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
@@ -119,6 +114,7 @@ function perform(action) {
   setWorld(session.state.topology); $('#moves').textContent = `${session.state.turn} 步`;
   $('#held-star').classList.toggle('collected', session.state.starCollected);
   $('#held-star').setAttribute('aria-label', session.state.starCollected ? '已收集可选星片' : '尚未收集可选星片');
+  if(action.type==='shift'){view=session.state.world==='dual'?'dual':'primal';renderMap();}
   if (action.type === 'place') burst(level.slots.find(s => s.id === action.slotId), '#a18e5d');
   if (!before.starCollected && session.state.starCollected) burst(level.star);
   if (action.type === 'topology' && !lightweight) { $('#arena').classList.remove('world-change'); void $('#arena').offsetWidth; $('#arena').classList.add('world-change'); }
@@ -169,7 +165,7 @@ function restart() {
 }
 function renderLevels() {
   const unlocked = unlockedLevel(progress);
-  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
+  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small>${progress.results[l.id]?.priorBest?.bestTurns?`<small>旧版 ${progress.results[l.id].priorBest.stars} 星 · ${progress.results[l.id].priorBest.bestTurns} 步</small>`:''}</span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
 function showDialog(id) {
   if (advancing) return;
@@ -195,7 +191,6 @@ function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap()
 function cycleTopology() { const modes = level.modes; if (modes.length > 1) actionQueue.push({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
 function actionLabel(action) {
   if (action.type === 'move') return `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}走一步`;
-  if (action.type === 'scale') return `调整连接范围到 ${level.radii[action.value-1]}`;
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
   if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放在空白地面`;
@@ -296,7 +291,6 @@ document.addEventListener('click', event => {
     return;
   }
   if (button.dataset.direction) { actionQueue.push({ type: 'move', direction: button.dataset.direction }); return; }
-  if (button.dataset.scale) { actionQueue.push({ type: 'scale', value: Number(button.dataset.scale) }); return; }
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
@@ -316,16 +310,16 @@ document.addEventListener('click', event => {
 });
 function showPreview(button) {
   if (lightweight || !button || button.disabled || session.state.status !== 'playing' || advancing) return;
-  const action = button.dataset.scale ? { type: 'scale', value: Number(button.dataset.scale) } : { type: 'topology', value: button.dataset.topology };
+  const action = {type:'topology',value:button.dataset.topology};
   previewState = preview(session.state, action, level); renderMap();
 }
 document.addEventListener('pointerover', event => {
   if (event.pointerType !== 'mouse') return;
-  const button = event.target.closest('[data-scale],[data-topology]'); if (button && !button.contains(event.relatedTarget)) showPreview(button);
+  const button = event.target.closest('[data-topology]'); if (button && !button.contains(event.relatedTarget)) showPreview(button);
 });
 document.addEventListener('pointerout', event => {
   if (event.pointerType !== 'mouse') return;
-  const button = event.target.closest('[data-scale],[data-topology]');
+  const button = event.target.closest('[data-topology]');
   if (button && !button.contains(event.relatedTarget) && previewState) { previewState = null; renderMap(); }
 });
 let lastKey = 0;
@@ -345,7 +339,6 @@ document.addEventListener('keydown', event => {
   lastKey = performance.now();
   const movement = { arrowup: 'up', w: 'up', arrowright: 'right', d: 'right', arrowdown: 'down', s: 'down', arrowleft: 'left', a: 'left' };
   if (movement[key]) { event.preventDefault(); actionQueue.push({ type: 'move', direction: movement[key] }); }
-  else if (['1', '2','3'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
   else if(key==='e'){event.preventDefault();actionQueue.push({type:'shift'});}
   else if (key === 't') { event.preventDefault(); cycleTopology(); }
   else if (key === ' ') { event.preventDefault(); actionQueue.push({ type: 'wait' }); }

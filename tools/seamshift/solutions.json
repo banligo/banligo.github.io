@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "revision": 10,
+    "revision": 11,
     "title": "Broken Path",
     "normal": [
       {
@@ -51,10 +51,6 @@
         "direction": "down"
       },
       {
-        "type": "scale",
-        "value": 3
-      },
-      {
         "type": "move",
         "direction": "down"
       },
@@ -68,11 +64,11 @@
       },
       {
         "type": "move",
-        "direction": "down"
+        "direction": "left"
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "right"
       },
       {
         "type": "move",
@@ -107,14 +103,14 @@
         "direction": "down"
       }
     ],
-    "n3Opt": 16,
+    "n3Opt": 15,
     "knownLimitations": [],
-    "threeStarLimit": 18,
-    "starExpanded": 41
+    "threeStarLimit": 17,
+    "starExpanded": 21
   },
   {
     "id": 2,
-    "revision": 10,
+    "revision": 11,
     "title": "Monster & Boundaries",
     "normal": [
       {
@@ -189,17 +185,17 @@
   },
   {
     "id": 3,
-    "revision": 10,
+    "revision": 11,
     "title": "Puzzle & Torus",
     "normal": [
+      {
+        "type": "rotate",
+        "pieceId": "fork"
+      },
       {
         "type": "place",
         "pieceId": "fork",
         "slotId": "3,0"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "fork"
       },
       {
         "type": "move",
@@ -259,10 +255,6 @@
         "direction": "up"
       },
       {
-        "type": "scale",
-        "value": 3
-      },
-      {
         "type": "move",
         "direction": "up"
       },
@@ -285,12 +277,12 @@
       },
       {
         "type": "place",
-        "pieceId": "turn",
+        "pieceId": "fork",
         "slotId": "3,5"
       },
       {
         "type": "rotate",
-        "pieceId": "turn"
+        "pieceId": "fork"
       },
       {
         "type": "move",
@@ -301,14 +293,14 @@
         "direction": "right"
       }
     ],
-    "n3Opt": 16,
+    "n3Opt": 15,
     "knownLimitations": [],
-    "threeStarLimit": 18,
-    "starExpanded": 75332
+    "threeStarLimit": 17,
+    "starExpanded": 9600
   },
   {
     "id": 4,
-    "revision": 10,
+    "revision": 11,
     "title": "Shadow Maze",
     "normal": [
       {
@@ -399,21 +391,21 @@
     "n3Opt": 12,
     "knownLimitations": [],
     "threeStarLimit": 14,
-    "starExpanded": 80
+    "starExpanded": 140
   },
   {
     "id": 5,
-    "revision": 10,
+    "revision": 11,
     "title": "The Broken Escape",
     "normal": [
-      {
-        "type": "move",
-        "direction": "down"
-      },
       {
         "type": "place",
         "pieceId": "reed",
         "slotId": "2,3"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
@@ -434,13 +426,13 @@
     ],
     "star": [
       {
-        "type": "move",
-        "direction": "down"
-      },
-      {
         "type": "place",
         "pieceId": "reed",
         "slotId": "2,3"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
@@ -470,11 +462,11 @@
     "n3Opt": 8,
     "knownLimitations": [],
     "threeStarLimit": 10,
-    "starExpanded": 29
+    "starExpanded": 30
   },
   {
     "id": 6,
-    "revision": 10,
+    "revision": 11,
     "title": "Keep the Light",
     "normal": [
       {
@@ -517,13 +509,13 @@
         "direction": "right"
       },
       {
+        "type": "move",
+        "direction": "right"
+      },
+      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "3,4"
-      },
-      {
-        "type": "move",
-        "direction": "right"
       },
       {
         "type": "move",
@@ -565,11 +557,11 @@
     "n3Opt": 12,
     "knownLimitations": [],
     "threeStarLimit": 14,
-    "starExpanded": 46
+    "starExpanded": 51
   },
   {
     "id": 7,
-    "revision": 10,
+    "revision": 11,
     "title": "Shadow & Light",
     "normal": [
       {
@@ -650,11 +642,11 @@
     "n3Opt": 11,
     "knownLimitations": [],
     "threeStarLimit": 13,
-    "starExpanded": 91
+    "starExpanded": 110
   },
   {
     "id": 8,
-    "revision": 10,
+    "revision": 11,
     "title": "Light Across the Seam",
     "normal": [
       {
@@ -666,17 +658,17 @@
         "direction": "right"
       },
       {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "3,4"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
       },
       {
         "type": "move",
@@ -741,11 +733,11 @@
     "n3Opt": 10,
     "knownLimitations": [],
     "threeStarLimit": 12,
-    "starExpanded": 374
+    "starExpanded": 224
   },
   {
     "id": 9,
-    "revision": 10,
+    "revision": 11,
     "title": "Star Hunt",
     "normal": [
       {
@@ -886,19 +878,154 @@
   },
   {
     "id": 10,
-    "revision": 10,
+    "revision": 11,
     "title": "First Mastery",
-    "normal": null,
-    "star": null,
-    "n3Opt": null,
-    "knownLimitations": [
-      "Search budget reached (300000); no verified normal route.",
-      "Search budget reached (300000); no verified star route."
-    ]
+    "normal": [
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "4,4"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "topology",
+        "value": "plane"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      }
+    ],
+    "star": [
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "4,4"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "topology",
+        "value": "plane"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      }
+    ],
+    "n3Opt": 17,
+    "knownLimitations": [],
+    "threeStarLimit": 19,
+    "starExpanded": 24534
   },
   {
     "id": 11,
-    "revision": 10,
+    "revision": 11,
     "title": "Mirror Walk",
     "normal": [
       {
@@ -1089,17 +1216,12 @@
   },
   {
     "id": 12,
-    "revision": 10,
+    "revision": 11,
     "title": "First Light",
     "normal": [
       {
         "type": "move",
         "direction": "right"
-      },
-      {
-        "type": "place",
-        "pieceId": "shield",
-        "slotId": "3,4"
       },
       {
         "type": "move",
@@ -1108,6 +1230,11 @@
       {
         "type": "move",
         "direction": "down"
+      },
+      {
+        "type": "place",
+        "pieceId": "shield",
+        "slotId": "3,4"
       },
       {
         "type": "move",
@@ -1132,13 +1259,13 @@
         "direction": "right"
       },
       {
+        "type": "move",
+        "direction": "right"
+      },
+      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "3,4"
-      },
-      {
-        "type": "move",
-        "direction": "right"
       },
       {
         "type": "move",
@@ -1180,11 +1307,11 @@
     "n3Opt": 12,
     "knownLimitations": [],
     "threeStarLimit": 15,
-    "starExpanded": 64
+    "starExpanded": 52
   },
   {
     "id": 13,
-    "revision": 10,
+    "revision": 11,
     "title": "Moving Territories",
     "normal": [
       {
@@ -1301,7 +1428,7 @@
   },
   {
     "id": 14,
-    "revision": 10,
+    "revision": 11,
     "title": "Shifting Domains",
     "normal": [
       {
@@ -1325,20 +1452,22 @@
         "direction": "right"
       },
       {
-        "type": "move",
-        "direction": "up"
+        "type": "shift"
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "topology",
-        "value": "torus"
+        "direction": "down"
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "place",
@@ -1347,7 +1476,7 @@
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "down"
       },
       {
         "type": "move",
@@ -1434,11 +1563,9 @@
         "direction": "right"
       },
       {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "up"
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "5,6"
       },
       {
         "type": "move",
@@ -1447,25 +1574,6 @@
       {
         "type": "move",
         "direction": "right"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "bend"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "bend"
-      },
-      {
-        "type": "rotate",
-        "pieceId": "bend"
       },
       {
         "type": "place",
@@ -1481,102 +1589,214 @@
         "direction": "right"
       }
     ],
-    "n3Opt": 32,
+    "n3Opt": 26,
     "knownLimitations": [],
-    "threeStarLimit": 35,
-    "starExpanded": 1430
+    "threeStarLimit": 29,
+    "starExpanded": 924,
+    "normalPlans": [
+      {
+        "label": "周期边界绕行",
+        "actions": [
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "up"
+          },
+          {
+            "type": "move",
+            "direction": "up"
+          },
+          {
+            "type": "topology",
+            "value": "torus"
+          },
+          {
+            "type": "move",
+            "direction": "up"
+          },
+          {
+            "type": "rotate",
+            "pieceId": "bend"
+          },
+          {
+            "type": "place",
+            "pieceId": "bend",
+            "slotId": "6,7"
+          },
+          {
+            "type": "move",
+            "direction": "up"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          }
+        ]
+      },
+      {
+        "label": "平面双界绕行",
+        "actions": [
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "place",
+            "pieceId": "bend",
+            "slotId": "6,7"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          }
+        ]
+      }
+    ]
   },
   {
     "id": 15,
-    "revision": 10,
+    "revision": 11,
     "title": "The Last Seam",
     "normal": [
-      {
-        "type": "scale",
-        "value": 3
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
       {
         "type": "place",
         "pieceId": "shield",
         "slotId": "7,6"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       },
       {
         "type": "move",
@@ -1589,120 +1809,335 @@
     ],
     "star": [
       {
-        "type": "scale",
-        "value": 3
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
         "type": "place",
         "pieceId": "shield",
         "slotId": "7,6"
       },
       {
         "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
         "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "spare"
+      },
+      {
+        "type": "place",
+        "pieceId": "spare",
+        "slotId": "7,5"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "rotate",
+        "pieceId": "shield"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       },
       {
         "type": "move",
         "direction": "right"
       }
     ],
-    "n3Opt": 28,
+    "n3Opt": 26,
     "knownLimitations": [],
-    "threeStarLimit": 31,
-    "starExpanded": 177707
+    "threeStarLimit": 29,
+    "starExpanded": 206290,
+    "normalPlans": [
+      {
+        "label": "平面裂隙与旋转房间",
+        "actions": [
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "place",
+            "pieceId": "shield",
+            "slotId": "7,6"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          }
+        ]
+      },
+      {
+        "label": "环面对偶周期绕行",
+        "actions": [
+          {
+            "type": "topology",
+            "value": "torus"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "shift"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "left"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "down"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "place",
+            "pieceId": "shield",
+            "slotId": "7,6"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          },
+          {
+            "type": "move",
+            "direction": "right"
+          }
+        ]
+      }
+    ]
   }
 ]

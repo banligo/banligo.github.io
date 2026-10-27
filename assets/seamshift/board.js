@@ -10,7 +10,6 @@ const corner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
 const wallCache = new WeakMap();
 const palette = { ochre: ['#c9a368', '#80613e'], clay: ['#be846a', '#86523e'], sage: ['#92a485', '#5d735e'] };
 const line = (a, b, stroke, width = 2, extra = '') => `<path d="M${a.x} ${a.y}L${b.x} ${b.y}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
-const bridgeBeam = (a,b,color,width) => line(a,b,color,width).replace('stroke-linecap="round"','stroke-linecap="butt"');
 export function pieceDrawing(piece, definition, previous = null) {
   const [fill, stroke] = palette[definition.color] ?? palette.ochre;
   const arms = ports({ ...piece, rotation: 0 }, definition).map(i => `M0 0L${directions[i].x * 25} ${directions[i].y * 25}`).join(' ');
@@ -39,16 +38,14 @@ function segment(a, b, level, coordinates, color, width, extra = '') {
 export function renderBoardLayers(level, state, { previous = null, selected = null, view = 'primal', previewState = null, lightweight = false } = {}) {
   const width = level.width * CELL + PADDING * 2, height = level.height * CELL + PADDING * 2;
   const random = seededRandom(level.seed), walls = [], ground = [], markings = [], overlay = [], actors = [];
-  const shown = previewState ?? state, prediction=predictTurn(shown,level), wallVariant = lightweight ? 'simple' : 'full', cachedWalls = wallCache.get(level)?.[wallVariant];
+  const shown = previewState ?? state, prediction=predictTurn(shown,level), wallVariant = 'simple', cachedWalls = wallCache.get(level)?.[wallVariant];
   const borders = [];
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const p = { x, y }, t = tile(level, p), c = center(p), variation = random();
     if (t === '#') {
       if (cachedWalls !== undefined) continue;
       const fill = variation < .35 ? '#e4dfd2' : variation < .7 ? '#eae5d9' : '#e6e1d5';
-      if (lightweight) { walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#c9c2ae" stroke-width=".6"/>`); continue; }
-      walls.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#c2bba7"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#eee8d7" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#a8b29a" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
-      continue;
+      walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#c9c2ae" stroke-width=".6"/>`); continue;
     }
     const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
     const piece = pieceAt(level, state, p), slot = level.slots.find(s => same(s, p));
@@ -58,7 +55,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       continue;
     }
     if(t==='R'&&!on){ground.push(`<rect x="${c.x-26}" y="${c.y-26}" width="52" height="52" rx="3" fill="#dbd7c9"/>`);continue;}
-    if(t==='B'&&!on){ground.push(`<rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="#bebba9" rx="4"/>`);continue;}
+    if(t==='B'){ground.push(`<rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="#d5cfbd" rx="3"/>`);continue;}
     const changed = previous && on !== oldOn;
     ground.push(`<g opacity="${on ? 1 : .42}" class="floor">${changed ? `<animate attributeName="opacity" values="${on ? '0;1' : '1;.42'}" dur=".17s"/>` : ''}<rect x="${c.x - 26}" y="${c.y - 23}" width="52" height="52" rx="4" fill="#b5a789"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="50" rx="4" fill="${t === 'a' || t === 'b' ? '#d7d4ad' : '#ded1ad'}" stroke="${on ? '#c5b791' : '#8e9a78'}" stroke-width="1" ${on ? '' : 'stroke-dasharray="4 3"'}/></g>`);
     if (!piece) {
@@ -115,6 +112,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const goal=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0],g=center(goal),lit=!!state.lampLit;
     const labels={unpowered:'无供能',ready:'待点火',charging:'充能中',lit:'灯亮 · 地板安全',shorted:'短路 · 能量流失'};
     overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.energy,state.lampStatus==='shorted')}<text y="-26" text-anchor="middle" font-size="10" fill="#79617c">${labels[state.lampStatus]}</text></g></g>`);
+    if(level.circuit.source){const supply=shortestPath(primalGraph(level,state),level.circuit.source,level.circuit.receiver);if(supply)for(let i=1;i<supply.length;i++)overlay.push(segment(supply[i-1],supply[i],level,center,'#b89c55',3,'opacity=".45" pointer-events="none"'));}
     if(level.circuit.source) overlay.push(actor(level.circuit.source,'<circle r="14" fill="#e2c276" stroke="#a38443" stroke-width="2"/><path d="M-7 0H7M0-7V7" stroke="#9d7435" stroke-width="2"/>'));
 
   }
@@ -139,27 +137,17 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const t=center(a),d=center(b),label=String(x+1);
     borders.push(`<g class="seam-port torus-port"><path d="M${t.x-14} ${PADDING-3}q14-14 28 0M${d.x-14} ${height-PADDING+3}q14 14 28 0" fill="none" stroke="#6b8874" stroke-width="2"/><text x="${t.x}" y="${PADDING-13}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text><text x="${d.x}" y="${height-PADDING+19}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text></g>`);
   }
-  for (const edge of level.radiusLinks) {
-    const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;
-    const on = primalOpen(level,shown,{x:edge.from[0],y:edge.from[1]},{x:edge.to[0],y:edge.to[1]});
-    const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d;
-    const contact=radius*2+1e-9>=d,reach=contact?d/2:Math.min(CELL*.18,d/4),ends=[{x:a.x+ux*reach,y:a.y+uy*reach},{x:b.x-ux*reach,y:b.y-uy*reach}];
-    const halves=[[a,ends[0]],[b,ends[1]]].map(([start,end],i)=>{
-      const length=Math.hypot(end.x-start.x,end.y-start.y),planks=[];
-      for(let t=5;t<length;t+=7) { const sign=i===0?1:-1,c={x:start.x+ux*t*sign,y:start.y+uy*t*sign};planks.push(line({x:c.x-uy*5,y:c.y+ux*5},{x:c.x+uy*5,y:c.y-ux*5},'#a28c62',1)); }
-      return `<g class="bridge-arm">${bridgeBeam(start,end,'#8c7959',14)}${bridgeBeam(start,end,'#e4cf9d',10)}${planks.join('')}</g>`;
-    }).join('');
-    overlay.push(`<g class="radius-link" data-radius-open="${on}" aria-label="${on?'几何道路相连':'连接范围不足，节点尚未相遇'}">${line(a,b,'#879581',1,'stroke-dasharray="3 4"')}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#b2bfa5" fill-opacity=".06" stroke="#889782" stroke-opacity=".3" stroke-width="1"/>`).join('')}${on?line(a,b,'#8b9d85',7):''}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
-  }
   for(const bridge of level.bridges){
     const open=bridgeIsOpen(state,bridge),color=bridge.color==='clay'?'#ae775e':'#9b7846';
-    for(const [x,y] of bridge.cells){const c=center({x,y});overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".25;1" dur=".2s"/>':''}<g transform="translate(${c.x} ${c.y})">${bridgeArt(open,color)}</g></g>`);}
+    const first=center({x:bridge.cells[0][0],y:bridge.cells[0][1]}),last=center({x:bridge.cells.at(-1)[0],y:bridge.cells.at(-1)[1]});
+    const angle=Math.atan2(last.y-first.y,last.x-first.x)*180/Math.PI,length=Math.hypot(last.x-first.x,last.y-first.y)+CELL*.9;
+    overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge" transform="translate(${(first.x+last.x)/2} ${(first.y+last.y)/2}) rotate(${angle})">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".3;1" dur=".2s"/>':''}${bridgeArt(open,color,length)}</g>`);
   }
   const colors={blue:'#78939c',clay:'#b18065',sage:'#89987b'};
   for(const c of level.controls){const b=level.bridges.find(b=>b.id===c.bridge),color=c.kind==='room'?colors[territoryAt(level,c)]:b?.color==='clay'?'#ae775e':'#9b7846';overlay.push(actor(c,controlArt(c.kind,color,c.direction)));}
   for(const r of level.rifts){overlay.push(actor(r.primal,riftArt()));const c=corner(r.dual);overlay.push(`<g transform="translate(${c.x} ${c.y}) scale(.55)" opacity="${state.world==='dual'?1:.55}">${riftArt()}</g>`);}
   for(const p of [...new Map([...darkDanger(state,level)].map(p=>[key(p),p])).values()]){const c=center(p);overlay.push(`<g data-dark="${key(p)}"><rect x="${c.x-21}" y="${c.y-21}" width="42" height="42" rx="4" fill="#555666" opacity=".6"/><path d="M${c.x-8} ${c.y-8}l16 16m-16 0 16-16" stroke="#c7bfd1" stroke-width="2"/></g>`);}
-  for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++)if(tile(level,{x,y})!=='#'&&level.territories.length){const c=center({x,y}),region=territoryAt(level,{x,y}),color=colors[region];for(const d of [directions[1],directions[2]]){const q={x:x+d.x,y:y+d.y};if(territoryAt(level,q)!==region)overlay.push(line({x:c.x+(d.x?27:-27),y:c.y+(d.y?27:-27)},{x:c.x+27,y:c.y+27},color,2,'opacity=".65"'));}}
+  for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++)if(tile(level,{x,y})!=='#'&&level.territories.length){const c=center({x,y}),region=territoryAt(level,{x,y}),color=colors[region];overlay.push(`<rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="${color}" opacity=".09" pointer-events="none"/>`);for(const d of [directions[1],directions[2]]){const q={x:x+d.x,y:y+d.y};if(territoryAt(level,q)!==region)overlay.push(line({x:c.x+(d.x?27:-27),y:c.y+(d.y?27:-27)},{x:c.x+27,y:c.y+27},color,2,'opacity=".65"'));}}
   for(const room of level.rooms){const a={x:PADDING+room.x*CELL,y:PADDING+room.y*CELL},size=room.size*CELL;overlay.push(`<g class="rotating-room" data-room="${room.id}" data-rotation="${state.rooms[room.id]}"><rect x="${a.x}" y="${a.y}" width="${size}" height="${size}" rx="6" fill="none" stroke="${colors[room.territory]}" stroke-width="3"/><path d="M${a.x+size-23} ${a.y+8}q14 0 14 14m-5-4 5 4 4-5" fill="none" stroke="${colors[room.territory]}" stroke-width="2"/></g>`);}
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };
@@ -172,7 +160,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (cachedWalls === undefined) wallCache.set(level, { ...wallCache.get(level), [wallVariant]: walls.join('') });
   return {
     viewBox: `0 0 ${width} ${height}`, role: level.pieces.length ? 'group' : 'img',
-    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，连接范围 ${level.radii[state.scale-1]}，${state.topology}`,
+    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，${state.topology}`,
     opacity: view === 'dual' ? '.45' : '1',
     walls: wallCache.get(level)[wallVariant], terrain: ground.join('') + markings.join(''),
     overlay: overlay.join('') + borders.join(''), actors: actors.join(''),

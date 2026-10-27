@@ -9,7 +9,7 @@ export function stateHash(state,level) {
 }
 export function actionsFor(level) {
   return [...directions.map(d => ({ type: 'move', direction: d.name })),
-    ...level.scales.map(value => ({ type: 'scale', value })), ...level.modes.map(value => ({ type: 'topology', value })),
+    ...level.modes.map(value => ({ type: 'topology', value })),
     ...level.pieces.flatMap(p => [{ type: 'rotate', pieceId: p.id }, { type: 'remove', pieceId: p.id }, ...p.allowedSlots.map(slotId => ({ type: 'place', pieceId: p.id, slotId }))]),
     ...(level.rifts.length?[{type:'shift'}]:[]),{ type: 'wait' }];
 }
