@@ -1,5 +1,5 @@
 import { levels, getLevel } from './levels.js';
-import { referenceLessons, lessonCards,notebookCards,observeDiscoveries,currentDiscoveryCards } from './teaching.js';
+import { referenceLessons, lessonCards,notebookCards,observeDiscoveries,pocketDiscoveryCards } from './teaching.js';
 import { createSession, preview, score, riftAccess, lampSupply } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
@@ -77,7 +77,7 @@ function render() {
   renderControls(); renderMap();
 }
 function renderNewMechanisms(){
- setMarkupIfChanged($('#current-discoveries'),currentDiscoveryCards(level,session.state,progress));
+ $('#new-discovery-button').title=`第 ${level.id} 关的新发现，已收入口袋说明书`;
 }
 function teachOnce(){
  for(const id of observeDiscoveries(level,session.state))discover(id);
@@ -165,12 +165,16 @@ function showDialog(id) {
   if (advancing) return;
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
-  if (id === 'help-dialog') setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level,progress)));
+  if(id==='help-dialog'){
+    setMarkupIfChanged($('#pocket-current-rules'),pocketDiscoveryCards(level,session.state,progress));
+    setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level,progress)));
+  }
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
     $('#discovery-cards').innerHTML=notebookCards(level,progress);
   }
   $(`#${id}`).showModal();
+  if(id==='help-dialog')$('#help-dialog').scrollTop=0;
 }
 function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
 function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap(); }
@@ -282,7 +286,7 @@ document.addEventListener('click', event => {
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
-    'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
+    'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'), 'new-discovery-button':()=>showDialog('help-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; },

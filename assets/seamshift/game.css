@@ -379,3 +379,28 @@ body[data-world="torus"] { background:#d9dfd1; }
  .dock { grid-column:2;grid-row:2/5; }
  .map-tools>.shift-button { min-width:88px;padding:0 5px;font-size:9px; }
 }
+@media(max-width:359px) and (min-height:521px) {
+ .control-deck:has(.mode-buttons:not([data-count="4"])) { grid-template-columns:minmax(0,1fr) 134px;grid-template-rows:134px; }
+ .control-deck:has(.mode-buttons:not([data-count="4"])) .mode-buttons { grid-column:1;grid-row:1;align-self:start; }
+ .control-deck:has(.mode-buttons:not([data-count="4"])) .tools { grid-column:1;grid-row:1;align-self:end;margin-bottom:5px; }
+ .control-deck:has(.mode-buttons:not([data-count="4"])) .dpad { grid-column:2;grid-row:1; }
+}
+@media(max-height:520px) and (min-width:480px) {
+ .discovery-strip { grid-column:1/-1;display:flex;gap:8px; }
+ .dock { grid-row:3/5; }
+ .control-deck { grid-template-rows:44px 134px; }
+ .tools { grid-column:1;grid-row:1;justify-self:start; }
+ .mode-buttons { grid-column:2;grid-row:1;justify-self:end; }
+ .dpad { grid-row:2; }
+ .small-hud { top:auto;bottom:calc(188px + env(safe-area-inset-bottom)); }
+}
+/* Compact entry; rules are collected in the pocket manual rather than spread over the map. */
+.discovery-strip { display:flex;align-items:center;justify-content:center;padding:0;min-height:44px; }
+.new-discovery-button { display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:0 12px;min-height:44px;font-size:11px;color:#7a6d53; }
+.new-discovery-button .info-mark { width:18px;height:18px;flex-basis:18px;font-size:12px; }
+.pocket-current-section { margin:8px 0 15px;padding-bottom:10px;border-bottom:1px solid #cdbf9d; }
+.pocket-current-section .help-section-title { margin:8px 0; }
+.pocket-discoveries { display:grid;gap:9px; }
+.pocket-discoveries .current-rule { font-size:12px;line-height:1.8;align-items:flex-start; }
+.pocket-discoveries .current-rule>svg { flex:0 0 32px;width:32px;height:32px; }
+@media(max-height:520px) and (min-width:480px) { .discovery-strip { grid-column:1/-1;display:flex;padding:0;min-height:44px; } }

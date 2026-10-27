@@ -66,7 +66,7 @@ const summary={
  14:['转动同色房间，再经裂隙或上下接缝绕行。'],
  15:['守桥者已警觉；断桥留住它，利用翻转或上下接缝。','影子每 4 回合走一步；紫裂痕与菱形提示危险。'],
 };
-export function currentDiscoveryCards(level,state,progress){
+export function pocketDiscoveryCards(level,state,progress){
  return (summary[level.id]??[level.lesson]).map((text,i)=>{const topics=levelTopics[level.id]??['road'],id=topics[Math.min(i,topics.length-1)],rule=lessons.find(l=>l.id===id),known=progress.discoveries.includes(id);let image=rule.art;
  const drawings={bridge:controlArt(),shadow:shadowArt(),trap:trapArt(),lamp:lampArt(true),energy:lampArt(true),dark:darkFloorArt(),ignite:controlArt('ignite'),rift:riftArt(),room:controlArt('room','#78939c'),star:`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`,'key-noise':keyArt()+noiseArt()};
  if(id==='hunter-sleep'||id==='hunter-awake')drawings[id]=hunterArt(state.hunterStates.some(m=>m!=='sleeping'));
