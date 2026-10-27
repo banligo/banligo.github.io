@@ -192,6 +192,8 @@ collections:
     permalink: /diary/:name.html
 
 exclude:
+  # Temporarily hide only the public root homepage; keep /seamshift/ published.
+  - /index.html
   - .private
   - tools
   - dist

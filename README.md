@@ -41,3 +41,5 @@ bundle exec jekyll serve --host 127.0.0.1
 打开 `http://127.0.0.1:4000`。
 
 修改完成后，提交并推送到公开仓库的 `master` 分支，GitHub Pages 会重新构建网站。
+
+首页暂时下线：`_config.yml` 的 `exclude` 中加入了 `/index.html`，构建不会发布根首页，根地址由 `404.html` 返回 404；`/seamshift/` 游戏照常发布。恢复首页时删除这一条排除配置即可，首页源码未删除。
