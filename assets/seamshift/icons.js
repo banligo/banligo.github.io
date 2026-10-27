@@ -16,6 +16,7 @@ const paths = {
   down: '<path d="m6 10 6 6 6-6"/>', left: '<path d="m14 6-6 6 6 6"/>',
   plane: '<path d="M4 6h16v13H4ZM8 6v13M16 6v13"/>',
   cylinder: '<ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 4 16 4 16 0V5M4 12c0 4 16 4 16 0"/>',
+  torus:'<ellipse cx="12" cy="12" rx="10" ry="7"/><ellipse cx="12" cy="12" rx="4" ry="2.5"/><path d="M4 7q8 5 16 0M4 17q8-5 16 0"/>',
   mobius: '<path d="M3 12c0-7 6-9 12 0s6 7 6 0-6-9-12 0-6 7-6 0Z"/>',
 };
 export function icon(name, extra = '') {

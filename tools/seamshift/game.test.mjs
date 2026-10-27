@@ -2,8 +2,8 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
 import {levels} from '../../assets/seamshift/levels.js';
-import {initialState,transition,applyAction,createSession,isLevelComplete,score,disconnected,starActive} from '../../assets/seamshift/engine.js';
-import {neighbor,directions,dualNode,dualGraph,primalGraph,primalOpen,same,tile} from '../../assets/seamshift/graphs.js';
+import {initialState,transition,applyAction,createSession,isLevelComplete,score,disconnected,starActive,shadowDanger} from '../../assets/seamshift/engine.js';
+import {neighbor,directions,dualNode,dualGraph,shortestPath,primalGraph,primalOpen,same,tile} from '../../assets/seamshift/graphs.js';
 import {freshProgress,recordWin,SAVE_KEY,saveProgress,loadProgress,resetProgress,validSnapshot} from '../../assets/seamshift/progress.js';
 import {solve,search} from '../../assets/seamshift/solver.js';
 import {renderBoard} from '../../assets/seamshift/board.js';
@@ -23,16 +23,69 @@ test('connection radius uses Euclidean node distances and is a monotone filtrati
 test('Level 1 needs two range adjustments and has two distinct bridge thresholds',()=>{const l=levels[0];assert(new Set(l.bridges.map(e=>e.distance)).size>=2);assert(proofs[0].normal.filter(a=>a.type==='scale').length>=2);});
 test('Cylinder and Mobius seam are involutions and reverse the correct coordinates',()=>{for(const l of levels)for(let y=0;y<l.height;y++){const p={x:0,y};for(const topology of ['cylinder','mobius']){const q=neighbor(p,directions[3],l,topology);assert.deepEqual(q,{x:l.width-1,y:topology==='mobius'?l.height-1-y:y});assert.deepEqual(neighbor(q,directions[1],l,topology),p);}}assert.deepEqual(dualNode({x:7,y:1},levels[2],'mobius'),{x:0,y:6});});
 test('free fragments can use any socket, swap and be retrieved',()=>{const l=levels[2];for(const p of l.pieces)assert.deepEqual(p.allowedSlots,l.slots.map(s=>s.id));let s=replay(l,[{type:'place',pieceId:'reed',slotId:'bend'},{type:'place',pieceId:'bend',slotId:'bridge'},{type:'place',pieceId:'reed',slotId:'bridge'}]);assert.equal(s.pieces[0].slot,'bridge');assert.equal(s.pieces[1].slot,'bend');s=applyAction(s,{type:'remove',pieceId:'reed'},l);assert.equal(s.pieces[0].slot,null);});
-test('rotation changes real primal AND dual edges',()=>{const l=levels[2],a=applyAction(initialState(l),{type:'place',pieceId:'reed',slotId:'bridge'},l),b=applyAction(a,{type:'rotate',pieceId:'reed'},l);assert.notDeepEqual(primalGraph(l,a),primalGraph(l,b));assert.notDeepEqual(dualGraph(l,a).graph,dualGraph(l,b).graph);for(const shape of ['straight','corner','tee'])for(let r=0;r<4;r++)assert.deepEqual(ports({rotation:r+4},{shape}),ports({rotation:r},{shape}));});
+test('rotation changes real primal AND dual edges',()=>{const l=levels[2],a=applyAction(initialState(l),{type:'place',pieceId:'reed',slotId:'middle'},l),b=applyAction(a,{type:'rotate',pieceId:'reed'},l);assert.notDeepEqual(primalGraph(l,a),primalGraph(l,b));assert.notDeepEqual(dualGraph(l,a).graph,dualGraph(l,b).graph);for(const shape of ['straight','corner','tee'])for(let r=0;r<4;r++)assert.deepEqual(ports({rotation:r+4},{shape}),ports({rotation:r},{shape}));});
 test('every dual edge complements its actual crossing primal edge in all geometries',()=>{for(const l of levels)for(const topology of l.modes)for(const scale of l.scales){const s={...initialState(l),topology,scale};s.pieces.forEach((p,i)=>{p.slot=l.slots[i]?.id;p.rotation=1;});for(const e of dualGraph(l,s).crossings)assert.equal(e.open,!primalOpen(l,s,e.a,e.b));}});
-test('Shadow barrier responds to puzzle and topology, not a scale toggle',()=>{const l=levels[3],s=initialState(l);assert(!disconnected(s,l));const blocked=replay(l,[{type:'rotate',pieceId:'barrier'},{type:'place',pieceId:'barrier',slotId:'barrier'}]);assert(disconnected(blocked,l));assert(!disconnected({...blocked,topology:'cylinder'},l));assert(!starActive(s,l));assert(starActive(blocked,l));assert(renderBoard(l,s).includes('opacity="0.28"'));});
+test('Shadow patrol is geometrically local and road rotation changes its real dual route',()=>{
+ const l=levels[3],s=initialState(l),placed=applyAction(s,{type:'place',pieceId:'barrier',slotId:'barrier'},l),rotated=applyAction(placed,{type:'rotate',pieceId:'barrier'},l);
+ assert.notDeepEqual(dualGraph(l,placed).graph,dualGraph(l,rotated).graph);
+ assert(renderBoard(l,s).includes('data-danger='));assert(renderBoard(l,s).includes('data-next-danger='));
+ const n=applyAction(s,{type:'wait'},l);assert.equal(n.turn,1);assert.equal(n.status,'playing');
+ for(const p of shadowDanger(s,l))assert(Math.abs(p.x-s.shadows[0].x)<=1&&Math.abs(p.y-s.shadows[0].y)<=1);
+});
 test('awake hunters act once on every effective turn and follow current graph',()=>{const l=levels[1];let s=initialState(l),moved=0;for(const a of proofs[1].star){const n=applyAction(s,a,l);if(n.hunterAwake){const graph=primalGraph(l,n);s.hunters.forEach((p,i)=>{if(!same(p,n.hunters[i])){assert(graph.get(`${p.x},${p.y}`)?.includes(`${n.hunters[i].x},${n.hunters[i].y}`));moved++;}});}s=n;}assert(moved>=2);const awake={...initialState(l),hunterAwake:true};for(const action of [{type:'wait'},{type:'scale',value:2},{type:'topology',value:'cylinder'},move('left')]){const result=transition(awake,action,l);if(result.valid){assert(result.state.hunterAwake);assert.equal(result.state.turn,1);}}});
 test('sleeping and blocked hunter states are visible and prediction is deterministic',()=>{const l=levels[1],s=initialState(l);assert(renderBoard(l,s).includes('>z<'));const awake={...s,hunterAwake:true,topology:'plane',player:{x:6,y:1}};assert(renderBoard(l,awake).includes('受阻'));assert.deepEqual(applyAction(awake,{type:'wait'},l).hunters,awake.hunters);});
 test('every star starts with an observable clue and activation is deterministic',()=>{for(const l of levels){const s=initialState(l);assert(renderBoard(l,s).includes('star-shard'));assert.equal(starActive(s,l),starActive(structuredClone(s),l));}});
 test('storage roundtrip, reentry, restart and full reset',()=>{const values=new Map(),storage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v),removeItem:k=>values.delete(k)};let p=freshProgress();const s=createSession(levels[0]);s.act(move('right'));p.snapshot=s.snapshot();saveProgress(storage,p);assert.deepEqual(loadProgress(storage,levels).snapshot,p.snapshot);s.restart();assert.equal(s.state.turn,0);values.set('seamshift.adventure.v2','old');values.set('seamshift.progress.v1','old');values.set('unrelated','keep');assert.deepEqual(resetProgress(storage),freshProgress());assert.deepEqual([...values],[['unrelated','keep']]);assert.deepEqual(loadProgress(storage,levels),freshProgress());});
 test('corrupt storage never prevents immediate entry',()=>{assert.deepEqual(loadProgress({getItem:()=>'{bad'},levels),freshProgress());assert.deepEqual(loadProgress({getItem:()=>{throw Error();}},levels),freshProgress());});
 test('fast input queue remains bounded FIFO and cancellable',()=>{let jobs=[],got=[];const q=createActionQueue(a=>got.push(a.direction),{schedule:f=>jobs.push(f),cancel:()=>jobs=[],limit:3});for(const d of ['left','right','up'])assert(q.push(move(d)));assert(!q.push(move('down')));while(jobs.length)jobs.shift()();assert.deepEqual(got,['left','right','up']);q.push(move('down'));q.clear();assert.equal(q.length,0);assert.equal(swipeDirection({x:0,y:0},{x:50,y:2}),'right');assert.equal(swipeDirection({x:0,y:0},{x:1,y:1}),null);});
-test('HTML controls exist, new name, reset confirmation, no start gate',()=>{const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);for(const m of app.matchAll(/\$\('#([\w-]+)'\)/g))assert(ids.includes(m[1]),m[1]);assert(html.includes('<title>GeoMaze'));assert(html.includes('id="reset-dialog"'));assert(!html.includes('id="start-button"'));});
+test('HTML controls exist, new name, reset confirmation, no start gate',()=>{const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');const ids=[...html.matchAll(/id="([^"]+)"/g)].map(m=>m[1]);assert.equal(new Set(ids).size,ids.length);for(const m of app.matchAll(/\$\('#([\w-]+)'\)/g))assert(ids.includes(m[1]),m[1]);assert(html.includes('<title>SEAMLOOM'));assert(html.includes('id="reset-dialog"'));assert(!html.includes('id="start-button"'));});
 test('awake pursuit responds to move, range, topology and wait each turn; rejected inputs do not advance',()=>{const l={...levels[1],scales:[1,2,3]},s={...initialState(l),hunterAwake:true};for(const action of [move('left'),{type:'scale',value:2},{type:'topology',value:'cylinder'},{type:'wait'}]){const r=transition(s,action,l);assert(r.valid);assert.equal(r.state.turn,1);assert.deepEqual(r.state.hunters,[{x:0,y:3}]);}assert.equal(transition(s,move('up'),l).state,s);});
 test('key doors are physical graph obstacles and direct collision always loses',()=>{const l=levels[1],s=initialState(l),door={x:0,y:5},goal={x:1,y:5};assert(!primalOpen(l,s,door,goal));assert(primalOpen(l,{...s,hasKey:true},door,goal));const hit={...s,player:{x:0,y:3}};assert.equal(applyAction(hit,move('down'),l).status,'lost');});
-test('Shadow advances on actual dual edges and loses only on reaching its beacon',()=>{const l=levels[3],s={...initialState(l),turn:5,shadows:[{x:4,y:4}]};const n=applyAction(s,{type:'wait'},l);assert.equal(n.status,'lost');assert(dualGraph(l,n).graph.get('4,4').includes(`${n.shadows[0].x},${n.shadows[0].y}`));});
+test('Shadow reaching a patrol waypoint turns around rather than ending the level',()=>{
+ const l=levels[3],s={...initialState(l),turn:2,shadows:[{x:1,y:3}]};const n=applyAction(s,{type:'wait'},l);
+ assert.deepEqual(n.shadows,[{x:1,y:4}]);assert(n.shadowReturning);assert.equal(n.status,'playing');
+});
+
+test('Torus wraps all four primal directions and all dual corner coordinates',()=>{
+ const l=levels[3];for(let x=0;x<l.width;x++){assert.deepEqual(neighbor({x,y:0},directions[0],l,'torus'),{x,y:l.height-1});assert.deepEqual(neighbor({x,y:l.height-1},directions[2],l,'torus'),{x,y:0});}
+ assert.deepEqual(dualNode({x:l.width,y:l.height},l,'torus'),{x:0,y:0});
+ const g=dualGraph(l,{...initialState(l),topology:'torus'});assert.equal(g.graph.size,l.width*l.height);
+ assert(g.crossings.some(e=>e.a.y===l.height-1&&e.b.y===0));assert(g.crossings.some(e=>e.a.x===l.width-1&&e.b.x===0));
+});
+test('a noncontractible primal cycle does not separate the Torus dual graph',()=>{
+ const l={...levels[0],width:4,height:4,map:['####','####','P..E','####'],bridges:[],slots:[],pieces:[]},s={...initialState(l),topology:'torus'};
+ const g=dualGraph(l,s).graph;for(const id of g.keys())assert(shortestPath(g,'0,0',id));
+ const plane=dualGraph(l,{...s,topology:'plane'}).graph;assert.equal(shortestPath(plane,'1,1','1,3'),null);
+});
+test('unsafe floor at turn end loses, while moving away or Undo restores safety',()=>{
+ const l=levels[3],s={...initialState(l),player:{x:4,y:2}};assert(shadowDanger(s,l).some(p=>same(p,s.player)));assert.equal(applyAction(s,{type:'wait'},l).status,'lost');
+ const session=createSession(l,{state:s,history:[]});session.act({type:'wait'});assert(session.undo());assert.deepEqual(session.state,s);
+ assert.equal(applyAction(s,move('up'),l).status,'playing');
+});
+test('star activation collects under a stationary player on range changes and reload',()=>{
+ const l=levels[2],s={...initialState(l),player:{...l.star}};assert(!starActive(s,l));const n=applyAction(s,{type:'scale',value:2},l);assert(n.starCollected);assert.equal(n.turn,1);
+ const raw={...freshProgress(),currentLevel:2,results:{1:{stars:1,bestTurns:12}},snapshot:{state:{...initialState(levels[1]),player:{...levels[1].star}},history:[]}};
+ const restored=loadProgress({getItem:k=>k===SAVE_KEY?JSON.stringify(raw):null},levels);assert(restored.snapshot.state.starCollected);
+});
+test('Level 3 genuinely needs puzzle and geometric radius operations',()=>{
+ const l=levels[2];assert.equal(l.pieces.length,3);assert.equal(l.slots.length,3);assert.equal(l.hunterSpeed,undefined);assert.equal(l.shadowSpeed,undefined);
+ assert.equal(search(l,undefined,{forbid:a=>a.type==='scale',maxDepth:24}).actions,null);
+ assert.equal(search(l,undefined,{forbid:a=>a.type==='place',maxDepth:24}).actions,null);
+});
+test('Level 4 Torus shortcut is used, Level 5 is shorter without any seal predicate',()=>{
+ assert(proofs[3].normal.some(a=>a.type==='topology'&&a.value==='torus'));assert(proofs[4].star.length<20);
+ for(const l of levels.slice(3)){const s=replay(l,proofs[l.id-1].normal);assert.equal(s.status,'won');assert.equal(tile(l,s.player),'E');}
+});
+test('renaming migrates previous achievements and compatible attempts without losing old data',()=>{
+ const oldState={...initialState(levels[1]),version:3,turn:2};delete oldState.layoutRevision;delete oldState.shadowReturning;
+ const old={version:3,currentLevel:2,results:{1:{stars:3,bestTurns:10,bestThreeStarTurns:10}},seenTips:['lesson-1'],snapshot:{state:oldState,history:[]}};
+ const values=new Map([['geomaze.adventure.v3',JSON.stringify(old)]]),storage={getItem:k=>values.get(k)??null,setItem:(k,v)=>values.set(k,v)};
+ const p=loadProgress(storage,levels);assert.equal(p.results[1].stars,3);assert.equal(p.currentLevel,2);assert.equal(p.snapshot.state.turn,2);assert(validSnapshot(p.snapshot,levels[1]));saveProgress(storage,p);assert(values.has(SAVE_KEY));assert(values.has('geomaze.adventure.v3'));
+ old.currentLevel=3;old.results[2]={stars:2,bestTurns:10};old.snapshot.state.levelId=3;values.set('geomaze.adventure.v3',JSON.stringify(old));values.delete(SAVE_KEY);
+ const updated=loadProgress(storage,levels);assert.equal(updated.currentLevel,3);assert.equal(updated.snapshot,null);assert(updated.archivedAttempts[3]);assert.equal(updated.results[2].stars,2);
+});
+test('intro is nonblocking and scores are absent from level entry UI',()=>{
+ const html=readFileSync(new URL('../../seamshift/index.html',import.meta.url),'utf8'),app=readFileSync(new URL('../../assets/seamshift/app.js',import.meta.url),'utf8');assert(html.includes('intro-rules'));assert(html.includes('等待</span>'));assert(!html.includes('id="par"'));assert(!app.includes('三星最优'));assert(app.includes("includes('first-rules')"));
+});
+test('predicted Shadow floor matches the actual next wait turn across patrol reversals',()=>{for(const l of levels.slice(3)){let s=initialState(l);for(const a of proofs[l.id-1].star){const predicted=shadowDanger(s,l,true).map(p=>`${p.x},${p.y}`).sort(),wait=applyAction(s,{type:'wait'},l);assert.deepEqual(predicted,shadowDanger(wait,l).map(p=>`${p.x},${p.y}`).sort());s=applyAction(s,a,l);}}});
+test('Torus corner danger wraps geometrically and does not invent arbitrary cells',()=>{const l=levels[4],s={...initialState(l),topology:'torus',shadows:[{x:0,y:0}]};const danger=shadowDanger(s,l);assert.deepEqual(danger,[]);const full={...l,map:Array.from({length:8},()=>'.'.repeat(8))};assert.deepEqual(shadowDanger(s,full).map(p=>`${p.x},${p.y}`).sort(),['0,0','0,7','7,0','7,7']);});

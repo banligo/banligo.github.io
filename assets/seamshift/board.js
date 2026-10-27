@@ -1,5 +1,5 @@
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, disconnected, starActive, shadowPaths } from './engine.js';
+import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
 import { starPath } from './icons.js';
 export const CELL = 56, PADDING = 23;
@@ -25,6 +25,10 @@ function actor(p, contents, previous, cornerActor = false) {
   return `<g transform="translate(${c.x} ${c.y})">${old && !same(p, previous) && !wraps ? `<animateTransform attributeName="transform" type="translate" from="${old.x} ${old.y}" to="${c.x} ${c.y}" dur=".115s"/>` : ''}${wraps ? '<animate attributeName="opacity" values="0;1" dur=".18s"/>' : ''}${contents}</g>`;
 }
 function segment(a, b, level, coordinates, color, width, extra = '') {
+  if (Math.abs(a.x-b.x)<=1 && Math.abs(a.y-b.y)>1) {
+    const top=a.y<b.y?a:b,bottom=a.y>b.y?a:b;
+    return line(coordinates(top),{x:coordinates(top).x,y:PADDING-11},color,width,extra)+line(coordinates(bottom),{x:coordinates(bottom).x,y:PADDING+level.height*CELL+11},color,width,extra);
+  }
   if (Math.abs(a.x - b.x) <= 1) return line(coordinates(a), coordinates(b), color, width, extra);
   const left = a.x < b.x ? a : b, right = a.x > b.x ? a : b;
   return line(coordinates(right), { x: PADDING + level.width * CELL + 11, y: coordinates(right).y }, color, width, extra) + line({ x: PADDING - 11, y: coordinates(left).y }, coordinates(left), color, width, extra);
@@ -82,8 +86,16 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (state.shadows.length) {
     const paths = shadowPaths(shown, level);
     paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#79607e', 2, 'stroke-dasharray="3 5" class="shadow-trail"')); });
-    const beacon = beaconPosition(shown, level);
-    overlay.push(actor(beacon, '<ellipse cy="13" rx="12" ry="4" fill="#6a586a" opacity=".18"/><path d="M-7 9V-5h14V9Z" fill="#b1a0a9" stroke="#655467" stroke-width="1.5"/><path d="M-10-6h20M-9 10H9M-3-9q3-5 6 0" fill="none" stroke="#655467" stroke-width="2"/><path d="M0 5c-5-3-2-7 0-10 3 4 5 7 0 10" fill="#eeddbb"/>', null, true));
+    overlay.push('<defs><pattern id="shadow-hatch" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M-2 2 2-2M0 10 10 0M8 12 12 8" stroke="#765779" stroke-width="2" opacity=".6"/></pattern></defs>');
+    const danger=shadowDanger(shown,level), future=shadowDanger(shown,level,true);
+    for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}"><rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" rx="3" fill="#77547b" opacity=".24"/><rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="url(#shadow-hatch)"/></g>`); }
+    for(const p of future) { const c=center(p); overlay.push(`<rect class="shadow-zone" data-next-danger="${key(p)}" x="${c.x-23}" y="${c.y-23}" width="46" height="46" rx="3" fill="none" stroke="#87588c" stroke-width="2" stroke-dasharray="5 4"/>`); }
+    if(previous) {
+      const old=dualGraph(level,previous).crossings;
+      for(const e of crossings) if(!e.open && old.some(o=>o.open && same(o.a,e.a) && same(o.b,e.b))) {
+        overlay.push(segment(e.a,e.b,level,center,'#719f9e',5,'opacity=".65"')+segment(e.u,e.v,level,corner,'#b8aeb5',4,'stroke-dasharray="3 5" opacity=".8"'));
+      }
+    }
     shown.shadows.forEach((p, i) => {
       const next = paths[i]?.[1];
       if (next) { const c = corner(next); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="7" fill="none" stroke="#8a7389" stroke-width="1.2" stroke-dasharray="2 3"/>`); }
@@ -105,6 +117,11 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     if (!primalOpen(level, shown, a, b)) continue;
     const l = center(a), r = center(b), label = String.fromCharCode(65 + y);
     borders.push(`<g class="seam-port"><path d="M${PADDING - 3} ${l.y - 15}q-15 15 0 30M${width - PADDING + 3} ${r.y - 15}q15 15 0 30" fill="none" stroke="${shown.topology === 'mobius' ? '#a6746a' : '#728967'}" stroke-width="2"/><text x="${PADDING - 14}" y="${l.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text><text x="${width - PADDING + 14}" y="${r.y + 3}" text-anchor="middle" fill="#756748" font-size="9">${label}</text></g>`);
+  }
+  if(shown.topology==='torus') for(let x=0;x<level.width;x++) {
+    const a={x,y:0},b={x,y:level.height-1}; if(!primalOpen(level,shown,a,b))continue;
+    const t=center(a),d=center(b),label=String(x+1);
+    borders.push(`<g class="seam-port torus-port"><path d="M${t.x-14} ${PADDING-3}q14-14 28 0M${d.x-14} ${height-PADDING+3}q14 14 28 0" fill="none" stroke="#6b8874" stroke-width="2"/><text x="${t.x}" y="${PADDING-13}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text><text x="${d.x}" y="${height-PADDING+19}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text></g>`);
   }
   for (const edge of level.bridges) {
     const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;

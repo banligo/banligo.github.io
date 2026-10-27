@@ -12,7 +12,7 @@ export const active = (level, p, scale, state) => birth(tile(level, p)) <= scale
 
 export function neighbor(p, direction, level, topology) {
   let x = p.x + direction.x, y = p.y + direction.y;
-  if (y < 0 || y >= level.height) return null;
+  if (y < 0 || y >= level.height) { if(topology !== 'torus') return null; y=(y+level.height)%level.height; }
   if (x < 0 || x >= level.width) {
     if (topology === 'plane') return null;
     x = (x + level.width) % level.width;
@@ -54,6 +54,7 @@ export function primalGraph(level, state) {
 // exist: there is no exterior face through which a shadow could bypass a wall.
 export function dualNode(p, level, topology) {
   let { x, y } = p;
+  if(topology === 'torus') return {x:(x+level.width)%level.width,y:(y+level.height)%level.height};
   if (y <= 0 || y >= level.height) return null;
   if (topology === 'plane') return x > 0 && x < level.width ? { x, y } : null;
   if (x === level.width) {
@@ -66,7 +67,7 @@ export function dualNode(p, level, topology) {
 export function remapDual(p, level, topology) {
   // A seam corner becomes its nearest interior corner when the seam is cut.
   // Each entity is mapped exactly once, independently of graph connectivity.
-  return dualNode(p, level, topology) ?? { x: Math.max(1, Math.min(level.width - 1, p.x)), y: p.y };
+  return dualNode(p, level, topology) ?? { x: Math.max(1, Math.min(level.width - 1, p.x)), y: Math.max(1,Math.min(level.height-1,p.y)) };
 }
 
 const dualCache = new WeakMap();
@@ -76,7 +77,7 @@ export function dualGraph(level, state) {
   const cached = dualCache.get(level);
   if (cached.has(signature)) return cached.get(signature);
   const graph = new Map(), crossings = [];
-  for (let y = 1; y < level.height; y++) {
+  for (let y = state.topology === 'torus' ? 0 : 1; y < level.height; y++) {
     for (let x = state.topology === 'plane' ? 1 : 0; x < level.width; x++) graph.set(key({ x, y }), []);
   }
   function cross(a, b, u, v, seam = false) {
@@ -92,6 +93,9 @@ export function dualGraph(level, state) {
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     if (x + 1 < level.width) cross({ x, y }, { x: x + 1, y }, { x: x + 1, y }, { x: x + 1, y: y + 1 });
     if (y + 1 < level.height) cross({ x, y }, { x, y: y + 1 }, { x, y: y + 1 }, { x: x + 1, y: y + 1 });
+    if (y === level.height - 1 && state.topology === 'torus') {
+      cross({x,y},{x,y:0},{x,y:level.height},{x:x+1,y:level.height},true);
+    }
     if (x === level.width - 1 && state.topology !== 'plane') {
       const b = neighbor({ x, y }, directions[1], level, state.topology);
       cross({ x, y }, b, { x: level.width, y }, { x: level.width, y: y + 1 }, true);

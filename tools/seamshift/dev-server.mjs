@@ -17,4 +17,4 @@ createServer(async (req, res) => {
     const contents = await readFile(path);
     res.writeHead(200, { 'Content-Type': types[extname(path)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); res.end(contents);
   } catch { res.writeHead(404); res.end('Not found'); }
-}).listen(port, '127.0.0.1', () => console.log(`GeoMaze → http://127.0.0.1:${port}/seamshift/`));
+}).listen(port, '127.0.0.1', () => console.log(`SEAMLOOM → http://127.0.0.1:${port}/seamshift/`));

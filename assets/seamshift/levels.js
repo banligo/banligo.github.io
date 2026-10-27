@@ -11,41 +11,37 @@ const definitions = [
     scales: [1], modes: ['plane', 'cylinder', 'mobius'], hunterSpeed: 1, wakeOnKey: true, star: { x: 0, y: 2 },
     lesson: '先绕到钥匙，再把边界翻过来；小兽也会过边界。', goalText: '绕开小兽，走到终点。',
     hints: ['地图的左右两侧看起来很接近。', '选择圆柱，再试着走过左边界。'], par: 8 },
-  { id: 3, title: 'Missing Piece', subtitle: '缺失的碎片', seed: 307,
-    map: ['#######', '.JP####', '##.####', '#######', '#####E#', '#####J.', '#######'],
-    scales: [1], modes: ['plane', 'cylinder', 'mobius'], star: { x: 2, y: 2 },
-    slots: [{ id: 'bridge', x: 1, y: 1 }, { id: 'bend', x: 5, y: 5 }],
-    pieces: [
-      { id: 'reed', shape: 'straight', rotation: 0, allowedSlots: ['bridge'], color: 'ochre' },
-      { id: 'bend', shape: 'corner', rotation: 3, allowedSlots: ['bend'], color: 'clay' }],
-    lesson: '碎片没有固定位置，试着改变道路的方向。', goalText: '拼好道路，穿过扭转的边界。',
-    hints: ['缺口两侧的道路，需要对得上。', '先让接口对上；碎片可以跨槽位移动，边界也能帮你。'], par: 12 },
-  { id: 4, title: 'Shadow Maze', subtitle: '影子迷宫', seed: 409,
-    map: ['###.###', '#P....#', '#.#.###', '#...#.#', '###J###', '#...E.#', '###.###'],
-    slots: [{id:'barrier',x:3,y:4}], pieces:[{id:'barrier',shape:'straight',rotation:1,color:'sage'}],
-    scales: [1], modes: ['plane','cylinder','mobius'], star: { x: 5, y: 1 }, starGuarded:true, shadowSpeed: 6, shadow: [2, 4], beacon: [5, 4],
-    lesson: '你打开的道路，可能会挡住别的东西。', goalText: '挡住影子，走到终点。',
-
-    hints: ['观察紫色影子脚下那条细路。', '把直路转向上下并放进缺口，留意紫色道路和边界。'], par: 12 },
-  { id: 5, title: 'GeoMaze', subtitle: '缝隙之间', seed: 503,
-    map: ['#########', '.JP..##K.', '##.####.#', '#J.###M.#', '#..######', '#########', '######E##', '######JD.', '#########'],
-    scales: [1, 2, 3], modes: ['plane', 'cylinder', 'mobius'], hunterSpeed: 1, wakeOnKey: true, shadowSpeed: 8,
-    shadow: [2, 4], beacon: [6, 4], star: { x: 1, y: 4 }, starGuarded:true,
-    bridges: [{from:[0,1],to:[1,1],distance:1.32}, {from:[1,4],to:[2,4],distance:1.05}],
-    slots: [{ id: 'bridge', x: 1, y: 1 }, {id:'ring',x:1,y:3}, { id: 'bend', x: 6, y: 7 }],
-    pieces: [
-      { id: 'reed', shape: 'straight', rotation: 0, allowedSlots: ['bridge'], color: 'ochre' },
-      { id: 'bend', shape: 'corner', rotation: 3, allowedSlots: ['bend'], color: 'clay' }],
-
-    lesson: '路可以拼起来，世界也可以。', goalText: '拼起道路，取钥匙，再折叠空间抵达终点。',
-    hints: ['先看看影子身边那圈没有闭合的路。', '弯路闭合小环可隔开影子；碎片还能收回再用，圆柱通往钥匙。'], par: 28 },
+  { id: 3, title:'Loose Threads', subtitle:'编起道路', seed:307,
+    map:['#######','.JJP###','###.###','#######','#######','####EJ.','#######'],
+    scales:[1,2,3],modes:['plane','cylinder','mobius'],star:{x:3,y:2},starScale:2,
+    bridges:[{from:[0,1],to:[1,1],distance:1.05}],
+    slots:[{id:'bridge',x:1,y:1},{id:'middle',x:2,y:1},{id:'bend',x:5,y:5}],
+    pieces:[{id:'reed',shape:'straight',rotation:0,color:'ochre'},{id:'bend',shape:'corner',rotation:3,color:'clay'},{id:'fork',shape:'tee',rotation:0,color:'sage'}],
+    lesson:'接口要对上，连接范围也要够。',goalText:'拼起道路，找到终点。',
+    hints:['每块碎片都能放在任意槽位。','看看虚线桥两侧的范围；碎片可以收回，再用一次。'] },
+  { id:4,title:'Between the Paths',subtitle:'裂隙里的邻居',seed:409,
+    map:['####.##','#PJ..##','##.#.##','#....##','#..#.##','##...##','####.E#'],
+    scales:[1],modes:['plane','cylinder','mobius','torus'],star:{x:3,y:3},
+    slots:[{id:'barrier',x:2,y:1}],pieces:[{id:'barrier',shape:'straight',rotation:0,color:'sage'}],
+    shadow:[4,3],beacon:[1,4],shadowSpeed:3,
+    lesson:'紫色地板有危险，虚线框预告下一回合。',goalText:'避开裂隙的影子，找到终点。',
+    hints:['影子只影响它周围的地板，走远一点就安全。','转动碎片会改动紫色通道；环面也能从上下边界绕行。'] },
+  { id:5,title:'Seamloom',subtitle:'织出另一条路',seed:503,
+    map:['###.####','.#PJ###.','##..###.','##J....M','##.##..#','##...E.#','###.####','###.####'],
+    scales:[1,2,3],modes:['plane','cylinder','mobius','torus'],star:{x:3,y:7},
+    bridges:[{from:[2,3],to:[2,4],distance:1.05},{from:[3,1],to:[3,0],distance:1.32}],
+    slots:[{id:'bridge',x:3,y:1},{id:'bend',x:2,y:3}],
+    pieces:[{id:'reed',shape:'straight',rotation:0,color:'ochre'},{id:'bend',shape:'corner',rotation:0,color:'clay'}],
+    hunterSpeed:1,alertRadius:5,shadow:[4,4],beacon:[6,5],shadowSpeed:3,
+    lesson:'有危险时，可以等待，也可以织出另一条路。',goalText:'避开紫色地板，走到终点。',
+    hints:['下方的缺口需要一块路和更大的连接范围。','星光就在上下相连的另一边；留意影子的下一步。'] },
 ];
 export const levels = definitions.map(level => ({
-  initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
+  revision: level.id >= 3 ? 2 : 1, initialScale: 1, initialTopology: 'plane', radii: [.9,1.1,1.4], bridges: [], slots: [], pieces: [],
   levelObjectives: [{ type: 'reachGoal' }], ...level, width: level.map[0].length, height: level.map.length,
 }));
 for (const level of levels) {
-  level.n3Opt = [10,9,12,13,29][level.id-1]; level.threeStarLimit = level.n3Opt + (level.id === 5 ? 3 : 2); level.par=level.threeStarLimit;
+  level.n3Opt ??= [10,9,14,13,13][level.id-1]; level.threeStarLimit ??= level.n3Opt + 2; level.par=level.threeStarLimit;
   const random = seededRandom(level.seed);
   level.bridges = level.bridges.map(e => { const dx=e.to[0]-e.from[0],dy=e.to[1]-e.from[1],d=Math.hypot(dx,dy),r=e.distance ?? level.radii[(e.birth ?? 1)-1]; const mx=(e.from[0]+e.to[0])/2,my=(e.from[1]+e.to[1])/2; return {...e,nodes:[{x:mx-dx/d*r/2+(random()-.5)*.008,y:my-dy/d*r/2+(random()-.5)*.008},{x:mx+dx/d*r/2+(random()-.5)*.008,y:my+dy/d*r/2+(random()-.5)*.008}]}; });
   level.pieces = level.pieces.map(p => ({...p, allowedSlots:level.slots.map(s=>s.id)}));

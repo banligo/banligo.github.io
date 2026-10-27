@@ -5,7 +5,7 @@ const gcd = (a, b) => b ? gcd(b, a % b) : a;
 export const period = level => ((level.hunterSpeed || 1) * (level.shadowSpeed || 1)) / gcd(level.hunterSpeed || 1, level.shadowSpeed || 1);
 export function stateHash(state, level) {
   return [key(state.player), state.hunters.map(key).join(';'), state.shadows.map(key).join(';'),
-    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level), +!!state.hunterAwake].join('|');
+    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level), +!!state.hunterAwake, +!!state.shadowReturning].join('|');
 }
 export function actionsFor(level) {
   return [...directions.map(d => ({ type: 'move', direction: d.name })),

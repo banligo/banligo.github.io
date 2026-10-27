@@ -1,27 +1,30 @@
 import { active, dualGraph, key } from './graphs.js';
-import { initialState } from './engine.js';
-export const SAVE_KEY = 'geomaze.adventure.v3';
-export const freshProgress = () => ({ version: 3, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null });
+import { initialState, collectStar } from './engine.js';
+import { levels as campaign } from './levels.js';
+const LAST = campaign.length;
+export const SAVE_KEY = 'seamloom.adventure.v4';
+export const freshProgress = () => ({ version: 4, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });
 export function unlockedLevel(progress) {
-  let id = 1; while (id < 5 && progress.results[id]?.stars >= 1) id++; return id;
+  let id = 1; while (id < LAST && progress.results[id]?.stars >= 1) id++; return id;
 }
 export function normalizeProgress(raw, legacy = null) {
   const result = freshProgress();
-  if (raw?.version === 3) {
-    for (let id = 1; id <= 5; id++) {
+  if ([2,3,4].includes(raw?.version)) {
+    for (let id = 1; id <= LAST; id++) {
       const r = raw.results?.[id];
       if (r && Number.isInteger(r.stars) && r.stars >= 1 && r.stars <= 3 && Number.isInteger(r.bestTurns) && r.bestTurns > 0) {
         result.results[id] = { stars: r.stars, bestTurns: r.bestTurns, bestThreeStarTurns: r.stars === 3 && Number.isInteger(r.bestThreeStarTurns) && r.bestThreeStarTurns > 0 ? r.bestThreeStarTurns : null };
       }
     }
     result.seenTips = Array.isArray(raw.seenTips) ? raw.seenTips.filter(x => typeof x === 'string') : [];
-    result.discoveries = Array.isArray(raw.discoveries) ? raw.discoveries.filter(x => ['scale', 'cylinder', 'mobius', 'pieces', 'duality'].includes(x)) : [];
+    result.discoveries = Array.isArray(raw.discoveries) ? raw.discoveries.filter(x => ['scale', 'cylinder', 'mobius', 'torus', 'pieces', 'duality'].includes(x)) : [];
     result.currentLevel = Math.max(1, Math.min(unlockedLevel(result), Number.isInteger(raw.currentLevel) ? raw.currentLevel : unlockedLevel(result)));
     result.snapshot = raw.snapshot ?? null;
+    result.archivedAttempts = raw.archivedAttempts && typeof raw.archivedAttempts === 'object' ? raw.archivedAttempts : {};
   } else if (legacy && typeof legacy === 'object') {
     // Old saves represent completed tutorials; preserve unlocks without claiming
     // stars that did not exist in that version of the game.
-    for (let id = 1; id <= 5; id++) if (Number.isInteger(legacy[id]) && legacy[id] > 0) result.results[id] = { stars: 1, bestTurns: legacy[id] };
+    for (let id = 1; id <= LAST; id++) if (Number.isInteger(legacy[id]) && legacy[id] > 0) result.results[id] = { stars: 1, bestTurns: legacy[id] };
     result.currentLevel = unlockedLevel(result);
   }
   return result;
@@ -29,14 +32,14 @@ export function normalizeProgress(raw, legacy = null) {
 export function recordWin(progress, levelId, stars, turns) {
   const next = structuredClone(progress), old = next.results[levelId];
   next.results[levelId] = { stars: Math.max(stars, old?.stars ?? 0), bestTurns: Math.min(turns, old?.bestTurns ?? Infinity), bestThreeStarTurns: stars === 3 ? Math.min(turns,old?.bestThreeStarTurns ?? Infinity) : old?.bestThreeStarTurns ?? null };
-  next.currentLevel = Math.min(5, levelId + 1); next.snapshot = null;
+  next.currentLevel = Math.min(LAST, levelId + 1); next.snapshot = null;
   return next;
 }
 export function validSnapshot(snapshot, level) {
   if (!snapshot?.state || !Array.isArray(snapshot.history)) return false;
   const valid = state => {
-    if (!state || state.version !== 3 || state.levelId !== level.id || !level.scales.includes(state.scale) || !level.modes.includes(state.topology)) return false;
-    if (!Number.isInteger(state.turn) || state.turn < 0 || !['playing', 'won', 'lost'].includes(state.status) || typeof state.hunterAwake !== 'boolean' || typeof state.hasKey !== 'boolean' || typeof state.starCollected !== 'boolean') return false;
+    if (!state || state.version !== 4 || state.layoutRevision !== level.revision || state.levelId !== level.id || !level.scales.includes(state.scale) || !level.modes.includes(state.topology)) return false;
+    if (!Number.isInteger(state.turn) || state.turn < 0 || !['playing', 'won', 'lost'].includes(state.status) || typeof state.shadowReturning !== 'boolean' || typeof state.hunterAwake !== 'boolean' || typeof state.hasKey !== 'boolean' || typeof state.starCollected !== 'boolean') return false;
     if (!Array.isArray(state.pieces) || state.pieces.length !== level.pieces.length || !Array.isArray(state.hunters) || !Array.isArray(state.shadows) || !Array.isArray(state.events)) return false;
     if (state.hunters.length !== initialState(level).hunters.length || state.shadows.length !== (level.shadow ? 1 : 0)) return false;
     if (new Set(state.pieces.map(p => p.id)).size !== state.pieces.length) return false;
@@ -52,10 +55,21 @@ export function validSnapshot(snapshot, level) {
 export function loadProgress(storage, levels) {
   try {
     const read = name => { try { return JSON.parse(storage.getItem(name) || 'null'); } catch { return null; } };
-    const result = normalizeProgress(read(SAVE_KEY));
+    const latest = read(SAVE_KEY), old = read('geomaze.adventure.v3') ?? read('seamshift.adventure.v2');
+    const raw = latest?.version === 4 ? latest : old;
+    const result = normalizeProgress(raw, read('seamshift.progress.v1'));
     const level = levels.find(l => l.id === result.currentLevel);
-    if (!validSnapshot(result.snapshot, level)) result.snapshot = null;
-    if (result.snapshot?.state.status === 'won' && result.currentLevel < 5) { result.currentLevel++; result.snapshot = null; }
+    if(result.snapshot && raw?.version !== 4 && raw?.version === 3 && level.id <= 2) {
+      for(const state of [result.snapshot.state,...(result.snapshot.history??[])]) {
+        state.version=4; state.layoutRevision=level.revision; state.shadowReturning=false; state.hunterAwake=!!state.hunterAwake;
+      }
+    }
+    if (!validSnapshot(result.snapshot, level)) {
+      if(result.snapshot) result.archivedAttempts[level.id]=result.snapshot;
+      result.snapshot = null;
+    }
+    if(result.snapshot?.state.status === 'playing') collectStar(result.snapshot.state,level);
+    if (result.snapshot?.state.status === 'won' && result.currentLevel < LAST) { result.currentLevel++; result.snapshot = null; }
     return result;
   } catch { return freshProgress(); }
 }
@@ -64,6 +78,6 @@ export function saveProgress(storage, progress) {
 }
 
 export function resetProgress(storage) {
-  for (const name of [SAVE_KEY,'seamshift.adventure.v2','seamshift.progress.v1']) storage.removeItem(name);
+  for (const name of [SAVE_KEY,'geomaze.adventure.v3','seamshift.adventure.v2','seamshift.progress.v1']) storage.removeItem(name);
   return freshProgress();
 }

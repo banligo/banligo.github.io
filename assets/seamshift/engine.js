@@ -3,19 +3,19 @@ export function positions(level, symbol) {
   return level.map.flatMap((row, y) => [...row].flatMap((t, x) => t === symbol ? [{ x, y }] : []));
 }
 export function initialState(level) {
-  return { version: 3, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
+  return { version: 4, layoutRevision:level.revision, levelId: level.id, player: positions(level, 'P')[0], hunters: positions(level, 'M'),
     shadows: level.shadow ? [{ x: level.shadow[0], y: level.shadow[1] }] : [],
     pieces: level.pieces.map(p => ({ id: p.id, rotation: p.rotation, slot: null })),
     scale: level.initialScale, topology: level.initialTopology, hasKey: false, starCollected: false,
-    hunterAwake: false, turn: 0, status: 'playing', events: [] };
+    shadowReturning: false, hunterAwake: false, turn: 0, status: 'playing', events: [] };
 }
-export const beaconPosition = (state, level) => level.beacon ? remapDual({ x: level.beacon[0], y: level.beacon[1] }, level, state.topology) : null;
+export const beaconPosition = (state, level) => { const target=state.shadowReturning ? level.shadow : level.beacon; return target ? remapDual({x:target[0],y:target[1]},level,state.topology) : null; };
 const pathCache = new WeakMap();
 export function shadowPaths(state, level) {
   if (!state.shadows.length) return [];
   const { graph } = dualGraph(level, state);
   if(!pathCache.has(graph)) pathCache.set(graph,new Map()); const cache=pathCache.get(graph);
-  return state.shadows.map(p => { const id=`${p.x},${p.y}`; if(!cache.has(id)) cache.set(id,shortestPath(graph,p,beaconPosition(state,level))); return cache.get(id); });
+  return state.shadows.map(p => { const id=`${p.x},${p.y}:${!!state.shadowReturning}`; if(!cache.has(id)) cache.set(id,shortestPath(graph,p,beaconPosition(state,level))); return cache.get(id); });
 }
 export const disconnected = (state, level) => !!state.shadows.length && shadowPaths(state, level).every(p => !p);
 export const isLevelComplete = (state, level) => state.status !== 'lost' && tile(level, state.player) === 'E';
@@ -24,7 +24,22 @@ export function score(state, level) {
   const within = state.turn <= level.threeStarLimit;
   return 1 + Number(within || state.starCollected) + Number(within && state.starCollected);
 }
-export const starActive = (state, level) => !level.starGuarded || disconnected(state, level);
+export const starActive = (state, level) => !level.starScale || state.scale >= level.starScale;
+export function shadowDanger(state,level,predict=false) {
+  const moving=predict && (state.turn+1)%level.shadowSpeed===0;
+  const shadows=moving ? state.shadows.map((p,i)=>shadowPaths(state,level)[i]?.[1]??p) : state.shadows;
+  const cells=new Map();
+  for(const p of shadows) for(const dx of [-1,0]) for(const dy of [-1,0]) {
+    let x=p.x+dx,y=p.y+dy;
+    if(state.topology !== 'plane' && (x<0 || x>=level.width)) {x=(x+level.width)%level.width;if(state.topology==='mobius')y=level.height-1-y;}
+    if(state.topology==='torus') y=(y+level.height)%level.height;
+    const q={x,y}; if(x>=0&&x<level.width&&y>=0&&y<level.height&&active(level,q,state.scale,state)) cells.set(`${x},${y}`,q);
+  }
+  return [...cells.values()];
+}
+export function collectStar(state,level,events=[]) {
+  if(!state.starCollected && same(state.player,level.star) && starActive(state,level)) {state.starCollected=true;events.push('捡到一片星光。');}
+}
 export const rejected = (state, message) => ({ state, valid: false, message });
 const copyState = state => ({...state,pieces:state.pieces.map(p=>({...p})),hunters:[...state.hunters],shadows:[...state.shadows],events:[]});
 function geometryChange(state, action, level) {
@@ -71,7 +86,7 @@ export function transition(state, action, level) {
     next = copyState(state); next.player = target;
     if (Math.abs(target.x - state.player.x) > 1) events.push(state.topology === 'mobius' ? '另一边，上下倒了过来。' : '原来两边连在一起。');
     if (tile(level, target) === 'K' && !state.hasKey) { next.hasKey = true; events.push('钥匙找到了。'); }
-    if (same(target, level.star) && starActive(next, level) && !state.starCollected) { next.starCollected = true; events.push('捡到一片星光。'); }
+
   } else if (action.type === 'wait') next = copyState(state);
   else {
     const result = geometryChange(state, action, level); if (!result.valid) return result;
@@ -93,7 +108,9 @@ export function transition(state, action, level) {
   if (level.shadowSpeed && next.turn % level.shadowSpeed === 0) {
     const paths = shadowPaths(next, level); next.shadows = next.shadows.map((p, i) => paths[i]?.[1] ?? p);
   }
-  if (next.shadows.some(p => same(p, beaconPosition(next, level)))) next.status = 'lost';
+  if(next.shadows.some(p=>same(p,beaconPosition(next,level)))) next.shadowReturning=!next.shadowReturning;
+  if(shadowDanger(next,level).some(p=>same(p,next.player))) {next.status='lost';events.push('紫色地板有危险；看看虚线预告，再等待或绕行。');}
+  if(next.status !== 'lost') collectStar(next,level,events);
   if (next.status === 'lost') events.push('没关系，撤销一步就好。');
   else if (isLevelComplete(next, level)) { next.status = 'won'; events.push('找到路了。'); }
 

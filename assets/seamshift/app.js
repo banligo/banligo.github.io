@@ -8,7 +8,7 @@ import { icon } from './icons.js';
 import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
 import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js';
 const $ = selector => document.querySelector(selector);
-const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转' };
+const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转', torus:'环面' };
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const storage = { getItem: name => localStorage.getItem(name), removeItem: name => localStorage.removeItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
@@ -49,15 +49,16 @@ function renderTray() {
 }
 function renderControls() {
   const state = session.state;
+  if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
   setMarkupIfChanged($('#scale-buttons'), [1, 2, 3].map(value => `<button data-scale="${value}" aria-label="尺度 ${value}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value || Math.abs(state.scale-value)>1 ? 'disabled' : ''}>${level.radii[value-1].toFixed(1)}</button>`).join(''));
-  setMarkupIfChanged($('#mode-buttons'), ['plane', 'cylinder', 'mobius'].map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
+  setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
 function render() {
   const state = session.state;
   setWorld(state.topology);
-  $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `0${level.id} / 05`;
-  $('#moves').textContent = `${state.turn} 步`; $('#par').textContent = `三星 ≤${level.threeStarLimit}步`; $('#par').title = `三星理论最优 ${level.n3Opt} 步；历史最佳三星 ${progress.results[level.id]?.bestThreeStarTurns ?? '—'} 步`;
+  $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `${String(level.id).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
+  $('#moves').textContent = `${state.turn} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
   $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id]?.stars || 0} 星`);
   $('#held-star').classList.toggle('collected', state.starCollected);
@@ -65,17 +66,28 @@ function render() {
   $('#current-goal').textContent = level.goalText; $('#lost-overlay').hidden = state.status !== 'lost';
   renderControls(); renderMap();
 }
-function teachOnce() {
-  const id = `lesson-${level.id}`;
-  if (!progress.seenTips.includes(id)) { progress.seenTips.push(id); persist(); toast(level.lesson, '', 3100); }
-  else toast();
+function teachWait() {
+  if((level.hunterSpeed || level.shadowSpeed) && !progress.seenTips.includes('wait')) {
+    progress.seenTips.push('wait');persist();toast('等待一回合，看看怪物会怎么行动。');
+  }
 }
+function teachOnce() {
+  if(!progress.seenTips.includes('first-rules')) {
+    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false;
+    setTimeout(()=>{ $('#intro-rules').hidden=true; teachWait(); },4400); persist(); return;
+  }
+  const id=`lesson-${level.id}`;
+  if(!progress.seenTips.includes(id)) {progress.seenTips.push(id);persist();toast(level.lesson);}
+  else toast();
+  teachWait();
+}
+
 function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
 function checkDiscoveries(before, action) {
   const state = session.state;
   if (action.type === 'scale') discover('scale');
   if (['place', 'rotate'].includes(action.type)) discover('pieces');
-  if (Math.abs(before.player.x - state.player.x) > 1) discover(state.topology);
+  if (Math.abs(before.player.x - state.player.x) > 1 || Math.abs(before.player.y-state.player.y)>1) discover(state.topology);
   if (level.id !== 4 && state.shadows.length && !disconnected(before, level) && disconnected(state, level)) discover('duality');
 }
 function flashInvalid(text) {
@@ -112,16 +124,16 @@ function finishLevel() {
   progress = recordWin(progress, level.id, count, session.state.turn); saveProgress(storage, progress);
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id].stars);
   $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id].stars} 星`);
-  $('#clear-title').textContent = level.id === 5 ? '这段旅程完成了。' : '找到路了。';
+  $('#clear-title').textContent = level.id === levels.length ? '这段旅程完成了。' : '找到路了。';
   $('#clear-stars').innerHTML = [1, 2, 3].map(n => icon('star', `class="${n <= count ? 'earned' : ''}"`)).join('');
   $('#clear-stars').setAttribute('aria-label', `获得 ${count} 星`);
-  $('#clear-score').textContent = `${session.state.turn} 步 · 最佳三星 ${progress.results[level.id].bestThreeStarTurns ?? '—'} 步`;
+  $('#clear-score').textContent = `${session.state.turn} 步 · 最佳 ${progress.results[level.id].bestTurns} 步`;
   $('#clear-overlay').hidden = false; toast(); advanceTimer = setTimeout(advance, reduceMotion ? 900 : 1850);
 }
 function advance() {
   if (!advancing) return;
   clearTimeout(advanceTimer); advancing = false; $('#clear-overlay').hidden = true;
-  if (level.id < 5) chooseLevel(level.id + 1);
+  if (level.id < levels.length) chooseLevel(level.id + 1);
   else { persist(); $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((sum, r) => sum + r.stars, 0)} / 15 颗星。`; $('#ending-dialog').showModal(); render(); }
 }
 function closeDialogs() { document.querySelectorAll('dialog[open]').forEach(dialog => dialog.close()); }
@@ -147,14 +159,15 @@ function restart() {
 }
 function renderLevels() {
   const unlocked = unlockedLevel(progress);
-  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title} · 三星最优 ${l.n3Opt} / 目标 ${l.threeStarLimit} / 个人 ${progress.results[l.id]?.bestThreeStarTurns ?? '—'}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
+  $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
 const discoveries = {
   scale: ['会生长的路', '有的道路要到更大的尺度才出现。它们逐层加入网络：放大不会删除原有道路。这是一种几何过滤。'],
   cylinder: ['边界之外，还是这里', '环绕空间把左右同一行接在一起，像把纸卷成圆柱。你能过去，小兽也能。'],
   mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
+  torus: ['四边之外', '环面将左右和上下分别接起来。原来的屏障可能有另一条绕行路，影子也会沿周期裂隙绕过去。'],
   pieces: ['道路也可以拼起来', '碎片的方向决定四边的接口。相邻接口都打开，路才接通。旋转与放置改变的是真实网络，也会改变怪物的路。'],
-  duality: ['我的路，是你的墙', '影子走在格子角点之间。它的每条路都穿过你的一条路：一条打开，另一条关闭。这就是原始图与对偶图的互补。'],
+  duality: ['我的路，是你的墙', '影子住在道路之间的裂隙。每条紫色通道都穿过一条玩家道路：一条打开，另一条关闭。影子附近的四块地板会受影响；虚线框预告下回合。'],
 };
 function showDialog(id) {
   if (advancing) return;
@@ -275,10 +288,11 @@ document.addEventListener('click', event => {
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; }, 'help-hint-button': hint,
+    'desktop-wait': () => actionQueue.push({type:'wait'}),
     'wait-button': () => actionQueue.push({ type: 'wait' }),
     'rotate-button': () => selected && actionQueue.push({ type: 'rotate', pieceId: selected }),
     'remove-button': () => selected && actionQueue.push({ type: 'remove', pieceId: selected }),
-    'ending-levels': () => showDialog('levels-dialog'), 'ending-replay': () => chooseLevel(5),
+    'ending-levels': () => showDialog('levels-dialog'), 'ending-replay': () => chooseLevel(levels.length),
   };
   actions[button.id]?.();
 });
@@ -325,7 +339,9 @@ document.addEventListener('keydown', event => {
 window.addEventListener('pagehide', () => { if (!advancing) flushPersistence(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && !advancing) flushPersistence(); });
 hydrateIcons(); render();
-if (session.state.status === 'won' && level.id === 5) {
+if (session.state.status === 'won' && level.id === levels.length) {
   $('#ending-score').textContent = `五段旅程，共收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / 15 颗星。`;
   $('#ending-dialog').showModal();
 } else { persist(); teachOnce(); }
+
+setTimeout(()=>$('#boot-fade').remove(),900);
