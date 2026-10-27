@@ -283,3 +283,46 @@ body[data-world="torus"] { background:#d9dfd1; }
   .tray-label { display:none; }
   .level-info { font-size:9px;line-height:13px;gap:4px; }
 }
+/* Controls belong to the fitted map, not to viewport coordinates. */
+.map-stage { --rule-space:46px; padding-top:46px; max-width:calc((100cqh - 46px) * var(--map-aspect,1));max-height:calc(100cqw / var(--map-aspect,1) + 46px); }
+.map-stage.has-new-rule { --rule-space:46px; }
+.level-info { position:absolute;top:0;left:0;width:calc(100% - 50px);justify-content:center;height:44px; }
+.map-stage>.view-button { position:absolute;right:0;top:0;width:44px;height:44px;z-index:2; }
+.shift-button { position:absolute;bottom:4px;left:50%;transform:translateX(-50%);z-index:3;font-size:11px;min-height:44px;background:#e4d7e5ee;border-color:#91759b; }
+.shift-button:active { transform:translateX(-50%) translateY(1px); }
+.map-stage:has(.shift-button:not([hidden])) { padding-bottom:48px; }
+.game[data-layer=dual] .board>[data-layer=terrain] { opacity:.3; }
+.scale-buttons button { min-width:44px; }
+.scale-buttons svg { display:none; }
+.tools { grid-template-columns:repeat(2,48px); }
+.rule-card { border-bottom:1px solid #cfc2a3;padding:12px 0; }
+.rule-card small,.rule-card details { grid-column:1/-1;font-size:11px;line-height:1.8;color:#85775f; }
+.rule-card summary { min-height:44px;display:flex;align-items:center;cursor:pointer; }
+.rule-card details p { padding-bottom:10px;color:#74694f; }
+.topology-reference { grid-column:1/-1;display:grid;grid-template-columns:repeat(4,1fr);text-align:center;gap:4px;margin-bottom:10px; }
+.topology-reference>div { display:grid;justify-items:center;gap:4px;padding:8px 0;background:#ded5bd88; }
+.topology-reference svg { width:48px;height:40px;fill:none;stroke:#7c8067;stroke-width:1.4; }
+.topology-reference b { font:11px Georgia,serif; }
+.topology-reference small { font-size:10px; }
+#discovery-cards>section>h3 { font-size:13px;margin:24px 0 3px;color:#65785d; }
+.pieces { flex-wrap:wrap; }
+.hunter-art.sleeping { animation:breathe 3s ease-in-out infinite;transform-origin:center; }
+@keyframes breathe { 50%{transform:scaleY(.94)} }
+@media(max-width:600px) {
+ .scale-buttons button { min-width:44px;font-size:10px; }
+ .scale-row { flex-wrap:wrap;align-content:center;gap:0; }
+ .control-label { width:100%;text-align:center;font-size:8px;line-height:8px; }
+ .tools { grid-template-columns:repeat(3,44px);align-self:start; }
+ .control-deck { grid-template-rows:44px 44px 88px; }
+ .piece-button { width:44px;min-width:44px; }
+ .piece-tools { flex-wrap:nowrap; }
+}
+@media(max-height:520px) and (min-width:480px) {
+ .scale-row { flex-wrap:nowrap; }
+ .scale-buttons button { min-width:44px; }
+ .tools { display:flex; }
+ .pieces { flex-wrap:wrap;max-width:132px; }
+ .piece-button { flex:0 0 44px; }
+ .puzzle-tray { align-content:start; }
+ .map-stage { padding-top:44px; }
+}

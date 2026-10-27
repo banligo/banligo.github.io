@@ -1,4 +1,5 @@
 const paths = {
+  radius:'<circle cx="8" cy="12" r="6"/><circle cx="16" cy="12" r="6"/><path d="M8 12h8"/>',
   bridgeOff: '<path d="M3 7v10m18-10v10M3 10h6m6 0h6M3 14h6m6 0h6m-10-5-2 6m6-6-2 6"/>',
   bridgeOn: '<path d="M3 7v10m18-10v10M3 10h18M3 14h18M7 10v4m5-4v4m5-4v4"/>',
   levels: '<rect x="3" y="3" width="6" height="6" rx="1"/><rect x="15" y="3" width="6" height="6" rx="1"/><rect x="3" y="15" width="6" height="6" rx="1"/><rect x="15" y="15" width="6" height="6" rx="1"/>',

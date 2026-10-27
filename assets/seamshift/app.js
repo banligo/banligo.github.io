@@ -1,5 +1,5 @@
 import { levels, getLevel } from './levels.js';
-import { pendingLessons, referenceLessons, lessonCards } from './teaching.js';
+import { pendingLessons, referenceLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js';
 import { createSession, disconnected, preview, score } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
@@ -52,8 +52,13 @@ function renderTray() {
 function renderControls() {
   const state = session.state;
   if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
-  setMarkupIfChanged($('#scale-buttons'), [1,2].map(value => `<button data-scale="${value}" aria-label="${value===1?'断桥':'连桥'}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${icon(value===1?'bridgeOff':'bridgeOn')}<span>${value===1?'断桥':'连桥'}</span></button>`).join(''));
+  setMarkupIfChanged($('#scale-buttons'), level.scales.map(value => `<button data-scale="${value}" aria-label="连接范围 ${level.radii[value-1]}" aria-pressed="${state.scale === value}" ${!level.scales.includes(value) || state.scale === value ? 'disabled' : ''}>${icon('radius')}<span>${level.radii[value-1]}</span></button>`).join(''));
   setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
+  $('#scale-buttons').closest('.scale-row').hidden=level.scales.length<2;
+  $('#shift-button').hidden=!level.rifts.length;
+  $('#shift-button').textContent=state.world==='dual'?'回到道路 · E':'进入裂隙 · E';
+  $('#shift-button').disabled=!level.rifts.some(r=>{const p=state.world==='dual'?r.dual:r.primal;return p.x===state.player.x&&p.y===state.player.y;});
+  $('#game').dataset.layer=state.world;
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
 function render() {
@@ -77,6 +82,7 @@ function renderNewMechanisms() {
   $('#map-stage').classList.toggle('has-new-rule', !!fresh.length);
 }
 function teachOnce() {
+  for(const id of observeDiscoveries(level,session.state))discover(id);renderNewMechanisms();
   toast();
   if(!progress.seenTips.includes('first-rules')) {
     progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false; $('#level-info').style.visibility='hidden';
@@ -86,6 +92,8 @@ function teachOnce() {
 
 function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
 function checkDiscoveries(before, action) {
+  for(const id of observeDiscoveries(level,session.state,action)) discover(id);
+  renderNewMechanisms();
   const state = session.state;
   if (action.type === 'scale') discover('scale');
   if (['place', 'rotate'].includes(action.type)) discover('pieces');
@@ -163,31 +171,23 @@ function renderLevels() {
   const unlocked = unlockedLevel(progress);
   $('#level-list').innerHTML = levels.map(l => `<button class="level-option" data-level="${l.id}" aria-current="${l.id === level.id}" ${l.id > unlocked ? 'disabled' : ''}><span class="level-number">${l.id}</span><span><strong>${l.subtitle}</strong><small>${l.title}</small></span><span class="level-rating">${l.id > unlocked ? icon('lock', 'class="lock"') : starsMarkup(progress.results[l.id]?.stars || 0)}</span></button>`).join('');
 }
-const discoveries = {
-  scale: ['路与桥', '连接桥梁会为道路网络添加边，断开桥梁会移除这些边。这是一种几何过滤。'],
-  cylinder: ['边界之外，还是这里', '环绕空间把左右同一行接在一起，像把纸卷成圆柱。你能过去，小兽也能。'],
-  mobius: ['上下颠倒的另一边', '扭转空间把左侧接到右侧的相反一行。它来自莫比乌斯带的边界识别；上下边界仍然封闭。'],
-  torus: ['四边之外', '环面将左右和上下分别接起来。原来的屏障可能有另一条绕行路，影子也会沿周期裂隙绕过去。'],
-  pieces: ['道路也可以拼起来', '碎片的方向决定四边的接口。相邻接口都打开，路才接通。旋转与放置改变的是真实网络，也会改变怪物的路。'],
-  duality: ['我的路，是你的墙', '对偶不是另一个宇宙，而是同一张地图的另一种走法：你走格子中心，影子走格子角点。两条交叉的路，一条接通会挡住另一条。守护灯与门之间的金线，显示了控制影子的实际用途。'],
-};
 function showDialog(id) {
   if (advancing) return;
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
   if (id === 'level-dialog') renderLevelInfo();
-  if (id === 'help-dialog') setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level)));
+  if (id === 'help-dialog') setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level,progress)));
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
-    $('#discovery-cards').innerHTML = Object.entries(discoveries).map(([key, [title, description]]) => `<article class="discovery-card ${progress.discoveries.includes(key) ? '' : 'locked'}"><h3>${progress.discoveries.includes(key) ? title : '尚未发现'}</h3><p>${progress.discoveries.includes(key) ? description : '继续走一走，世界会告诉你。'}</p></article>`).join('');
+    $('#discovery-cards').innerHTML=notebookCards(level,progress);
   }
   $(`#${id}`).showModal();
 }
 function renderLevelInfo() {
   const fresh = pendingLessons(level,progress);
   $('#level-dialog-title').textContent = fresh.length ? '新的发现' : '图例与规则';
-  $('#rule-cards').innerHTML = lessonCards(fresh.length ? fresh : referenceLessons(level));
-  for(const rule of fresh) progress.seenTips.push(`mechanism:${rule.id}`);
+  $('#rule-cards').innerHTML = lessonCards(fresh.length ? fresh : referenceLessons(level,progress));
+  for(const rule of fresh) progress.seenTips.push(`notebook-v5:${rule.id}`);
   renderNewMechanisms(); persist();
 }
 function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
@@ -195,10 +195,10 @@ function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap()
 function cycleTopology() { const modes = level.modes; if (modes.length > 1) actionQueue.push({ type: 'topology', value: modes[(modes.indexOf(session.state.topology) + 1) % modes.length] }); }
 function actionLabel(action) {
   if (action.type === 'move') return `向${({ up: '上', right: '右', down: '下', left: '左' })[action.direction]}走一步`;
-  if (action.type === 'scale') return `${action.value===1?'断开桥梁':'连接桥梁'}`;
+  if (action.type === 'scale') return `调整连接范围到 ${level.radii[action.value-1]}`;
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
-  if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放进任意空位`;
+  if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放在空白地面`;
   if (action.type === 'remove') return '收回这块碎片再试试';
   return '等一回合，看看小兽的下一步';
 }
@@ -266,12 +266,12 @@ document.addEventListener('pointerup', event => {
       const svg = $('#board svg'), p = svg && cellFromClient(svg, event.clientX, event.clientY, CELL, PADDING), slot = p && slotAt(level, p);
       if (slot) actionQueue.push({ type: 'place', pieceId: g.pieceId, slotId: slot.id });
       else if (inside($('#puzzle-tray').getBoundingClientRect(), event.clientX, event.clientY)) actionQueue.push({ type: 'remove', pieceId: g.pieceId });
-      else flashInvalid('拖到任意空位，或放回碎片栏。');
+      else flashInvalid('拖到空白地面，或放回碎片栏。');
     } else if (g.replaceWith) {
       const slotId = session.state.pieces.find(p=>p.id===g.pieceId)?.slot;
       if (slotId) actionQueue.push({type:'place',pieceId:g.replaceWith,slotId});
     } else if (g.placed || g.selectedBefore === g.pieceId) actionQueue.push({ type: 'rotate', pieceId: g.pieceId });
-    else toast('点任意的空位放下；再点碎片旋转。');
+    else toast('点空白地面放下；再点碎片旋转。');
   } else {
     const direction = swipeDirection({ x: g.x, y: g.y }, { x: event.clientX, y: event.clientY });
     if (direction) actionQueue.push({ type: 'move', direction });
@@ -305,6 +305,7 @@ document.addEventListener('click', event => {
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; },
+    'shift-button':()=>actionQueue.push({type:'shift'}),
     'desktop-wait': () => actionQueue.push({type:'wait'}),
     'wait-button': () => actionQueue.push({ type: 'wait' }),
     'rotate-button': () => selected && actionQueue.push({ type: 'rotate', pieceId: selected }),
@@ -344,7 +345,8 @@ document.addEventListener('keydown', event => {
   lastKey = performance.now();
   const movement = { arrowup: 'up', w: 'up', arrowright: 'right', d: 'right', arrowdown: 'down', s: 'down', arrowleft: 'left', a: 'left' };
   if (movement[key]) { event.preventDefault(); actionQueue.push({ type: 'move', direction: movement[key] }); }
-  else if (['1', '2'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
+  else if (['1', '2','3'].includes(key)) { event.preventDefault(); actionQueue.push({ type: 'scale', value: Number(key) }); }
+  else if(key==='e'){event.preventDefault();actionQueue.push({type:'shift'});}
   else if (key === 't') { event.preventDefault(); cycleTopology(); }
   else if (key === ' ') { event.preventDefault(); actionQueue.push({ type: 'wait' }); }
   else if (key === 'z') { event.preventDefault(); undo(); }

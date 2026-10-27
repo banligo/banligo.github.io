@@ -1,5 +1,5 @@
 import {bridgeIsOpen,roomAt,territoryAt} from './world.js';
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt} from './sprites.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt} from './sprites.js';
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
 import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
@@ -127,7 +127,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     }
     actors.push(actor(p,hunterArt(state.hunterAwake),previous?.hunters[i]));
   });
-  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><rect class="traveler-face" x="-8" y="-11" width="16" height="16" rx="6" fill="#eedfbe" stroke="#aa9066" stroke-width="1"/><g class="traveler-hat"><path d="M-10-10v-4a10 8 0 0 1 20 0v4Z" fill="#d5bd86" stroke="#8b7957" stroke-width="1.3"/><path d="M-10-11h20" stroke="#a48a59" stroke-width="2"/><path d="M-15-9q15-4 30 0l-1 3h-28Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.2"/></g><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.world===state.world?previous?.player:null,state.world==='dual'));
+  actors.push(actor(state.player, playerArt(), previous?.world===state.world?previous?.player:null,state.world==='dual'));
   if (shown.topology !== 'plane') for (let y = 0; y < level.height; y++) {
     const a = { x: 0, y }, b = { x: level.width - 1, y: shown.topology === 'mobius' ? level.height - 1 - y : y };
     if (!primalOpen(level, shown, a, b)) continue;
@@ -153,7 +153,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   }
   for(const bridge of level.bridges){
     const open=bridgeIsOpen(state,bridge),color=bridge.color==='clay'?'#ae775e':'#9b7846';
-    for(const [x,y] of bridge.cells){const c=center({x,y});overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".25;1" dur=".2s"/>':''}<rect x="${c.x-24}" y="${c.y-24}" width="48" height="48" rx="2" fill="${open?'#dec391':'#b4ae9a'}" opacity="${open?1:.55}"/>${open?[-18,-6,6,18].map(d=>line({x:c.x-23,y:c.y+d},{x:c.x+23,y:c.y+d},color,2)).join(''):line({x:c.x-20,y:c.y-17},{x:c.x-7,y:c.y-3},color,5)+line({x:c.x+7,y:c.y+3},{x:c.x+20,y:c.y+17},color,5)}<path d="M${c.x-10} ${c.y-6}h20m-20 12h20" stroke="${color}" stroke-width="3"/></g>`);}
+    for(const [x,y] of bridge.cells){const c=center({x,y});overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".25;1" dur=".2s"/>':''}<g transform="translate(${c.x} ${c.y})">${bridgeArt(open,color)}</g></g>`);}
   }
   const colors={blue:'#78939c',clay:'#b18065',sage:'#89987b'};
   for(const c of level.controls){const b=level.bridges.find(b=>b.id===c.bridge),color=c.kind==='room'?colors[territoryAt(level,c)]:b?.color==='clay'?'#ae775e':'#9b7846';overlay.push(actor(c,controlArt(c.kind,color,c.direction)));}
