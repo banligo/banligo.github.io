@@ -6,7 +6,7 @@ export function pieceAt(level, state, p) {
   return slot && state.pieces.find(piece => piece.slot === slot.id);
 }
 export function portOpen(level, state, p, direction) {
-  if (level.map[p.y]?.[p.x] !== 'J') return true;
+  if (!['J','_'].includes(level.map[p.y]?.[p.x])) return true;
   const piece = pieceAt(level, state, p);
   return !!piece && ports(piece, level.pieces.find(d => d.id === piece.id)).includes(direction);
 }

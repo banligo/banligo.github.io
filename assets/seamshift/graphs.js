@@ -1,3 +1,4 @@
+import {bridgeAt,bridgeIsOpen,roomAt,worldSignature} from './world.js';
 import { pieceAt, pieceSignature, portOpen } from './pieces.js';
 export const key = p => `${p.x},${p.y}`;
 export const point = k => { const [x, y] = k.split(',').map(Number); return { x, y }; };
@@ -8,7 +9,11 @@ export const directions = [
 ];
 export const tile = (level, p) => level.map[p.y]?.[p.x] ?? '#';
 export const birth = t => t === '#' ? Infinity : t === 'b' ? 3 : t === 'a' ? 2 : 1;
-export const active = (level, p, scale, state) => birth(tile(level, p)) <= scale && (tile(level, p) !== 'J' || !!state && !!pieceAt(level, state, p));
+export const active = (level,p,scale,state) => {
+  const room=roomAt(level,state,p);if(room)return room.ports.length>0;
+  const bridge=bridgeAt(level,p);if(bridge)return bridgeIsOpen(state??{},bridge);
+  return birth(tile(level,p))<=scale && (!['J','_'].includes(tile(level,p)) || !!state&&!!pieceAt(level,state,p));
+};
 
 export function neighbor(p, direction, level, topology) {
   let x = p.x + direction.x, y = p.y + direction.y;
@@ -25,9 +30,10 @@ export function primalOpen(level, state, a, b) {
   if (!a || !b || !active(level, a, state.scale, state) || !active(level, b, state.scale, state)) return false;
   const direction = directions.findIndex(d => same(neighbor(a, d, level, state.topology), b));
   if (direction < 0 || !portOpen(level, state, a, direction) || !portOpen(level, state, b, (direction + 2) % 4)) return false;
-  if (!state.lampLit && level.circuit && (tile(level,a)==='E'||tile(level,b)==='E')) return false;
+  const ra=roomAt(level,state,a),rb=roomAt(level,state,b);
+  if(ra&&!ra.ports.includes(direction)||rb&&!rb.ports.includes((direction+2)%4))return false;
   if (!state.hasKey && (tile(level, a) === 'D' || tile(level, b) === 'D')) return false;
-  return !level.bridges.some(edge => (
+  return !(level.radiusLinks??[]).some(edge => (
     (same(a, { x: edge.from[0], y: edge.from[1] }) && same(b, { x: edge.to[0], y: edge.to[1] })) ||
     (same(b, { x: edge.from[0], y: edge.from[1] }) && same(a, { x: edge.to[0], y: edge.to[1] }))
   ) && (edge.nodes ? level.radii[state.scale - 1] + 1e-9 < Math.hypot(edge.nodes[0].x-edge.nodes[1].x,edge.nodes[0].y-edge.nodes[1].y) : state.scale < edge.birth));
@@ -35,7 +41,7 @@ export function primalOpen(level, state, a, b) {
 
 const primalCache = new WeakMap();
 export function primalGraph(level, state) {
-  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${pieceSignature(state)}`;
+  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${worldSignature(state)}:${pieceSignature(state)}`;
   if (!primalCache.has(level)) primalCache.set(level,new Map());
   const cache = primalCache.get(level); if (cache.has(signature)) return cache.get(signature);
   const graph = new Map();
@@ -73,7 +79,7 @@ export function remapDual(p, level, topology) {
 
 const dualCache = new WeakMap();
 export function dualGraph(level, state) {
-  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${pieceSignature(state)}`;
+  const signature = `${state.scale}:${state.topology}:${state.hasKey}:${!!state.lampLit}:${worldSignature(state)}:${pieceSignature(state)}`;
   if (!dualCache.has(level)) dualCache.set(level, new Map());
   const cached = dualCache.get(level);
   if (cached.has(signature)) return cached.get(signature);

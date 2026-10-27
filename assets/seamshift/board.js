@@ -1,5 +1,7 @@
+import {bridgeIsOpen,roomAt,territoryAt} from './world.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt} from './sprites.js';
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths } from './engine.js';
+import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
 import { starPath } from './icons.js';
 export const CELL = 56, PADDING = 23;
@@ -37,13 +39,13 @@ function segment(a, b, level, coordinates, color, width, extra = '') {
 export function renderBoardLayers(level, state, { previous = null, selected = null, view = 'primal', previewState = null, lightweight = false } = {}) {
   const width = level.width * CELL + PADDING * 2, height = level.height * CELL + PADDING * 2;
   const random = seededRandom(level.seed), walls = [], ground = [], markings = [], overlay = [], actors = [];
-  const shown = previewState ?? state, wallVariant = lightweight ? 'simple' : 'full', cachedWalls = wallCache.get(level)?.[wallVariant];
+  const shown = previewState ?? state, prediction=predictTurn(shown,level), wallVariant = lightweight ? 'simple' : 'full', cachedWalls = wallCache.get(level)?.[wallVariant];
   const borders = [];
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const p = { x, y }, t = tile(level, p), c = center(p), variation = random();
     if (t === '#') {
       if (cachedWalls !== undefined) continue;
-      const fill = variation < .35 ? '#d4cebc' : variation < .7 ? '#ddd6c4' : '#d8d1bf';
+      const fill = variation < .35 ? '#e4dfd2' : variation < .7 ? '#eae5d9' : '#e6e1d5';
       if (lightweight) { walls.push(`<rect class="wall" x="${c.x - 26}" y="${c.y - 27}" width="52" height="52" rx="4" fill="${fill}" stroke="#c9c2ae" stroke-width=".6"/>`); continue; }
       walls.push(`<g class="wall"><rect x="${c.x - 26}" y="${c.y - 22}" width="52" height="51" rx="5" fill="#c2bba7"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="48" rx="5" fill="${fill}"/><path d="M${c.x - 18} ${c.y - 19}h${15 + Math.floor(variation * 15)}M${c.x + 13} ${c.y + 13}h6" stroke="#eee8d7" stroke-width="2" stroke-linecap="round" opacity=".6"/>${variation < .2 ? `<path d="M${c.x - 18} ${c.y + 14}q5-8 12-2t8-3" fill="none" stroke="#a8b29a" stroke-width="3" stroke-linecap="round"/>` : ''}</g>`);
       continue;
@@ -51,10 +53,12 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const on = active(level, p, state.scale, state), oldOn = previous && active(level, p, previous.scale, previous);
     const piece = pieceAt(level, state, p), slot = level.slots.find(s => same(s, p));
     if (slot && !piece) {
-      const highlighted = !!selected;
-      ground.push(`<g data-slot="${slot.id}" role="button" tabindex="0" aria-label="拼图空位 ${level.slots.indexOf(slot) + 1}" class="puzzle-slot ${highlighted ? 'slot-highlight' : ''}"><rect x="${c.x - 25}" y="${c.y - 25}" width="50" height="50" rx="4" fill="${highlighted ? '#f1da9b' : '#b4ac95'}" stroke="${highlighted ? '#876338' : '#8a8069'}" stroke-width="1.5" stroke-dasharray="4 4"/><path d="M${c.x - 9} ${c.y}h18M${c.x} ${c.y - 9}v18" stroke="#897f65" opacity=".55"/><text x="${c.x + 17}" y="${c.y + 19}" font-size="9" text-anchor="middle" fill="#6d654f"></text></g>`);
+      const highlighted = false;
+      ground.push(`<g data-slot="${slot.id}" role="button" tabindex="0" aria-label="空白建路地面 ${x},${y}" class="puzzle-slot ${highlighted ? 'slot-highlight' : ''}"><rect x="${c.x - 25}" y="${c.y - 25}" width="50" height="50" rx="4" fill="#e5decc" stroke="${highlighted ? '#876338' : '#8a8069'}" stroke-width="1.5" /><path d="M${c.x - 16} ${c.y+15}h3m23 0h3" stroke="#b5a88e" opacity=".5"/><text x="${c.x + 17}" y="${c.y + 19}" font-size="9" text-anchor="middle" fill="#6d654f"></text></g>`);
       continue;
     }
+    if(t==='R'&&!on){ground.push(`<rect x="${c.x-26}" y="${c.y-26}" width="52" height="52" rx="3" fill="#dbd7c9"/>`);continue;}
+    if(t==='B'&&!on){ground.push(`<rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="#bebba9" rx="4"/>`);continue;}
     const changed = previous && on !== oldOn;
     ground.push(`<g opacity="${on ? 1 : .42}" class="floor">${changed ? `<animate attributeName="opacity" values="${on ? '0;1' : '1;.42'}" dur=".17s"/>` : ''}<rect x="${c.x - 26}" y="${c.y - 23}" width="52" height="52" rx="4" fill="#b5a789"/><rect x="${c.x - 26}" y="${c.y - 27}" width="52" height="50" rx="4" fill="${t === 'a' || t === 'b' ? '#d7d4ad' : '#ded1ad'}" stroke="${on ? '#c5b791' : '#8e9a78'}" stroke-width="1" ${on ? '' : 'stroke-dasharray="4 3"'}/></g>`);
     if (!piece) {
@@ -79,15 +83,15 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (!state.starCollected) {
     actors.push(actor(level.star, `<ellipse cy="13" rx="11" ry="3" fill="#ad985f" opacity=".2"/><g class="star-shard" opacity="${starActive(state,level) ? 1 : .28}"><path d="${starPath}" fill="#e9b54e" stroke="#ad7f32" stroke-width="1.4"/><path d="m-2-4 2-4 1 4" stroke="#fff0b4" fill="none" stroke-width="1.6"/></g>`));
   }
-  const { graph, crossings } = view !== 'primal' || state.shadows.length ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
-  if (view !== 'primal' || state.shadows.length) {
+  const { graph, crossings } = view !== 'primal' || state.shadows.length || level.rifts.length || state.world==='dual' ? dualGraph(level, shown) : { graph: new Map(), crossings: [] };
+  if (view !== 'primal' || state.shadows.length || level.rifts.length || state.world==='dual') {
     for (const e of crossings) if (e.open) overlay.push(segment(e.u, e.v, level, corner, '#795c85', view === 'primal' ? 1.7 : 2.6, `opacity="${view === 'primal' ? '.25' : '.9'}" class="dual-channel"`));
     for (const id of graph.keys()) { const [x, y] = id.split(',').map(Number), c = corner({ x, y }); overlay.push(`<circle cx="${c.x}" cy="${c.y}" r="2" fill="#795c85" opacity="${view === 'primal' ? .25 : .75}"/>`); }
   }
   if (state.shadows.length) {
     const paths = shadowPaths(shown, level);
     if(level.shadowSpeed) paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#674571', 2.6, 'opacity=".9" class="shadow-trail"')); });
-    const danger=shadowDanger(shown,level), future=shadowDanger(shown,level,true);
+    const danger=shadowDanger(shown,level), future=prediction.danger;
     for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}" aria-label="裂痕陷阱"><path d="M${c.x-12} ${c.y-7}l8 5-3 7 9-2 7 8M${c.x-4} ${c.y-2}l7-8M${c.x+2} ${c.y+3}l-7 8" fill="none" stroke="#897789" stroke-width="1.7" opacity=".65"/><path d="M${c.x-20} ${c.y-15}v-5h5M${c.x+20} ${c.y+15}v5h-5" fill="none" stroke="#938291" stroke-width="1.2" opacity=".38"/></g>`); }
     for(const p of future) if(!danger.some(d=>same(d,p))) { const c=center(p); overlay.push(`<path class="shadow-zone" data-next-danger="${key(p)}" d="M${c.x} ${c.y-10}l9 10-9 10-9-10Z" fill="none" stroke="#96799b" stroke-width="1.5" opacity=".7"/>`); }
     if(previous) {
@@ -97,30 +101,33 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       }
     }
     shown.shadows.forEach((p, i) => {
-      const next = level.shadowSpeed ? paths[i]?.[1] : null;
+      const next = prediction.shadows[i]&&!same(prediction.shadows[i],p)?prediction.shadows[i]:null;
       if (next) {
         const c=corner(next),dx=next.x-p.x,dy=next.y-p.y;
         const angle=Math.abs(dx)>1 ? (dx<0?0:180) : Math.abs(dy)>1 ? (dy<0?90:-90) : Math.atan2(dy,dx)*180/Math.PI;
         overlay.push(`<g data-shadow-next="true" class="shadow-next-arrow" transform="translate(${c.x} ${c.y}) rotate(${angle})"><title>箭头：影子下次移动的方向与落点</title><path d="M-10 0H5M0-5l5 5-5 5" fill="none" stroke="#765080" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>`);
       }
-      actors.push(actor(p, `<ellipse cy="10" rx="12" ry="4" fill="#544358" opacity=".2"/><path d="M-12 7C-12-15 12-15 12 7l-5-2-4 5-5-4-8 4Z" fill="#67536e" stroke="#4b3d50" stroke-width="1.5"/><ellipse cx="-4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/><ellipse cx="4" cy="-2" rx="2" ry="3" fill="#f7e7c6"/>${disconnected(shown, level) ? '<path d="M-4 4h8" stroke="#ad9bad" stroke-width="1.4"/>' : ''}`, previous?.shadows[i], true));
+      actors.push(actor(p, shadowArt(), previous?.shadows[i], true));
     });
   }
   if(level.circuit) {
     const p=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),c=corner(p);
     const goal=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0],g=center(goal),lit=!!state.lampLit;
-    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2.5" ${lit?'':'stroke-dasharray="5 4"'}/><circle cx="${c.x}" cy="${c.y}" r="12" fill="${lit?'#f4d58c':'#b6a5b2'}" stroke="${lit?'#a77b35':'#79617c'}" stroke-width="2"/><path d="M${c.x-5} ${c.y+7}h10M${c.x} ${c.y-6}v9" stroke="${lit?'#ad7d37':'#715a73'}" stroke-width="2"/><text x="${c.x}" y="${c.y-18}" text-anchor="middle" font-size="10" fill="${lit?'#97743d':'#79617c'}">${lit?'灯亮 · 门开':'守护灯 · 能量流失'}</text></g>`);
+    const labels={unpowered:'无供能',ready:'待点火',charging:'充能中',lit:'灯亮 · 地板安全',shorted:'短路 · 能量流失'};
+    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.energy,state.lampStatus==='shorted')}<text y="-26" text-anchor="middle" font-size="10" fill="#79617c">${labels[state.lampStatus]}</text></g></g>`);
+    if(level.circuit.source) overlay.push(actor(level.circuit.source,'<circle r="14" fill="#e2c276" stroke="#a38443" stroke-width="2"/><path d="M-7 0H7M0-7V7" stroke="#9d7435" stroke-width="2"/>'));
+
   }
   const hunterGraph = state.hunters.length ? primalGraph(level, shown) : null;
   state.hunters.forEach((p, i) => {
-    const next = state.hunterAwake ? shortestPath(hunterGraph, p, state.player)?.[1] : null;
+    const next = !same(prediction.hunters[i],p)?prediction.hunters[i]:null;
     overlay.push(actor(p, `<text y="-22" text-anchor="middle" font-size="11" fill="#9b5745">${!state.hunterAwake ? 'z' : next ? '!' : '受阻'}</text>`));
     if (next) {
       const c = center(next); overlay.push(segment(p, next, level, center, '#a1604d', 1.3, 'stroke-dasharray="2 4" opacity=".6"') + `<path d="M${c.x - 3} ${c.y + 4}l3-5 3 5" fill="none" stroke="#a1604d" opacity=".65"/>`);
     }
-    actors.push(actor(p, '<ellipse cy="13" rx="19" ry="5" fill="#786048" opacity=".25"/><path d="m-17 4-2-12 8 5 3-10 7 7 7-8 3 11 10-4-2 13Z" fill="#97674f" stroke="#77513e" stroke-width="1.5"/><ellipse cy="4" rx="16" ry="11" fill="#bb8060" stroke="#77513e" stroke-width="1.4"/><path d="M-9 11v5M9 11v5" stroke="#77513e" stroke-width="3" stroke-linecap="round"/><circle cx="-6" cy="1" r="2" fill="#443c30"/><circle cx="6" cy="1" r="2" fill="#443c30"/><ellipse cy="7" rx="4" ry="3" fill="#d29a79"/>', previous?.hunters[i]));
+    actors.push(actor(p,hunterArt(state.hunterAwake),previous?.hunters[i]));
   });
-  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><rect class="traveler-face" x="-8" y="-11" width="16" height="16" rx="6" fill="#eedfbe" stroke="#aa9066" stroke-width="1"/><g class="traveler-hat"><path d="M-10-10v-4a10 8 0 0 1 20 0v4Z" fill="#d5bd86" stroke="#8b7957" stroke-width="1.3"/><path d="M-10-11h20" stroke="#a48a59" stroke-width="2"/><path d="M-15-9q15-4 30 0l-1 3h-28Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.2"/></g><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.player));
+  actors.push(actor(state.player, '<ellipse cy="17" rx="13" ry="4" fill="#8e7e60" opacity=".25"/><path d="M-8 12v6M6 12v6" stroke="#66563f" stroke-width="5" stroke-linecap="round"/><path d="M-10-1Q-14 9-9 14H9Q12 5 8-1Z" fill="#b97053" stroke="#825c44" stroke-width="1.5"/><path d="M-10 0q-6 2-3 10" stroke="#748566" stroke-width="5" stroke-linecap="round"/><rect class="traveler-face" x="-8" y="-11" width="16" height="16" rx="6" fill="#eedfbe" stroke="#aa9066" stroke-width="1"/><g class="traveler-hat"><path d="M-10-10v-4a10 8 0 0 1 20 0v4Z" fill="#d5bd86" stroke="#8b7957" stroke-width="1.3"/><path d="M-10-11h20" stroke="#a48a59" stroke-width="2"/><path d="M-15-9q15-4 30 0l-1 3h-28Z" fill="#e7d7af" stroke="#8b7957" stroke-width="1.2"/></g><circle cx="-4" cy="-1" r="1.4" fill="#514634"/><circle cx="4" cy="-1" r="1.4" fill="#514634"/><path d="M-10 4h18l5 7-8-3H-8Z" fill="#73886c" stroke="#5a7055" stroke-width=".8"/>', previous?.world===state.world?previous?.player:null,state.world==='dual'));
   if (shown.topology !== 'plane') for (let y = 0; y < level.height; y++) {
     const a = { x: 0, y }, b = { x: level.width - 1, y: shown.topology === 'mobius' ? level.height - 1 - y : y };
     if (!primalOpen(level, shown, a, b)) continue;
@@ -132,7 +139,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     const t=center(a),d=center(b),label=String(x+1);
     borders.push(`<g class="seam-port torus-port"><path d="M${t.x-14} ${PADDING-3}q14-14 28 0M${d.x-14} ${height-PADDING+3}q14 14 28 0" fill="none" stroke="#6b8874" stroke-width="2"/><text x="${t.x}" y="${PADDING-13}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text><text x="${d.x}" y="${height-PADDING+19}" text-anchor="middle" font-size="10" fill="#687b61">${label}</text></g>`);
   }
-  for (const edge of level.bridges) {
+  for (const edge of level.radiusLinks) {
     const [a,b] = edge.nodes.map(center), radius = level.radii[shown.scale-1]*CELL/2;
     const on = primalOpen(level,shown,{x:edge.from[0],y:edge.from[1]},{x:edge.to[0],y:edge.to[1]});
     const dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d;
@@ -142,8 +149,18 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       for(let t=5;t<length;t+=7) { const sign=i===0?1:-1,c={x:start.x+ux*t*sign,y:start.y+uy*t*sign};planks.push(line({x:c.x-uy*5,y:c.y+ux*5},{x:c.x+uy*5,y:c.y-ux*5},'#a28c62',1)); }
       return `<g class="bridge-arm">${bridgeBeam(start,end,'#8c7959',14)}${bridgeBeam(start,end,'#e4cf9d',10)}${planks.join('')}</g>`;
     }).join('');
-    overlay.push(`<g class="radius-link" data-bridge-open="${on}" aria-label="${on?'桥已连接，可以通过':contact?'桥已连接，还需对齐碎片接口':'桥已断开，不能通过'}">${halves}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
+    overlay.push(`<g class="radius-link" data-radius-open="${on}" aria-label="${on?'几何道路相连':'连接范围不足，节点尚未相遇'}">${line(a,b,'#879581',1,'stroke-dasharray="3 4"')}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="${radius}" fill="#b2bfa5" fill-opacity=".06" stroke="#889782" stroke-opacity=".3" stroke-width="1"/>`).join('')}${on?line(a,b,'#8b9d85',7):''}${[a,b].map(c=>`<circle cx="${c.x}" cy="${c.y}" r="5" fill="#7a684d" stroke="#dac698" stroke-width="2"/>`).join('')}${on?`<circle cx="${(a.x+b.x)/2}" cy="${(a.y+b.y)/2}" r="2" fill="#faf0d3"/>`:''}</g>`);
   }
+  for(const bridge of level.bridges){
+    const open=bridgeIsOpen(state,bridge),color=bridge.color==='clay'?'#ae775e':'#9b7846';
+    for(const [x,y] of bridge.cells){const c=center({x,y});overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".25;1" dur=".2s"/>':''}<rect x="${c.x-24}" y="${c.y-24}" width="48" height="48" rx="2" fill="${open?'#dec391':'#b4ae9a'}" opacity="${open?1:.55}"/>${open?[-18,-6,6,18].map(d=>line({x:c.x-23,y:c.y+d},{x:c.x+23,y:c.y+d},color,2)).join(''):line({x:c.x-20,y:c.y-17},{x:c.x-7,y:c.y-3},color,5)+line({x:c.x+7,y:c.y+3},{x:c.x+20,y:c.y+17},color,5)}<path d="M${c.x-10} ${c.y-6}h20m-20 12h20" stroke="${color}" stroke-width="3"/></g>`);}
+  }
+  const colors={blue:'#78939c',clay:'#b18065',sage:'#89987b'};
+  for(const c of level.controls){const b=level.bridges.find(b=>b.id===c.bridge),color=c.kind==='room'?colors[territoryAt(level,c)]:b?.color==='clay'?'#ae775e':'#9b7846';overlay.push(actor(c,controlArt(c.kind,color,c.direction)));}
+  for(const r of level.rifts){overlay.push(actor(r.primal,riftArt()));const c=corner(r.dual);overlay.push(`<g transform="translate(${c.x} ${c.y}) scale(.55)" opacity="${state.world==='dual'?1:.55}">${riftArt()}</g>`);}
+  for(const p of [...new Map([...darkDanger(state,level)].map(p=>[key(p),p])).values()]){const c=center(p);overlay.push(`<g data-dark="${key(p)}"><rect x="${c.x-21}" y="${c.y-21}" width="42" height="42" rx="4" fill="#555666" opacity=".6"/><path d="M${c.x-8} ${c.y-8}l16 16m-16 0 16-16" stroke="#c7bfd1" stroke-width="2"/></g>`);}
+  for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++)if(tile(level,{x,y})!=='#'&&level.territories.length){const c=center({x,y}),region=territoryAt(level,{x,y}),color=colors[region];for(const d of [directions[1],directions[2]]){const q={x:x+d.x,y:y+d.y};if(territoryAt(level,q)!==region)overlay.push(line({x:c.x+(d.x?27:-27),y:c.y+(d.y?27:-27)},{x:c.x+27,y:c.y+27},color,2,'opacity=".65"'));}}
+  for(const room of level.rooms){const a={x:PADDING+room.x*CELL,y:PADDING+room.y*CELL},size=room.size*CELL;overlay.push(`<g class="rotating-room" data-room="${room.id}" data-rotation="${state.rooms[room.id]}"><rect x="${a.x}" y="${a.y}" width="${size}" height="${size}" rx="6" fill="none" stroke="${colors[room.territory]}" stroke-width="3"/><path d="M${a.x+size-23} ${a.y+8}q14 0 14 14m-5-4 5 4 4-5" fill="none" stroke="${colors[room.territory]}" stroke-width="2"/></g>`);}
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
     const a = { x, y };
     for (const d of directions.slice(1, 3)) {
@@ -155,7 +172,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (cachedWalls === undefined) wallCache.set(level, { ...wallCache.get(level), [wallVariant]: walls.join('') });
   return {
     viewBox: `0 0 ${width} ${height}`, role: level.pieces.length ? 'group' : 'img',
-    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，${state.scale === 2 ? '连桥' : '断桥'}，${state.topology}`,
+    label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，连接范围 ${level.radii[state.scale-1]}，${state.topology}`,
     opacity: view === 'dual' ? '.45' : '1',
     walls: wallCache.get(level)[wallVariant], terrain: ground.join('') + markings.join(''),
     overlay: overlay.join('') + borders.join(''), actors: actors.join(''),

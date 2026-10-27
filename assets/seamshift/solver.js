@@ -1,17 +1,17 @@
 import { applyAction, disconnected, initialState, positions } from './engine.js';
-import { directions, key, neighbor, same, shortestPath, tile, dualGraph } from './graphs.js';
+import { directions, key, neighbor, same, shortestPath, tile, dualGraph, dualNode } from './graphs.js';
 import { pieceSignature, ports } from './pieces.js';
 const gcd = (a, b) => b ? gcd(b, a % b) : a;
 export const period = level => ((level.hunterSpeed || 1) * (level.shadowSpeed || 1)) / gcd(level.hunterSpeed || 1, level.shadowSpeed || 1);
-export function stateHash(state, level) {
-  return [key(state.player), state.hunters.map(key).join(';'), state.shadows.map(key).join(';'),
-    pieceSignature(state), +state.hasKey, +state.starCollected, state.scale, state.topology, state.turn % period(level), +!!state.hunterAwake, +!!state.shadowReturning, +!!state.lampLit].join('|');
+export function stateHash(state,level) {
+ const pieces=state.pieces.map(p=>{const d=level.pieces.find(d=>d.id===p.id);return `${d.shape}:${p.slot??'-'}:${p.rotation%(d.shape==='straight'?2:d.shape==='cross'?1:4)}`;}).sort().join(';');
+ return [key(state.player),state.world,key(state.anchor),state.hunters.map(key).join(';'),state.shadows.map(key).join(';'),pieces,+state.hasKey,+state.starCollected,state.scale,state.topology,state.turn%period(level),+state.hunterAwake,+state.shadowReturning,+state.lampLit,+state.lampStarted,state.lampCharge,state.energy,JSON.stringify(state.bridgeStates),JSON.stringify(state.rooms),state.triggered.filter(id=>level.controls.find(c=>c.id===id)?.once).join(',')].join('|');
 }
 export function actionsFor(level) {
   return [...directions.map(d => ({ type: 'move', direction: d.name })),
     ...level.scales.map(value => ({ type: 'scale', value })), ...level.modes.map(value => ({ type: 'topology', value })),
     ...level.pieces.flatMap(p => [{ type: 'rotate', pieceId: p.id }, { type: 'remove', pieceId: p.id }, ...p.allowedSlots.map(slotId => ({ type: 'place', pieceId: p.id, slotId }))]),
-    { type: 'wait' }];
+    ...(level.rifts.length?[{type:'shift'}]:[]),{ type: 'wait' }];
 }
 class Heap {
   data = [];
@@ -31,28 +31,17 @@ class Heap {
   }
 }
 
-function makeHeuristic(level, requireStar) {
-  const union = new Map(), distanceCache = new Map();
-  for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
-    const p = { x, y }; if (tile(level, p) === '#') continue;
-    const ns = [];
-    for (const mode of level.modes) for (const d of directions) {
-      const q = neighbor(p, d, level, mode); if (q && tile(level, q) !== '#') ns.push(key(q));
-    }
-    union.set(key(p), [...new Set(ns)]);
-  }
-  const distance = (a, b) => {
-    const id = `${key(a)}:${key(b)}`;
-    if (!distanceCache.has(id)) distanceCache.set(id, (shortestPath(union, a, b)?.length ?? 40) - 1);
-    return distanceCache.get(id);
-  };
-  const goal = positions(level, 'E')[0], item = positions(level, 'K')[0];
-  return state => {
-    const needStar = requireStar && !state.starCollected, needKey = item && !state.hasKey;
-    if (needStar && needKey) return Math.min(distance(state.player,level.star)+distance(level.star,item)+distance(item,goal),distance(state.player,item)+distance(item,level.star)+distance(level.star,goal));
-    const target = needStar ? level.star : needKey ? item : goal;
-    return distance(state.player,target) + (target === goal ? 0 : distance(target,goal));
-  };
+function makeHeuristic(level,requireStar) {
+ const union=new Map(),cache=new Map(),pkey=p=>'p:'+key(p),dkey=p=>'d:'+key(p);
+ const add=(a,b)=>{if(!union.has(a))union.set(a,new Set());union.get(a).add(b);};
+ for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++){
+  const p={x,y};if(tile(level,p)!=='#')for(const mode of level.modes)for(const d of directions){const q=neighbor(p,d,level,mode);if(q&&tile(level,q)!=='#')add(pkey(p),pkey(q));}
+  if(level.rifts.length)for(const mode of level.modes)if(dualNode(p,level,mode))for(const d of directions){let q={x:x+d.x,y:y+d.y};if(q.x<0&&mode!=='plane'){q.x+=level.width;if(mode==='mobius')q.y=level.height-q.y;}q=dualNode(q,level,mode);if(q)add(dkey(p),dkey(q));}
+ }
+ for(const r of level.rifts){add(pkey(r.primal),dkey(r.dual));add(dkey(r.dual),pkey(r.primal));}
+ const distance=(a,b)=>{const id=a+':'+b;if(!cache.has(id)){const queue=[[a,0]],seen=new Set([a]);let found=0;for(let i=0;i<queue.length;i++){const [p,n]=queue[i];if(p===b){found=n;break;}for(const q of union.get(p)??[])if(!seen.has(q)){seen.add(q);queue.push([q,n+1]);}}cache.set(id,found);}return cache.get(id);};
+ const goal=pkey(positions(level,'E')[0]),star=pkey(level.star);
+ return state=>{const p=(state.world==='dual'?dkey:pkey)(state.player);return requireStar&&!state.starCollected?distance(p,star)+distance(star,goal):distance(p,goal);};
 }
 // A* with an admissible relaxed-union movement lower bound. Geometry,
 // monsters and locks are relaxed only in the heuristic, never in transitions.
