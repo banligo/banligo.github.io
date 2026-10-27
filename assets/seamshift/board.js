@@ -1,12 +1,13 @@
 import {bridgeIsOpen,roomAt,territoryAt} from './world.js';
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt} from './sprites.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt,darkFloorArt,noiseArt} from './sprites.js';
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger } from './engine.js';
+import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger, dangerCells, hunterMode, hunterAlertCells, lampSupply } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
 import { starPath } from './icons.js';
 export const CELL = 56, PADDING = 23;
-const center = p => ({ x: PADDING + (p.x + .5) * CELL, y: PADDING + (p.y + .5) * CELL });
-const corner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
+export const cellCenter = p => ({ x: PADDING + (p.x + .5) * CELL, y: PADDING + (p.y + .5) * CELL });
+export const dualCorner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });
+const center=cellCenter,corner=dualCorner;
 const wallCache = new WeakMap();
 const palette = { ochre: ['#c9a368', '#80613e'], clay: ['#be846a', '#86523e'], sage: ['#92a485', '#5d735e'] };
 const line = (a, b, stroke, width = 2, extra = '') => `<path d="M${a.x} ${a.y}L${b.x} ${b.y}" fill="none" stroke="${stroke}" stroke-width="${width}" stroke-linecap="round" ${extra}/>`;
@@ -71,7 +72,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       markings.push(`<g transform="translate(${c.x} ${c.y})" data-slot="${slot.id}" data-map-piece="${piece.id}" role="button" tabindex="0" aria-label="旋转拼图 ${level.pieces.indexOf(definition) + 1}" class="placed-piece ${selected === piece.id ? 'selected-piece' : ''}"><rect x="-27" y="-29" width="54" height="56" rx="4" fill="transparent"/>${pieceDrawing(piece, definition, prior)}${selected === piece.id ? '<rect x="-27" y="-28" width="54" height="55" rx="5" fill="none" stroke="#685b3b" stroke-width="1.8" stroke-dasharray="3 3"/>' : ''}</g>`);
     }
     if (t === 'D') markings.push(actor(p, `<path d="M-20-19h40v38h-40Z" fill="${state.hasKey ? '#b0b28a' : '#8c775b'}" stroke="#66563f" stroke-width="2"/><path d="M-13-18v36M0-18v36M13-18v36" stroke="#d7bd89" stroke-width="2"/>${state.hasKey ? '<path d="M-10 0h20" stroke="#607758" stroke-width="3"/>' : '<rect x="-6" y="-5" width="12" height="13" rx="2" fill="#deb25d" stroke="#765c36"/><path d="M-4-5v-4a4 4 0 0 1 8 0v4" fill="none" stroke="#deb25d" stroke-width="2"/>'}`));
-    if (t === 'K' && !state.hasKey) markings.push(actor(p, '<g fill="none" stroke="#8c6234" stroke-width="3"><circle cx="-5" cy="-5" r="6" fill="#e9c475"/><path d="m-1-1 12 12m-5-5 4-4m-8 0 4-4"/></g>'));
+    if(t==='K'&&!state.hasKey)markings.push(actor(p,keyArt()+(level.keyNoise?noiseArt():'')));
     if (t === 'E') {
       const ready = !level.circuit || state.lampLit;
       markings.push(actor(p, `<ellipse cy="9" rx="21" ry="13" fill="#a1b18a"/><path d="M-15 11V-6a15 15 0 0 1 30 0v17Z" fill="${ready ? '#6d8b6c' : '#a0a789'}" stroke="#53644a" stroke-width="2"/><path d="M-8 11V-5a8 8 0 0 1 16 0v16Z" fill="${ready ? '#ebdbaa' : '#c5c4a2'}"/>${ready ? '<path d="M-4 1h8m-3-3 3 3-3 3" fill="none" stroke="#7e966a" stroke-width="2"/>' : '<circle r="3" fill="#7c7e60"/>'}<path d="M-20 13h40" stroke="#5d7052" stroke-width="3" stroke-linecap="round"/>`));
@@ -88,9 +89,6 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if (state.shadows.length) {
     const paths = shadowPaths(shown, level);
     if(level.shadowSpeed) paths.forEach(path => { if (path) for (let i = 1; i < path.length; i++) overlay.push(segment(path[i - 1], path[i], level, corner, '#674571', 2.6, 'opacity=".9" class="shadow-trail"')); });
-    const danger=shadowDanger(shown,level), future=prediction.danger;
-    for(const p of danger) { const c=center(p); overlay.push(`<g class="shadow-zone" data-danger="${key(p)}" aria-label="裂痕陷阱"><path d="M${c.x-12} ${c.y-7}l8 5-3 7 9-2 7 8M${c.x-4} ${c.y-2}l7-8M${c.x+2} ${c.y+3}l-7 8" fill="none" stroke="#897789" stroke-width="1.7" opacity=".65"/><path d="M${c.x-20} ${c.y-15}v-5h5M${c.x+20} ${c.y+15}v5h-5" fill="none" stroke="#938291" stroke-width="1.2" opacity=".38"/></g>`); }
-    for(const p of future) if(!danger.some(d=>same(d,p))) { const c=center(p); overlay.push(`<path class="shadow-zone" data-next-danger="${key(p)}" d="M${c.x} ${c.y-10}l9 10-9 10-9-10Z" fill="none" stroke="#96799b" stroke-width="1.5" opacity=".7"/>`); }
     if(previous) {
       const old=dualGraph(level,previous).crossings;
       for(const e of crossings) if(!e.open && old.some(o=>o.open && same(o.a,e.a) && same(o.b,e.b))) {
@@ -110,20 +108,19 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if(level.circuit) {
     const p=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),c=corner(p);
     const goal=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0],g=center(goal),lit=!!state.lampLit;
-    const labels={unpowered:'无供能',ready:'待点火',charging:'充能中',lit:'灯亮 · 地板安全',shorted:'短路 · 能量流失'};
-    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.energy,state.lampStatus==='shorted')}<text y="-26" text-anchor="middle" font-size="10" fill="#79617c">${labels[state.lampStatus]}</text></g></g>`);
-    if(level.circuit.source){const supply=shortestPath(primalGraph(level,state),level.circuit.source,level.circuit.receiver);if(supply)for(let i=1;i<supply.length;i++)overlay.push(segment(supply[i-1],supply[i],level,center,'#b89c55',3,'opacity=".45" pointer-events="none"'));}
-    if(level.circuit.source) overlay.push(actor(level.circuit.source,'<circle r="14" fill="#e2c276" stroke="#a38443" stroke-width="2"/><path d="M-7 0H7M0-7V7" stroke="#9d7435" stroke-width="2"/>'));
+    const supply=lampSupply(state,level),labels={unpowered:'供能断开',ready:'发电 OFF',charging:'充电中',lit:'灯亮 · 安全',shorted:'短路 · 归零'};
+    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}" data-charge="${state.lampCharge}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.lampCharge,supply.shorted,supply.maxCharge)}<text y="-26" text-anchor="middle" font-size="10" fill="#79617c">${labels[state.lampStatus]}</text></g></g>`);
+    if(supply.path)for(let i=1;i<supply.path.length;i++)overlay.push(segment(supply.path[i-1],supply.path[i],level,center,supply.started?'#ba9847':'#9e9581',supply.started?3:1.5,`class="${supply.started&&supply.powered&&!supply.shorted?'energy-flow':''}" opacity=".65" stroke-dasharray="${supply.started?'5 4':'2 5'}" pointer-events="none"`));
+    if(level.circuit.source)overlay.push(actor(level.circuit.source,`<g data-generator="${supply.started?'on':'off'}"><circle r="14" fill="${supply.started?'#e9cb71':'#bbb39f'}" stroke="#a38443" stroke-width="2"/><path d="M-7 0H7M0-7V7" stroke="#9d7435" stroke-width="2"/><text y="-21" text-anchor="middle" font-size="10" fill="#98723e">${supply.started?'ON':'OFF'}</text></g>`));
 
   }
-  const hunterGraph = state.hunters.length ? primalGraph(level, shown) : null;
-  state.hunters.forEach((p, i) => {
-    const next = !same(prediction.hunters[i],p)?prediction.hunters[i]:null;
-    overlay.push(actor(p, `<text y="-22" text-anchor="middle" font-size="11" fill="#9b5745">${!state.hunterAwake ? 'z' : next ? '!' : '受阻'}</text>`));
-    if (next) {
-      const c = center(next); overlay.push(segment(p, next, level, center, '#a1604d', 1.3, 'stroke-dasharray="2 4" opacity=".6"') + `<path d="M${c.x - 3} ${c.y + 4}l3-5 3 5" fill="none" stroke="#a1604d" opacity=".65"/>`);
-    }
-    actors.push(actor(p,hunterArt(state.hunterAwake),previous?.hunters[i]));
+  state.hunters.forEach((p,i)=>{
+    const mode=hunterMode(state,i),next=prediction.hunters[i],moving=next&&!same(next,p);
+    if(mode==='sleeping')for(const q of hunterAlertCells(shown,level,i)){if(same(p,q))continue;const c=center(q);overlay.push(`<rect data-alert-range="${i}:${key(q)}" x="${c.x-22}" y="${c.y-22}" width="44" height="44" rx="4" fill="#b9995a" fill-opacity=".07" stroke="#b9995a" stroke-width=".8" stroke-dasharray="2 4" opacity=".6" pointer-events="none"/>`);}
+    overlay.push(actor(p,`<g data-hunter-state="${mode}" data-wake-reason="${state.hunterWakeReasons[i]??''}"><text y="-22" text-anchor="middle" font-size="11" fill="${mode==='alert'?'#ae833d':'#9b5745'}">${mode==='sleeping'?'z':mode==='alert'?'! 警觉':moving?'追击':'受阻'}</text></g>`));
+    if(mode!=='sleeping'&&moving){const c=center(next);overlay.push(`<g data-hunter-next="${key(next)}">${segment(p,next,level,center,'#ae7053',2,'opacity=".8"')}<rect x="${c.x-20}" y="${c.y-20}" width="40" height="40" rx="4" fill="#b67455" fill-opacity=".08" stroke="#b67455" stroke-opacity=".5" stroke-width="1"/><path d="M${c.x-5} ${c.y+6}l5-9 5 9Z" fill="none" stroke="#a1604d" stroke-width="1.8"/></g>`);}
+    actors.push(actor(p,hunterArt(mode!=='sleeping'),previous?.hunters[i]));
+    if(previous&&previous.hunterStates[i]==='sleeping'&&mode==='alert')overlay.push(actor(p,'<circle r="20" fill="none" stroke="#c09747" stroke-width="2"><animate attributeName="r" values="12;26" dur=".3s"/><animate attributeName="opacity" values="1;0" dur=".3s" fill="freeze"/></circle>'));
   });
   actors.push(actor(state.player, playerArt(), previous?.world===state.world?previous?.player:null,state.world==='dual'));
   if (shown.topology !== 'plane') for (let y = 0; y < level.height; y++) {
@@ -144,9 +141,12 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     overlay.push(`<g data-mechanism-bridge="${bridge.id}" data-bridge-open="${open}" class="mechanism-bridge" transform="translate(${(first.x+last.x)/2} ${(first.y+last.y)/2}) rotate(${angle})">${previous&&bridgeIsOpen(previous,bridge)!==open?'<animate attributeName="opacity" values=".3;1" dur=".2s"/>':''}${bridgeArt(open,color,length)}</g>`);
   }
   const colors={blue:'#78939c',clay:'#b18065',sage:'#89987b'};
-  for(const c of level.controls){const b=level.bridges.find(b=>b.id===c.bridge),color=c.kind==='room'?colors[territoryAt(level,c)]:b?.color==='clay'?'#ae775e':'#9b7846';overlay.push(actor(c,controlArt(c.kind,color,c.direction)));}
+  for(const c of level.controls){const b=level.bridges.find(b=>b.id===c.bridge),color=c.kind==='room'?colors[territoryAt(level,c)]:b?.color==='clay'?'#ae775e':'#9b7846';overlay.push(actor(c,`<g data-control="${c.id}" ${c.kind==='ignite'?`data-generator-control="${state.lampStarted?'on':'off'}"`:''}>${controlArt(c.kind,color,c.direction)}${c.kind==='ignite'?`<circle cx="14" cy="-14" r="4" fill="${state.lampStarted?'#e3bd51':'#817d70'}"/>${previous&&!previous.lampStarted&&state.lampStarted?'<animate attributeName="opacity" values=".3;1;.3;1" dur=".3s"/>':''}`:''}</g>`));}
   for(const r of level.rifts){overlay.push(actor(r.primal,riftArt()));const c=corner(r.dual);overlay.push(`<g transform="translate(${c.x} ${c.y}) scale(.55)" opacity="${state.world==='dual'?1:.55}">${riftArt()}</g>`);}
-  for(const p of [...new Map([...darkDanger(state,level)].map(p=>[key(p),p])).values()]){const c=center(p);overlay.push(`<g data-dark="${key(p)}"><rect x="${c.x-21}" y="${c.y-21}" width="42" height="42" rx="4" fill="#555666" opacity=".6"/><path d="M${c.x-8} ${c.y-8}l16 16m-16 0 16-16" stroke="#c7bfd1" stroke-width="2"/></g>`);}
+  const hazards=dangerCells(shown,level);
+  for(const p of hazards){const c=center(p);overlay.push(`<g class="hazard-cell" data-hazard="${key(p)}" data-hazard-kind="${p.kind}" ${p.kind==='shadow'?`data-danger="${key(p)}"`:`data-dark="${key(p)}"`} transform="translate(${c.x} ${c.y})" aria-label="${p.kind==='shadow'?'紫色裂痕陷阱':'灰灯印地板：灯灭时危险'}">${p.kind==='shadow'?trapArt():darkFloorArt()}</g>`);}
+  for(const p of prediction.danger)if(!hazards.some(q=>same(p,q))){const c=center(p);overlay.push(`<path data-next-danger="${key(p)}" data-next-kind="${p.kind}" d="M${c.x} ${c.y-10}l9 10-9 10-9-10Z" fill="none" stroke="${p.kind==='shadow'?'#96799b':'#777887'}" stroke-width="1.5" opacity=".8" pointer-events="none"/>`);}
+  if(level.keyNoise&&state.hasKey&&previous&&!previous.hasKey){const p=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='K'?[{x,y}]:[]))[0];overlay.push(actor(p,noiseArt()));}
   for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++)if(tile(level,{x,y})!=='#'&&level.territories.length){const c=center({x,y}),region=territoryAt(level,{x,y}),color=colors[region];overlay.push(`<rect x="${c.x-25}" y="${c.y-25}" width="50" height="50" fill="${color}" opacity=".09" pointer-events="none"/>`);for(const d of [directions[1],directions[2]]){const q={x:x+d.x,y:y+d.y};if(territoryAt(level,q)!==region)overlay.push(line({x:c.x+(d.x?27:-27),y:c.y+(d.y?27:-27)},{x:c.x+27,y:c.y+27},color,2,'opacity=".65"'));}}
   for(const room of level.rooms){const a={x:PADDING+room.x*CELL,y:PADDING+room.y*CELL},size=room.size*CELL;overlay.push(`<g class="rotating-room" data-room="${room.id}" data-rotation="${state.rooms[room.id]}"><rect x="${a.x}" y="${a.y}" width="${size}" height="${size}" rx="6" fill="none" stroke="${colors[room.territory]}" stroke-width="3"/><path d="M${a.x+size-23} ${a.y+8}q14 0 14 14m-5-4 5 4 4-5" fill="none" stroke="${colors[room.territory]}" stroke-width="2"/></g>`);}
   if (previewState) for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {

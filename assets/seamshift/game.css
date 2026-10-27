@@ -332,3 +332,50 @@ body[data-world="torus"] { background:#d9dfd1; }
  .tools { grid-row:2;align-self:center;grid-template-columns:repeat(3,44px); }
  .dpad { grid-row:2; }
 }
+/* Persistent per-level discoveries. Rules occupy their own row, never map cells. */
+.game { grid-template-rows:56px 24px auto minmax(0,1fr) 28px auto; }
+.discovery-strip { width:100%;max-width:920px;justify-self:center;display:flex;gap:5px 18px;padding:5px 4px 7px;min-height:30px;align-items:center; }
+.current-rule { display:flex;align-items:center;gap:5px;font-size:11px;line-height:16px;color:#786c54;min-width:0;flex:1; }
+.current-rule>svg { flex:0 0 35px;width:35px;height:28px; }
+.map-stage { padding-top:44px;padding-bottom:0;max-width:calc((100cqh - 44px) * var(--map-aspect,1));max-height:calc(100cqw / var(--map-aspect,1) + 44px); }
+.map-stage:has(.shift-button:not([hidden])) { padding-bottom:0; }
+.map-tools { position:absolute;right:0;top:0;display:flex;gap:4px;align-items:center;height:44px;z-index:2; }
+.map-tools>.view-button { width:44px;height:44px;flex:0 0 44px; }
+.map-tools>.shift-button { position:static;transform:none;min-width:96px;min-height:44px;padding:0 10px;border:1px solid #ab98ac;border-radius:4px;font-size:10px;color:#6c5874;background:#e4d9e3; }
+.map-tools>.shift-button:not(:disabled) { border-color:#7a5d86;background:#d9cadf;color:#654972; }
+.map-tools>.shift-button:active { transform:translateY(1px); }
+#power-status { font-variant-numeric:tabular-nums;color:#8c7446; }
+.math-note { padding:14px 0;border-bottom:1px solid #cfc2a3; }
+.math-note h4 { margin:0 0 7px;font-size:13px;font-weight:500;color:#607456; }
+.math-note p { font-size:11px;line-height:1.85;color:#81745d;margin:4px 0; }
+.math-note .math-definition { padding:7px 9px;background:#ded5bd77;color:#5d5c49; }
+.math-note.locked { padding:9px 0;opacity:.55; }
+.math-note.locked h4 { font-size:11px;color:#81745d; }
+.math-note.locked p { font-size:10px; }
+.energy-flow { animation:energy-feed 1.2s linear infinite; }
+@keyframes energy-feed { to{stroke-dashoffset:-18} }
+.hazard-cell,.noise-art { pointer-events:none; }
+@media(max-width:600px) {
+ .game { grid-template-rows:48px 22px auto minmax(0,1fr) 26px auto; }
+ .discovery-strip { display:grid;gap:3px;padding:3px 2px 5px; }
+ .current-rule { font-size:10px;line-height:14px; }
+ .current-rule>svg { flex-basis:28px;width:28px;height:23px; }
+ .small-hud { gap:8px;font-size:9px; }
+ #power-status { font-size:9px; }
+}
+@media(min-width:360px) and (max-width:600px) and (min-height:521px) {
+ .control-deck { grid-template-columns:minmax(176px,1fr) 134px;grid-template-rows:134px; }
+ .mode-buttons { grid-column:1;grid-row:1;align-self:start; }
+ .tools { grid-column:1;grid-row:1;align-self:end;margin-bottom:5px; }
+ .dpad { grid-column:2;grid-row:1; }
+}
+@media(max-height:520px) and (min-width:480px) {
+ .game { grid-template-rows:48px auto minmax(0,1fr) 25px; }
+ .discovery-strip { grid-column:1;grid-row:2;display:grid;padding:1px 0;gap:2px; }
+ .current-rule { font-size:9px;line-height:12px; }
+ .current-rule>svg { flex-basis:22px;width:22px;height:20px; }
+ .arena { grid-column:1;grid-row:3; }
+ .message { grid-column:1;grid-row:4; }
+ .dock { grid-column:2;grid-row:2/5; }
+ .map-tools>.shift-button { min-width:88px;padding:0 5px;font-size:9px; }
+}

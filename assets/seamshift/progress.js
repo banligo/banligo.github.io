@@ -3,13 +3,13 @@ import { initialState, collectStar } from './engine.js';
 import { levels as campaign } from './levels.js';
 const LAST = campaign.length;
 export const SAVE_KEY = 'seamloom.adventure.v4';
-export const freshProgress = () => ({ version: 5, campaignLength:LAST, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });
+export const freshProgress = () => ({ version: 6, campaignLength:LAST, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });
 export function unlockedLevel(progress) {
   let id = 1; while (id < LAST && (progress.results[id]?.completed || progress.results[id]?.stars >= 1)) id++; return id;
 }
 export function normalizeProgress(raw, legacy = null) {
   const result = freshProgress();
-  if ([2,3,4,5].includes(raw?.version)) {
+  if ([2,3,4,5,6].includes(raw?.version)) {
     for (let id = 1; id <= LAST; id++) {
       const r = raw.results?.[id];
       if (r && Number.isInteger(r.stars) && r.stars >= 0 && r.stars <= 3 && (r.bestTurns===null || Number.isInteger(r.bestTurns) && r.bestTurns > 0)) {
@@ -43,7 +43,7 @@ export function recordWin(progress, levelId, stars, turns) {
 export function validSnapshot(snapshot, level) {
   if (!snapshot?.state || !Array.isArray(snapshot.history)) return false;
   const valid = state => {
-    if (!state || state.version !== 5 || state.layoutRevision !== level.revision || state.levelId !== level.id || !level.scales.includes(state.scale) || !level.modes.includes(state.topology)) return false;
+    if (!state || state.version !== 6 || state.layoutRevision !== level.revision || state.levelId !== level.id || !level.scales.includes(state.scale) || !level.modes.includes(state.topology)) return false;
     if (!Number.isInteger(state.turn) || state.turn < 0 || !['playing', 'won', 'lost'].includes(state.status) || typeof state.lampLit !== 'boolean' || typeof state.shadowReturning !== 'boolean' || typeof state.hunterAwake !== 'boolean' || typeof state.hasKey !== 'boolean' || typeof state.starCollected !== 'boolean') return false;
     if (!Array.isArray(state.pieces) || state.pieces.length !== level.pieces.length || !Array.isArray(state.hunters) || !Array.isArray(state.shadows) || !Array.isArray(state.events)) return false;
     if (state.hunters.length !== initialState(level).hunters.length || state.shadows.length !== (level.shadow ? 1 : 0)) return false;
@@ -56,7 +56,9 @@ export function validSnapshot(snapshot, level) {
     if(!['primal','dual'].includes(state.world)||!validPosition(state.anchor))return false;
     if(!state.bridgeStates||level.bridges.some(b=>typeof state.bridgeStates[b.id]!=='boolean')||!Array.isArray(state.triggered))return false;
     if(!state.rooms||level.rooms.some(r=>!Number.isInteger(state.rooms[r.id])||state.rooms[r.id]<0||state.rooms[r.id]>3))return false;
-    if(!Number.isInteger(state.energy)||state.energy<0||state.energy>3||!Number.isInteger(state.lampCharge)||state.lampCharge<0||state.lampCharge>2||typeof state.lampStarted!=='boolean')return false;
+    if(!Number.isInteger(state.energy)||state.energy!==state.lampCharge||!Number.isInteger(state.lampCharge)||state.lampCharge<0||state.lampCharge>(level.circuit?.maxCharge??2)||typeof state.lampStarted!=='boolean')return false;
+    if(!Array.isArray(state.hunterStates)||state.hunterStates.length!==state.hunters.length||!state.hunterStates.every(m=>['sleeping','alert','chasing'].includes(m)))return false;
+    if(!Array.isArray(state.hunterWakeReasons)||state.hunterWakeReasons.length!==state.hunters.length||state.hunterAwake!==state.hunterStates.some(m=>m!=='sleeping'))return false;
     if(!['unpowered','ready','charging','lit','shorted'].includes(state.lampStatus)||state.lampLit!==(state.lampStatus==='lit'))return false;
     const dual=dualGraph(level,state).graph;
     return [...state.shadows,...(state.world==='dual'?[state.player]:[])].every(p=>validPosition(p)&&dual.has(key(p)));
@@ -67,9 +69,16 @@ export function loadProgress(storage, levels) {
   try {
     const read = name => { try { return JSON.parse(storage.getItem(name) || 'null'); } catch { return null; } };
     const latest = read(SAVE_KEY), old = read('geomaze.adventure.v3') ?? read('seamshift.adventure.v2');
-    const raw = [4,5].includes(latest?.version) ? latest : old;
+    const raw = [4,5,6].includes(latest?.version) ? latest : old;
     const result = normalizeProgress(raw, read('seamshift.progress.v1'));
     const level = levels.find(l => l.id === result.currentLevel);
+    // Compatible layouts retain their exact attempt and Undo history. Changed
+    // monster/light layouts have a new revision and are archived below instead.
+    if(result.snapshot?.state?.version===5&&result.snapshot.state.layoutRevision===level.revision&&Array.isArray(result.snapshot.history)){
+      for(const state of [result.snapshot.state,...result.snapshot.history]){
+        state.version=6;state.hunterStates=state.hunters.map(()=>state.hunterAwake?'chasing':'sleeping');state.hunterWakeReasons=state.hunters.map(()=>null);state.energy=state.lampCharge;
+      }
+    }
     if(result.snapshot?.state && Array.isArray(result.snapshot.history)) for(const s of [result.snapshot.state,...result.snapshot.history]) s.lampLit ??= false;
     if (!validSnapshot(result.snapshot, level)) {
       if(result.snapshot) result.archivedAttempts[level.id]=result.snapshot;

@@ -76,6 +76,7 @@ export function hunterAlertCells(state,level,index){
   return queue;
 }
 export function riftAccess(state,level){
+  if(state.status!=='playing')return {available:false,message:'本关已结束，可以撤销或重新开始。'};
   const rift=level.rifts.find(r=>same(state.player,state.world==='dual'?r.dual:r.primal));
   if(!rift)return {available:false,message:'只有站在双色裂隙上才能切换世界。'};
   if(state.world==='dual'){

@@ -1,6 +1,6 @@
 import { levels, getLevel } from './levels.js';
-import { pendingLessons, referenceLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js';
-import { createSession, disconnected, preview, score } from './engine.js';
+import { referenceLessons, lessonCards,notebookCards,observeDiscoveries,currentDiscoveryCards } from './teaching.js';
+import { createSession, preview, score, riftAccess, lampSupply } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
 import { patchBoard, setMarkupIfChanged } from './renderer.js';
@@ -55,7 +55,10 @@ function renderControls() {
   setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#shift-button').hidden=!level.rifts.length;
   $('#shift-button').textContent=state.world==='dual'?'回到道路 · E':'进入裂隙 · E';
-  $('#shift-button').disabled=!level.rifts.some(r=>{const p=state.world==='dual'?r.dual:r.primal;return p.x===state.player.x&&p.y===state.player.y;});
+  const access=riftAccess(state,level);$('#shift-button').disabled=!access.available;$('#shift-button').title=access.message;
+  $('#shift-button').setAttribute('aria-label',state.world==='dual'?'返回道路世界（E）':'进入裂隙（E）');
+  $('#power-status').hidden=!level.circuit;
+  if(level.circuit){const supply=lampSupply(state,level),names={unpowered:'断供',ready:'待启动',charging:'充电',lit:'灯亮',shorted:'短路'};$('#power-status').textContent=`发电 ${supply.started?'ON':'OFF'} · 电量 ${state.lampCharge}/${supply.maxCharge} · ${names[state.lampStatus]}`;}
   $('#game').dataset.layer=state.world;
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
@@ -73,27 +76,18 @@ function render() {
   $('#current-goal').textContent = level.goalText; $('#lost-overlay').hidden = state.status !== 'lost';
   renderControls(); renderMap();
 }
-function renderNewMechanisms() {
-  const fresh = pendingLessons(level,progress);
-  $('#level-info').hidden = !fresh.length;
-  $('#level-tip').textContent = fresh.length ? '新发现 · 点此看看' : '';
-  $('#map-stage').classList.toggle('has-new-rule', !!fresh.length);
+function renderNewMechanisms(){
+ setMarkupIfChanged($('#current-discoveries'),currentDiscoveryCards(level,session.state,progress));
 }
-function teachOnce() {
-  for(const id of observeDiscoveries(level,session.state))discover(id);renderNewMechanisms();
-  toast();
-  if(!progress.seenTips.includes('first-rules')) {
-    progress.seenTips.push('first-rules'); $('#intro-rules').hidden=false; $('#level-info').style.visibility='hidden';
-    setTimeout(()=>{ $('#intro-rules').hidden=true; $('#level-info').style.visibility='visible'; },4400); persist();
-  }
+function teachOnce(){
+ for(const id of observeDiscoveries(level,session.state))discover(id);
+ renderNewMechanisms();persist();
 }
 
 function discover(id) { if (!progress.discoveries.includes(id)) { progress.discoveries.push(id); $('#discovery-dot').hidden = false; } }
 function checkDiscoveries(before, action) {
-  for(const id of observeDiscoveries(level,session.state,action)) discover(id);
+  for(const id of observeDiscoveries(level,session.state,action,before)) discover(id);
   renderNewMechanisms();
-  const state = session.state;
-
 }
 function flashInvalid(text) {
   toast(text, 'error'); if (lightweight) return; const board = $('#board'); board.classList.remove('invalid'); void board.offsetWidth; board.classList.add('invalid');
@@ -122,11 +116,11 @@ function perform(action) {
   persist();
   if (session.state.status === 'lost') { actionQueue.clear(); $('#lost-overlay').hidden = false; toast('没关系，撤销一步就好。', 'error'); }
   else if (result.message) toast(result.message);
-  else if (session.state.hunterAwake) toast('小兽追击中；虚线是下一步，无路时停留。');
+  else if(session.state.hunterStates.includes('alert'))toast('小兽警觉了：棕色箭头是下一有效回合。');
 }
 function finishLevel() {
   clearTimeout(saveTimer); saveTimer = null;
-  actionQueue.clear(); if(level.id === 4) discover('duality'); advancing = true; const count = score(session.state, level);
+  actionQueue.clear(); discover('math-search');discover('math-shortest'); advancing = true; const count = score(session.state, level);
   progress = recordWin(progress, level.id, count, session.state.turn); saveProgress(storage, progress);
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id].stars);
   $('#best-stars').setAttribute('aria-label', `本关历史 ${progress.results[level.id].stars} 星`);
@@ -171,20 +165,12 @@ function showDialog(id) {
   if (advancing) return;
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
-  if (id === 'level-dialog') renderLevelInfo();
   if (id === 'help-dialog') setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level,progress)));
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
     $('#discovery-cards').innerHTML=notebookCards(level,progress);
   }
   $(`#${id}`).showModal();
-}
-function renderLevelInfo() {
-  const fresh = pendingLessons(level,progress);
-  $('#level-dialog-title').textContent = fresh.length ? '新的发现' : '图例与规则';
-  $('#rule-cards').innerHTML = lessonCards(fresh.length ? fresh : referenceLessons(level,progress));
-  for(const rule of fresh) progress.seenTips.push(`notebook-v5:${rule.id}`);
-  renderNewMechanisms(); persist();
 }
 function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
 function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap(); }
@@ -194,6 +180,7 @@ function actionLabel(action) {
   if (action.type === 'topology') return `试试${modeNames[action.value]}空间`;
   if (action.type === 'rotate') return `旋转第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片`;
   if (action.type === 'place') return `把第 ${level.pieces.findIndex(p => p.id === action.pieceId) + 1} 块碎片放在空白地面`;
+  if(action.type==='shift')return '在双色裂隙切换世界';
   if (action.type === 'remove') return '收回这块碎片再试试';
   return '等一回合，看看小兽的下一步';
 }
@@ -206,6 +193,7 @@ function hint() {
   tell('让我看看，这一步可以怎么走…');
   const finish = action => {
     if (request !== hintRequest || level.id !== id || session.state !== hintState) return;
+    discover('math-search');persist();
     tell(action ? `下一步可以${actionLabel(action)}。` : '当前搜索没找到出口；试着收回碎片，或撤销几步。');
   };
   try {
@@ -295,7 +283,6 @@ document.addEventListener('click', event => {
   const actions = {
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'),
-    'level-info': () => showDialog('level-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; },

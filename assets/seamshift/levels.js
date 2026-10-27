@@ -11,7 +11,7 @@ const definitions=[
   bridges:[bridge('reed',[[3,1],[4,1]]),bridge('clay',[[5,4],[5,5]],false,'clay')],
   controls:[control('first',2,1,'bridge',{bridge:'reed'}),control('second',5,3,'bridge',{bridge:'clay'})],scales:[1],modes:['plane'],star:{x:2,y:3},
   lesson:'踩同纹地板，让两座断桥重新相连。',hints:['机关上的双横纹，与桥的纹样相同。','拿到星片后，再次进入机关会改变桥的状态；先看桥有没有接好。']},
- {id:2,title:'Monster & Boundaries',subtitle:'另一边的小兽',map:['#######','.P####K','..#####','..#####','M.#####','DE#####','#######'],modes:['plane','cylinder','mobius'],scales:[1],keyNoise:{radius:4},alertRadius:1,star:{x:0,y:2},
+ {id:2,title:'Monster & Boundaries',subtitle:'另一边的小兽',map:['#######','.P####K','..#####','..#####','MD#####','.E#####','#######'],modes:['plane','cylinder','mobius'],scales:[1],keyNoise:{radius:4},alertRadius:1,star:{x:0,y:2},
   lesson:'带铃钥匙会传出声音；先看小兽的警戒，再绕行。',hints:['同一行的另一边有钥匙，扭转后另一边换了一行。','先规划退路；醒来的小兽每回合走一步，等待也会推进它。']},
  {id:3,title:'Puzzle & Torus',subtitle:'上下相接的织片',map:['##._###','##.P###','#._####','#######','#######','###_E##','##._###'],modes:['plane','torus'],scales:[1],
   pieces:[piece('reed'),piece('bend','corner',3,'clay'),piece('fork','tee',0,'sage')],star:{x:1,y:2},
@@ -59,7 +59,7 @@ const definitions=[
  {id:15,title:'The Last Seam',subtitle:'最后一道缝',map:['#.#######','#.#######','.PBB..M##','.Q#######','#########','###_E...#','###.#__..','##......#','#..######'],modes:['plane','mobius','torus'],
   bridges:[bridge('escape',[[2,2],[3,2]],true)],controls:[control('cut',1,3,'bridge',{bridge:'escape'})],
   pieces:[piece('bend','corner',1,'clay'),piece('barrier','straight',0,'sage')],hunterInitial:'alert',alertRadius:5,
-  shadow:[7,6],beacon:[5,6],shadowSpeed:4,star:{x:6,y:5},
+  shadow:[7,6],beacon:[5,6],shadowSpeed:4,star:{x:5,y:7},
   lesson:'守桥者已警觉；断桥留住它，再沿翻转或上下接缝绕行。',
   hints:['上、下同色边缘和左、右反序边缘，通向同一个下方区域。','紫色裂痕扫过终点和星片；可以绕下方小路，或用竖直拼图改变影子的紫线。']},
 

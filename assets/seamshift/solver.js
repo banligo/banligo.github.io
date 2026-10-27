@@ -31,22 +31,24 @@ class Heap {
   }
 }
 
-function makeHeuristic(level,requireStar) {
+function makeHeuristic(level,requireStar,modes=level.modes) {
  const union=new Map(),cache=new Map(),pkey=p=>'p:'+key(p),dkey=p=>'d:'+key(p);
  const add=(a,b)=>{if(!union.has(a))union.set(a,new Set());union.get(a).add(b);};
  for(let y=0;y<level.height;y++)for(let x=0;x<level.width;x++){
-  const p={x,y};if(tile(level,p)!=='#')for(const mode of level.modes)for(const d of directions){const q=neighbor(p,d,level,mode);if(q&&tile(level,q)!=='#')add(pkey(p),pkey(q));}
-  if(level.rifts.length)for(const mode of level.modes)if(dualNode(p,level,mode))for(const d of directions){let q={x:x+d.x,y:y+d.y};if(q.x<0&&mode!=='plane'){q.x+=level.width;if(mode==='mobius')q.y=level.height-q.y;}q=dualNode(q,level,mode);if(q)add(dkey(p),dkey(q));}
+  const p={x,y};if(tile(level,p)!=='#')for(const mode of modes)for(const d of directions){const q=neighbor(p,d,level,mode);if(q&&tile(level,q)!=='#')add(pkey(p),pkey(q));}
+  if(level.rifts.length)for(const mode of modes)if(dualNode(p,level,mode))for(const d of directions){let q={x:x+d.x,y:y+d.y};if(q.x<0&&mode!=='plane'){q.x+=level.width;if(mode==='mobius')q.y=level.height-q.y;}q=dualNode(q,level,mode);if(q)add(dkey(p),dkey(q));}
  }
  for(const r of level.rifts){add(pkey(r.primal),dkey(r.dual));add(dkey(r.dual),pkey(r.primal));}
- const distance=(a,b)=>{const id=a+':'+b;if(!cache.has(id)){const queue=[[a,0]],seen=new Set([a]);let found=0;for(let i=0;i<queue.length;i++){const [p,n]=queue[i];if(p===b){found=n;break;}for(const q of union.get(p)??[])if(!seen.has(q)){seen.add(q);queue.push([q,n+1]);}}cache.set(id,found);}return cache.get(id);};
+ const distance=(a,b)=>{const id=a+':'+b;if(!cache.has(id)){const queue=[[a,0]],seen=new Set([a]);let found=Infinity;for(let i=0;i<queue.length;i++){const [p,n]=queue[i];if(p===b){found=n;break;}for(const q of union.get(p)??[])if(!seen.has(q)){seen.add(q);queue.push([q,n+1]);}}cache.set(id,found);}return cache.get(id);};
  const goal=pkey(positions(level,'E')[0]),star=pkey(level.star);
  return state=>{const p=(state.world==='dual'?dkey:pkey)(state.player);return requireStar&&!state.starCollected?distance(p,star)+distance(star,goal):distance(p,goal);};
 }
 // A* with an admissible relaxed-union movement lower bound. Geometry,
 // monsters and locks are relaxed only in the heuristic, never in transitions.
 export function search(level, start = initialState(level), { maxExpanded = 200000, maxDepth = 48, requireStar = false, weight = 1, forbid = () => false } = {}) {
-  const heuristic = makeHeuristic(level, requireStar), open = new Heap(), best = new Map(), actions = actionsFor(level).filter(a => !forbid(a));
+  const modes=[...new Set([start.topology,...level.modes.filter(value=>!forbid({type:'topology',value}))])];
+  const heuristic = makeHeuristic(level, requireStar,modes), open = new Heap(), best = new Map(), actions = actionsFor(level).filter(a => !forbid(a));
+  if(!Number.isFinite(heuristic(start)))return {actions:null,expanded:0,exhausted:true,reason:'No path in the optimistic union of every permitted geometry'};
   open.push({ state: start, depth: 0, parent: null, action: null, priority: 0 }); best.set(stateHash(start, level), 0);
   let expanded = 0;
   while (open.data.length && expanded < maxExpanded) {
