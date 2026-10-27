@@ -1,6 +1,7 @@
 import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,floorArt,bridgeArt,keyArt,doorArt,playerArt,darkFloorArt,noiseArt} from './sprites.js';
 import {pieceIcon} from './board.js';
 import {starPath} from './icons.js';
+import {dualGraph} from './graphs.js';
 const art=body=>`<svg viewBox="-60 -32 120 66" aria-hidden="true">${body}</svg>`;
 const pair=(a,b)=>art(`<g transform="translate(-30 0) scale(.8)">${a}</g><g transform="translate(30 0) scale(.8)">${b}</g>`);
 // Pocket manual: game actions only. Mathematical material lives separately below.
@@ -35,7 +36,7 @@ export function observeDiscoveries(level,state,action=null,before=null){
  if(action?.type==='wait'&&state.shadows.length)ids.push('math-dynamics');
  if(state.hunterStates.some(m=>m==='chasing'))ids.push('math-bfs','math-shortest','math-dynamics');
  if(['place','rotate','remove'].includes(action?.type)||before&&JSON.stringify(state.bridgeStates)!==JSON.stringify(before.bridgeStates))ids.push('math-connectivity','math-cut','math-dynamic');
- if(before&&state.shadows.length&&['place','rotate','remove','topology'].includes(action?.type))ids.push('math-dual','math-cut-cycle');
+ if(before&&state.shadows.length&&['place','rotate','remove','topology','move'].includes(action?.type)){const old=dualGraph(level,before).crossings.map(e=>e.open).join(','),now=dualGraph(level,state).crossings.map(e=>e.open).join(',');if(old!==now)ids.push('math-dual','math-cut-cycle');}
  if(before&&JSON.stringify(state.rooms)!==JSON.stringify(before.rooms))ids.push('math-voronoi','math-dynamic');
  if(before&&before.lampCharge!==state.lampCharge)ids.push('math-energy','math-dynamics');
  if(before&&before.world!==state.world)ids.push('math-dual');
@@ -67,7 +68,10 @@ const summary={
 };
 export function currentDiscoveryCards(level,state,progress){
  return (summary[level.id]??[level.lesson]).map((text,i)=>{const topics=levelTopics[level.id]??['road'],id=topics[Math.min(i,topics.length-1)],rule=lessons.find(l=>l.id===id),known=progress.discoveries.includes(id);let image=rule.art;
- if(id==='hunter-sleep'||id==='hunter-awake')image=art(hunterArt(state.hunterStates.some(m=>m!=='sleeping')));
+ const drawings={bridge:controlArt(),shadow:shadowArt(),trap:trapArt(),lamp:lampArt(true),energy:lampArt(true),dark:darkFloorArt(),ignite:controlArt('ignite'),rift:riftArt(),room:controlArt('room','#78939c'),star:`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`,'key-noise':keyArt()+noiseArt()};
+ if(id==='hunter-sleep'||id==='hunter-awake')drawings[id]=hunterArt(state.hunterStates.some(m=>m!=='sleeping'));
+ if(drawings[id])image=art(drawings[id]).replace('-60 -32 120 66','-27 -28 54 56');
+ if(id==='topologies')image=boundaryDiagram(state.topology);
  return `<div class="current-rule" data-rule="${id}">${known?image:art('<circle r="7" fill="none" stroke="#aaa18a"/>')}<span>${known?text:'尚未发现 · 观察地图上的变化'}</span></div>`;}).join('');
 }
 const boundaryDiagram=mode=>`<svg viewBox="0 0 64 48" aria-hidden="true"><rect x="13" y="9" width="38" height="30" rx="2" fill="#ded1ad" stroke="#b9ad90"/><path d="M25 9v30M39 9v30M13 19h38M13 29h38" stroke="#c2b592" stroke-width=".6"/>${mode==='plane'?'<path d="M10 9v30M54 9v30M13 6h38M13 42h38" stroke="#9e957e"/>':mode==='mobius'?'<path d="M4 13 60 35M4 35 60 13" stroke="#ac7d6b" stroke-width="1.5"/>':'<path d="M4 24h56m-5-4 5 4-5 4" fill="none" stroke="#7d936e" stroke-width="1.5"/>'}${mode==='torus'?'<path d="M32 2v44m-4-5 4 5 4-5" fill="none" stroke="#6c8892" stroke-width="1.5"/>':''}</svg>`;
