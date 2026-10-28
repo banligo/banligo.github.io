@@ -1,6 +1,6 @@
-import { active, dualGraph, key } from './graphs.js';
-import { initialState, collectStar } from './engine.js';
-import { levels as campaign } from './levels.js';
+import { active, dualGraph, key } from './graphs.js?v=7bce4805ffac';
+import { initialState, collectStar } from './engine.js?v=7bce4805ffac';
+import { levels as campaign } from './levels.js?v=7bce4805ffac';
 const LAST = campaign.length;
 export const SAVE_KEY = 'seamloom.adventure.v4';
 export const freshProgress = () => ({ version: 6, campaignLength:LAST, currentLevel: 1, results: {}, seenTips: [], discoveries: [], snapshot: null, archivedAttempts: {} });

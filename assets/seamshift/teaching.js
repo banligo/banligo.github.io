@@ -1,7 +1,7 @@
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,floorArt,bridgeArt,keyArt,doorArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js';
-import {pieceIcon} from './board.js';
-import {starPath} from './icons.js';
-import {dualGraph} from './graphs.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,floorArt,bridgeArt,keyArt,doorArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js?v=7bce4805ffac';
+import {pieceIcon} from './board.js?v=7bce4805ffac';
+import {starPath} from './icons.js?v=7bce4805ffac';
+import {dualGraph} from './graphs.js?v=7bce4805ffac';
 const art=body=>`<svg viewBox="-60 -32 120 66" aria-hidden="true">${body}</svg>`;
 const pair=(a,b)=>art(`<g transform="translate(-30 0) scale(.8)">${a}</g><g transform="translate(30 0) scale(.8)">${b}</g>`);
 // Pocket manual: game actions only. Mathematical material lives separately below.

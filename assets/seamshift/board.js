@@ -1,9 +1,9 @@
-import {bridgeIsOpen,roomAt,territoryAt} from './world.js';
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js';
-import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
-import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger, dangerCells, hunterMode, hunterAlertCells, lampSupply } from './engine.js';
-import { pieceAt, ports } from './pieces.js';
-import { starPath } from './icons.js';
+import {bridgeIsOpen,roomAt,territoryAt} from './world.js?v=7bce4805ffac';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js?v=7bce4805ffac';
+import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js?v=7bce4805ffac';
+import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger, dangerCells, hunterMode, hunterAlertCells, lampSupply } from './engine.js?v=7bce4805ffac';
+import { pieceAt, ports } from './pieces.js?v=7bce4805ffac';
+import { starPath } from './icons.js?v=7bce4805ffac';
 export const CELL = 56, PADDING = 23;
 export const cellCenter = p => ({ x: PADDING + (p.x + .5) * CELL, y: PADDING + (p.y + .5) * CELL });
 export const dualCorner = p => ({ x: PADDING + p.x * CELL, y: PADDING + p.y * CELL });

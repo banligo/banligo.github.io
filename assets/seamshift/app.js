@@ -1,15 +1,14 @@
-import { levels, getLevel } from './levels.js';
-import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js';
-import { createSession, preview, score, riftAccess } from './engine.js';
-import { slotAt } from './pieces.js';
-import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
-import { patchBoard, setMarkupIfChanged } from './renderer.js';
-import { fitViewport } from './viewport.js';
-import { icon } from './icons.js';
-import { playerArt } from './sprites.js';
-import { routeHint } from './route-hints.js';
-import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
-import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js';
+import { levels, getLevel } from './levels.js?v=7bce4805ffac';
+import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js?v=7bce4805ffac';
+import { createSession, preview, score, riftAccess } from './engine.js?v=7bce4805ffac';
+import { slotAt } from './pieces.js?v=7bce4805ffac';
+import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js?v=7bce4805ffac';
+import { patchBoard, setMarkupIfChanged } from './renderer.js?v=7bce4805ffac';
+import { fitViewport } from './viewport.js?v=7bce4805ffac';
+import { icon } from './icons.js?v=7bce4805ffac';
+import { routeHint } from './route-hints.js?v=7bce4805ffac';
+import { createActionQueue, swipeDirection, cellFromClient } from './input.js?v=7bce4805ffac';
+import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js?v=7bce4805ffac';
 const $ = selector => document.querySelector(selector);
 const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转', torus:'环面' };
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
@@ -206,12 +205,12 @@ function hint() {
   };
   const known=routeHint(level,session.state);if(known){finish(known);return;}
   try {
-    worker ||= new Worker(new URL('./hint-worker.js', import.meta.url), { type: 'module' });
+    worker ||= new Worker(new URL('./hint-worker.js?v=7bce4805ffac', import.meta.url), { type: 'module' });
     worker.onmessage = ({ data }) => { if (data.request === request) finish(data.action); };
     worker.onerror = () => { worker?.terminate(); worker = null; finish(null); };
     worker.postMessage({ request, state: session.state, levelId: id });
   } catch {
-    import('./solver.js').then(({ solve }) => setTimeout(() => finish(solve(level, session.state, { maxDepth: 60, maxExpanded: 12000 })?.actions[0]), 0));
+    import('./solver.js?v=7bce4805ffac').then(({ solve }) => setTimeout(() => finish(solve(level, session.state, { maxDepth: 60, maxExpanded: 12000 })?.actions[0]), 0));
   }
 }
 function clearGesture() {
@@ -290,7 +289,6 @@ document.addEventListener('click', event => {
   if (button.dataset.direction) { actionQueue.push({ type: 'move', direction: button.dataset.direction }); return; }
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
-    'enter-game': enterGame,
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll, 'cancel-reset':()=>showDialog('levels-dialog'),
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'), 'new-discovery-button':()=>showDialog('new-discoveries-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
@@ -348,7 +346,7 @@ document.addEventListener('keydown', event => {
 });
 window.addEventListener('pagehide', () => { if (!advancing) flushPersistence(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && !advancing) flushPersistence(); });
-function enterGame() {
+export function enterGame() {
   if (entered) return;
   entered = true; $('#start-screen').hidden = true; $('#game').hidden = false; $('#game').inert = false;
   render();
@@ -358,5 +356,3 @@ function enterGame() {
   } else { persist(); teachOnce(); $('#board').focus({preventScroll:true}); }
 }
 hydrateIcons(); render();
-$('#start-art').innerHTML = `<svg viewBox="0 0 320 230"><ellipse cx="160" cy="196" rx="115" ry="15" fill="#c5b58e" opacity=".2"/><path d="M30 160H105V94H226V43H281" fill="none" stroke="#c5b38d" stroke-width="30" stroke-linejoin="round"/><path d="M30 160H105V94H226V43H281" fill="none" stroke="#f0e3bf" stroke-width="22" stroke-linejoin="round"/><path d="M118 94H153" stroke="#e9dfc6" stroke-width="33"/><path d="M119 80v28M128 80v28M137 80v28M146 80v28" stroke="#9a7851" stroke-width="4"/><g transform="translate(80 146) scale(2)">${playerArt()}</g><path d="m254 24 4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1Z" fill="#d5a54d"/><path d="M10 38q48-28 68 1M254 178q40 11 50-17" fill="none" stroke="#84967a" stroke-width="2" stroke-dasharray="4 6"/></svg>`;
-setTimeout(()=>$('#boot-fade').remove(),900);

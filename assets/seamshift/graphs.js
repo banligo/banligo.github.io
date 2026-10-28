@@ -1,5 +1,5 @@
-import {bridgeAt,bridgeIsOpen,roomAt,worldSignature} from './world.js';
-import { pieceAt, pieceSignature, portOpen } from './pieces.js';
+import {bridgeAt,bridgeIsOpen,roomAt,worldSignature} from './world.js?v=7bce4805ffac';
+import { pieceAt, pieceSignature, portOpen } from './pieces.js?v=7bce4805ffac';
 export const key = p => `${p.x},${p.y}`;
 export const point = k => { const [x, y] = k.split(',').map(Number); return { x, y }; };
 export const same = (a, b) => !!a && !!b && a.x === b.x && a.y === b.y;

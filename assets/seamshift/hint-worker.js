@@ -1,6 +1,6 @@
-import { getLevel } from './levels.js';
-import { solve } from './solver.js';
-import { routeHint } from './route-hints.js';
+import { getLevel } from './levels.js?v=7bce4805ffac';
+import { solve } from './solver.js?v=7bce4805ffac';
+import { routeHint } from './route-hints.js?v=7bce4805ffac';
 self.onmessage = ({ data }) => {
   const known = routeHint(getLevel(data.levelId),data.state);
   if(known){self.postMessage({request:data.request,action:known});return;}

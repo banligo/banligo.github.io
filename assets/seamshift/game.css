@@ -498,7 +498,7 @@ body[data-world="torus"] { background:#d9dfd1; }
 .start-screen h1 { font:clamp(38px,9vw,64px) Georgia,serif;letter-spacing:4px;color:#546a59;margin:16px 0 12px; }
 .start-subtitle { color:#85765c;font-size:15px; }
 .start-art { width:min(320px,72vw);margin:12px 0 20px; }
-.start-art svg { display:block;width:100%; }
+.start-art svg,.start-art img { display:block;width:100%;height:auto; }
 .enter-game { display:flex;align-items:center;justify-content:space-between;gap:40px;font-size:17px;min-height:54px;min-width:210px;padding:12px 23px;background:#758b71;color:#fff8e6;border:1px solid #526c54;box-shadow:0 4px 0 #526c54;border-radius:6px; }
 .enter-game:hover:not(:disabled) { color:#fff8e6;background:#657f63; }
 .start-caption { margin-top:22px;font-size:12px;color:#9a8c72; }
@@ -524,3 +524,5 @@ body[data-world="torus"] { background:#d9dfd1; }
 
 .discovery-strip>.shift-button:active { transform:translateY(1px); }
 #new-discoveries-dialog .dialog-header { justify-content:flex-end;margin:0; }
+
+.entry-status { margin-top:12px;max-width:280px;font-size:13px;line-height:1.7;color:#985e46; }

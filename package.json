@@ -8,5 +8,10 @@
     "build": "node tools/seamshift/build.mjs",
     "test": "node --test tools/seamshift/*.test.mjs"
   },
-  "engines": { "node": ">=20" }
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.14"
+  }
 }
