@@ -193,7 +193,7 @@ collections:
 
 exclude:
   # Temporarily hide only the public root homepage; keep /seamshift/ published.
-  - /index.html
+  # - /index.html
   - .private
   - tools
   - dist
