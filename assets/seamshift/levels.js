@@ -1,5 +1,5 @@
-import {buildable} from './world.js?v=7bce4805ffac';
-import {verified} from './verified.js?v=7bce4805ffac';
+import {buildable} from './world.js?v=06fbbcc5c4e0';
+import {verified} from './verified.js?v=06fbbcc5c4e0';
 const all=['plane','cylinder','mobius','torus'];
 const piece=(id,shape='straight',rotation=0,color='ochre')=>({id,shape,rotation,color});
 const control=(id,x,y,kind,extra={})=>({id,x,y,kind,...extra});

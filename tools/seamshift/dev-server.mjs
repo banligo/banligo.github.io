@@ -21,4 +21,4 @@ const server = createServer(async (req, res) => {
     res.writeHead(200, { 'Content-Type': types[extname(path)] || 'application/octet-stream', 'Cache-Control': 'no-cache' }); res.end(contents);
   } catch { res.writeHead(404); res.end('Not found'); }
 });
-server.listen(port, '127.0.0.1', () => console.log(`SEAMLOOM → http://127.0.0.1:${server.address().port}/seamshift/`));
+server.listen(port, '127.0.0.1', () => console.log(`Geometry Maze → http://127.0.0.1:${server.address().port}/seamshift/`));

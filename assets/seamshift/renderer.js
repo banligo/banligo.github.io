@@ -1,4 +1,4 @@
-import { boardMarkup } from './board.js?v=7bce4805ffac';
+import { boardMarkup } from './board.js?v=06fbbcc5c4e0';
 const boardCache = new WeakMap();
 const markupCache = new WeakMap();
 export function setMarkupIfChanged(element, markup) {

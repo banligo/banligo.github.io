@@ -1,14 +1,14 @@
-import { levels, getLevel } from './levels.js?v=7bce4805ffac';
-import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js?v=7bce4805ffac';
-import { createSession, preview, score, riftAccess } from './engine.js?v=7bce4805ffac';
-import { slotAt } from './pieces.js?v=7bce4805ffac';
-import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js?v=7bce4805ffac';
-import { patchBoard, setMarkupIfChanged } from './renderer.js?v=7bce4805ffac';
-import { fitViewport } from './viewport.js?v=7bce4805ffac';
-import { icon } from './icons.js?v=7bce4805ffac';
-import { routeHint } from './route-hints.js?v=7bce4805ffac';
-import { createActionQueue, swipeDirection, cellFromClient } from './input.js?v=7bce4805ffac';
-import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js?v=7bce4805ffac';
+import { levels, getLevel } from './levels.js?v=06fbbcc5c4e0';
+import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js?v=06fbbcc5c4e0';
+import { createSession, preview, score, riftAccess } from './engine.js?v=06fbbcc5c4e0';
+import { slotAt } from './pieces.js?v=06fbbcc5c4e0';
+import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js?v=06fbbcc5c4e0';
+import { patchBoard, setMarkupIfChanged } from './renderer.js?v=06fbbcc5c4e0';
+import { fitViewport } from './viewport.js?v=06fbbcc5c4e0';
+import { icon } from './icons.js?v=06fbbcc5c4e0';
+import { routeHint } from './route-hints.js?v=06fbbcc5c4e0';
+import { createActionQueue, swipeDirection, cellFromClient } from './input.js?v=06fbbcc5c4e0';
+import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js?v=06fbbcc5c4e0';
 const $ = selector => document.querySelector(selector);
 const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转', torus:'环面' };
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
@@ -205,12 +205,12 @@ function hint() {
   };
   const known=routeHint(level,session.state);if(known){finish(known);return;}
   try {
-    worker ||= new Worker(new URL('./hint-worker.js?v=7bce4805ffac', import.meta.url), { type: 'module' });
+    worker ||= new Worker(new URL('./hint-worker.js?v=06fbbcc5c4e0', import.meta.url), { type: 'module' });
     worker.onmessage = ({ data }) => { if (data.request === request) finish(data.action); };
     worker.onerror = () => { worker?.terminate(); worker = null; finish(null); };
     worker.postMessage({ request, state: session.state, levelId: id });
   } catch {
-    import('./solver.js?v=7bce4805ffac').then(({ solve }) => setTimeout(() => finish(solve(level, session.state, { maxDepth: 60, maxExpanded: 12000 })?.actions[0]), 0));
+    import('./solver.js?v=06fbbcc5c4e0').then(({ solve }) => setTimeout(() => finish(solve(level, session.state, { maxDepth: 60, maxExpanded: 12000 })?.actions[0]), 0));
   }
 }
 function clearGesture() {

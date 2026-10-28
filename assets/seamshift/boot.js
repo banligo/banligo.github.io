@@ -17,7 +17,7 @@ export function installEntrance(doc, load = loadGame) {
       game.enterGame();
     } catch (error) {
       status.textContent = '暂时无法进入，请重试或刷新页面。'; status.hidden = false;
-      console.error('SEAMLOOM could not start:', error);
+      console.error('Geometry Maze could not start:', error);
     } finally {
       loading = false; button.disabled = false; button.innerHTML = label;
     }

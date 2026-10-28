@@ -1,4 +1,4 @@
-# SEAMLOOM — A World of Twisted Paths
+# 几何迷宫 · Geometry Maze
 
 15 关轻量级回合迷宫。复用原有原生 ES modules + SVG 架构，无新增运行时依赖、后端或游戏框架。地址继续使用 `/seamshift/`。游戏独立发布。
 

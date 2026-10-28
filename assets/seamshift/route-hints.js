@@ -1,6 +1,6 @@
-import { walkthroughs } from './walkthroughs.js?v=7bce4805ffac';
-import { initialState, applyAction } from './engine.js?v=7bce4805ffac';
-import { stateHash } from './solver.js?v=7bce4805ffac';
+import { walkthroughs } from './walkthroughs.js?v=06fbbcc5c4e0';
+import { initialState, applyAction } from './engine.js?v=06fbbcc5c4e0';
+import { stateHash } from './solver.js?v=06fbbcc5c4e0';
 const cache = new WeakMap();
 export function routeHint(level, state) {
   const route = walkthroughs.find(p => p.id === level.id && p.revision === level.revision);

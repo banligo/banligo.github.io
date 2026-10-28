@@ -495,7 +495,7 @@ body[data-world="torus"] { background:#d9dfd1; }
 .shadow-next-arrow { pointer-events:none;filter:drop-shadow(0 2px 2px #51396066); }
 .start-screen { height:var(--app-height,100dvh);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;background:radial-gradient(ellipse at 50% 46%,#f5ecd7,transparent 65%);text-align:center; }
 .start-eyebrow { color:#8f8066;font:11px Georgia,serif;letter-spacing:3px; }
-.start-screen h1 { font:clamp(38px,9vw,64px) Georgia,serif;letter-spacing:4px;color:#546a59;margin:16px 0 12px; }
+.start-screen h1 { font:clamp(38px,9vw,64px) Georgia,"Songti SC","STSong",serif;letter-spacing:4px;color:#546a59;margin:16px 0 12px; }
 .start-subtitle { color:#85765c;font-size:15px; }
 .start-art { width:min(320px,72vw);margin:12px 0 20px; }
 .start-art svg,.start-art img { display:block;width:100%;height:auto; }
@@ -526,3 +526,6 @@ body[data-world="torus"] { background:#d9dfd1; }
 #new-discoveries-dialog .dialog-header { justify-content:flex-end;margin:0; }
 
 .entry-status { margin-top:12px;max-width:280px;font-size:13px;line-height:1.7;color:#985e46; }
+
+.wordmark { font-family:Georgia,"Songti SC","STSong",serif;letter-spacing:2px; }
+.wordmark small { display:block;margin-top:3px;font:10px/1.2 Georgia,serif;letter-spacing:.5px; }

@@ -14,7 +14,7 @@ test('game preview serves its assets and leaves the homepage to Jekyll',async()=
       child.once('exit',code=>{clearTimeout(timer);reject(Error(`Preview exited: ${code}`));});
     });
     for(const path of ['/','/index.html']){const r=await fetch(url+path,{redirect:'manual'});assert.equal(r.status,404);assert((await r.text()).includes('<h1>404</h1>'));assert.equal(r.headers.get('location'),null);}
-    const game=await fetch(url+'/seamshift/');assert.equal(game.status,200);assert((await game.text()).includes('<title>SEAMLOOM'));
+    const game=await fetch(url+'/seamshift/');assert.equal(game.status,200);assert((await game.text()).includes('<title>几何迷宫 · Geometry Maze</title>'));
     const asset=await fetch(url+'/assets/seamshift/app.js');assert.equal(asset.status,200);assert(asset.headers.get('content-type').includes('javascript'));
     assert.equal((await fetch(url+'/_config.yml')).status,404);
     const config=readFileSync(new URL('../../_config.yml',import.meta.url),'utf8');assert(!config.includes('  - /seamshift/'));

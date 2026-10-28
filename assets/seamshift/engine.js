@@ -1,5 +1,5 @@
-import {at,buildable,bridgeIsOpen,equal,roomAt,territoryAt} from './world.js?v=7bce4805ffac';
-import { active, directions, dualGraph, dualNode, key, neighbor, primalGraph, primalOpen, remapDual, same, shortestPath, tile } from './graphs.js?v=7bce4805ffac';
+import {at,buildable,bridgeIsOpen,equal,roomAt,territoryAt} from './world.js?v=06fbbcc5c4e0';
+import { active, directions, dualGraph, dualNode, key, neighbor, primalGraph, primalOpen, remapDual, same, shortestPath, tile } from './graphs.js?v=06fbbcc5c4e0';
 export function positions(level, symbol) {
   return level.map.flatMap((row, y) => [...row].flatMap((t, x) => t === symbol ? [{ x, y }] : []));
 }
