@@ -1,4 +1,4 @@
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,floorArt,bridgeArt,keyArt,doorArt,playerArt,darkFloorArt,noiseArt} from './sprites.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,floorArt,bridgeArt,keyArt,doorArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js';
 import {pieceIcon} from './board.js';
 import {starPath} from './icons.js';
 import {dualGraph} from './graphs.js';
@@ -19,7 +19,7 @@ export const lessons=[
  {id:'lamp',title:'灯每回合充一格',text:'接通电源并避开短路，灯每回合充一格。',art:art(lampArt(true)+energyArt(2,false))},
  {id:'energy',title:'看清 0/2、1/2、2/2',text:'充到 2/2 灯才亮；短路会清零，断供会熄灯。',art:pair(lampArt(true)+energyArt(2),lampArt(false)+energyArt(0,true))},
  {id:'dark',title:'灰灯印地板',text:'灰灯印处需要灯光；灯灭时不要走上去。',art:art(darkFloorArt())},
- {id:'ignite',title:'踩下发电地板',text:'踩火纹地板启动发电机。金色虚线显示供电路线。',art:pair(controlArt('ignite'),lampArt(true))},
+ {id:'ignite',title:'踩下发电地板',text:'踩火纹地板启动发电机。金色虚线显示供电路线。',art:pair(controlArt('ignite'),generatorArt(true))},
  {id:'rift',title:'查看，与真正进入',text:'眼睛只切换视图。站在裂隙上按 E 可进入另一侧；危险或被占据时不能进入。',art:art(riftArt())},
  {id:'room',title:'同色箭头与房间',text:'踩同色箭头旋转房间。房间里有人时不能旋转。',art:pair(controlArt('room','#78939c'),controlArt('room','#b18065',-1))},
  {id:'star',title:'可选星片',text:'收集星片并在目标步数内通关，就能获得三星。',art:art(`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`)},

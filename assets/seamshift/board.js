@@ -1,5 +1,5 @@
 import {bridgeIsOpen,roomAt,territoryAt} from './world.js';
-import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt,darkFloorArt,noiseArt} from './sprites.js';
+import {hunterArt,shadowArt,trapArt,riftArt,controlArt,lampArt,energyArt,bridgeArt,keyArt,playerArt,darkFloorArt,noiseArt,generatorArt} from './sprites.js';
 import { active, directions, dualGraph, key, neighbor, primalGraph, primalOpen, same, remapDual, seededRandom, shortestPath, tile } from './graphs.js';
 import { beaconPosition, disconnected, starActive, shadowDanger, shadowPaths, predictTurn, darkDanger, dangerCells, hunterMode, hunterAlertCells, lampSupply } from './engine.js';
 import { pieceAt, ports } from './pieces.js';
@@ -38,7 +38,7 @@ function segment(a, b, level, coordinates, color, width, extra = '') {
 }
 export function renderBoardLayers(level, state, { previous = null, selected = null, view = 'primal', previewState = null, lightweight = false } = {}) {
   const width = level.width * CELL + PADDING * 2, height = level.height * CELL + PADDING * 2;
-  const random = seededRandom(level.seed), walls = [], ground = [], markings = [], overlay = [], actors = [];
+  const random = seededRandom(level.seed), walls = [], ground = [], markings = [], overlay = [], actors = [], forecasts = [];
   const shown = previewState ?? state, prediction=predictTurn(shown,level), wallVariant = 'simple', cachedWalls = wallCache.get(level)?.[wallVariant];
   const borders = [];
   for (let y = 0; y < level.height; y++) for (let x = 0; x < level.width; x++) {
@@ -100,7 +100,8 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
       if (next) {
         const c=corner(next),dx=next.x-p.x,dy=next.y-p.y;
         const angle=Math.abs(dx)>1 ? (dx<0?0:180) : Math.abs(dy)>1 ? (dy<0?90:-90) : Math.atan2(dy,dx)*180/Math.PI;
-        overlay.push(`<g data-shadow-next="true" class="shadow-next-arrow" transform="translate(${c.x} ${c.y}) rotate(${angle})"><title>箭头：影子下次移动的方向与落点</title><path d="M-10 0H5M0-5l5 5-5 5" fill="none" stroke="#765080" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></g>`);
+        forecasts.push(`<g data-shadow-next="true" class="shadow-next-arrow" transform="translate(${c.x} ${c.y}) rotate(${angle})"><title>影子下一步</title><circle r="16" fill="#f6eddf" fill-opacity=".92" stroke="#674277" stroke-width="2"/><path d="M-10 0H9M2-7l7 7-7 7" fill="none" stroke="#674277" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/></g>`);
+
       }
       actors.push(actor(p, shadowArt(), previous?.shadows[i], true));
     });
@@ -108,16 +109,16 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
   if(level.circuit) {
     const p=remapDual({x:level.circuit.lamp[0],y:level.circuit.lamp[1]},level,state.topology),c=corner(p);
     const goal=level.map.flatMap((r,y)=>[...r].flatMap((t,x)=>t==='E'?[{x,y}]:[]))[0],g=center(goal),lit=!!state.lampLit;
-    const supply=lampSupply(state,level),labels={unpowered:'供能断开',ready:'发电 OFF',charging:'充电中',lit:'灯亮 · 安全',shorted:'短路 · 归零'};
-    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}" data-charge="${state.lampCharge}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.lampCharge,supply.shorted,supply.maxCharge)}<text y="-26" text-anchor="middle" font-size="13" font-weight="600" fill="#60475f">${labels[state.lampStatus]}</text></g></g>`);
+    const supply=lampSupply(state,level),labels={unpowered:'未接通',ready:'未启动',charging:'充电',lit:'灯亮',shorted:'短路'};
+    overlay.push(`<g class="lamp-circuit" data-lamp-lit="${lit}" data-lamp-status="${state.lampStatus}" data-charge="${state.lampCharge}"><path d="M${c.x} ${c.y}L${g.x} ${g.y}" fill="none" stroke="${lit?'#c19b4b':'#9e8f7b'}" stroke-width="2" opacity=".6"/><g transform="translate(${c.x} ${c.y})">${lampArt(lit)}${energyArt(state.lampCharge,supply.shorted,supply.maxCharge)}<text y="-26" text-anchor="middle" font-size="16" font-weight="600" paint-order="stroke" stroke="#eee5ce" stroke-width="3" fill="#60475f">${labels[state.lampStatus]}</text></g></g>`);
     if(supply.path)for(let i=1;i<supply.path.length;i++)overlay.push(segment(supply.path[i-1],supply.path[i],level,center,supply.started?'#ba9847':'#9e9581',supply.started?3:1.5,`class="${supply.started&&supply.powered&&!supply.shorted?'energy-flow':''}" opacity=".65" stroke-dasharray="${supply.started?'5 4':'2 5'}" pointer-events="none"`));
-    if(level.circuit.source)overlay.push(actor(level.circuit.source,`<g data-generator="${supply.started?'on':'off'}"><circle r="14" fill="${supply.started?'#e9cb71':'#bbb39f'}" stroke="#a38443" stroke-width="2"/><path d="M-7 0H7M0-7V7" stroke="#9d7435" stroke-width="2"/><text y="-21" text-anchor="middle" font-size="13" font-weight="600" fill="#77521e">${supply.started?'ON':'OFF'}</text></g>`));
+    if(level.circuit.source)overlay.push(actor(level.circuit.source,generatorArt(supply.started)));
 
   }
   state.hunters.forEach((p,i)=>{
     const mode=hunterMode(state,i),next=prediction.hunters[i],moving=next&&!same(next,p);
     if(mode==='sleeping')for(const q of hunterAlertCells(shown,level,i)){if(same(p,q))continue;const c=center(q);overlay.push(`<rect data-alert-range="${i}:${key(q)}" x="${c.x-22}" y="${c.y-22}" width="44" height="44" rx="4" fill="#b9995a" fill-opacity=".07" stroke="#b9995a" stroke-width=".8" stroke-dasharray="2 4" opacity=".6" pointer-events="none"/>`);}
-    overlay.push(actor(p,`<g data-hunter-state="${mode}" data-wake-reason="${state.hunterWakeReasons[i]??''}"><text y="-22" text-anchor="middle" font-size="11" fill="${mode==='alert'?'#ae833d':'#9b5745'}">${mode==='sleeping'?`${level.alertRadius??2}步`:mode==='alert'?(state.hunterWakeReasons[i]==='keyNoise'?'! 铃声':state.hunterWakeReasons[i]==='guard'?'! 守桥':'! 警觉'):moving?'追击':'受阻'}</text>${mode==='alert'?'<g transform="translate(-20 -13)"><circle r="7" fill="#edd29a" stroke="#a77b38"/><text y="4" text-anchor="middle" font-size="12" font-weight="bold" fill="#8f5d27">!</text></g>':''}</g>`));
+    overlay.push(actor(p,`<g data-hunter-state="${mode}" data-wake-reason="${state.hunterWakeReasons[i]??''}"><text y="-22" text-anchor="middle" font-size="14" fill="${mode==='alert'?'#ae833d':'#9b5745'}">${mode==='sleeping'?`${level.alertRadius??2}步`:mode==='alert'?(state.hunterWakeReasons[i]==='keyNoise'?'! 铃声':state.hunterWakeReasons[i]==='guard'?'! 守桥':'! 警觉'):moving?'追击':'受阻'}</text>${mode==='alert'?'<g transform="translate(-20 -13)"><circle r="7" fill="#edd29a" stroke="#a77b38"/><text y="4" text-anchor="middle" font-size="12" font-weight="bold" fill="#8f5d27">!</text></g>':''}</g>`));
     if(mode!=='sleeping'&&moving){const c=center(next);overlay.push(`<g data-hunter-next="${key(next)}">${segment(p,next,level,center,'#ae7053',2,'opacity=".8"')}<rect x="${c.x-20}" y="${c.y-20}" width="40" height="40" rx="4" fill="#b67455" fill-opacity=".08" stroke="#b67455" stroke-opacity=".5" stroke-width="1"/><path d="M${c.x-5} ${c.y+6}l5-9 5 9Z" fill="none" stroke="#a1604d" stroke-width="1.8"/></g>`);}
     actors.push(actor(p,hunterArt(mode!=='sleeping'),previous?.hunters[i]));
     if(previous&&previous.hunterStates[i]==='sleeping'&&mode==='alert')overlay.push(actor(p,'<circle r="20" fill="none" stroke="#c09747" stroke-width="2"><animate attributeName="r" values="12;26" dur=".3s"/><animate attributeName="opacity" values="1;0" dur=".3s" fill="freeze"/></circle>'));
@@ -163,7 +164,7 @@ export function renderBoardLayers(level, state, { previous = null, selected = nu
     label: `第 ${level.id} 关，玩家 ${state.player.x},${state.player.y}，${state.turn} 步，${state.topology}`,
     opacity: view === 'dual' ? '.45' : '1',
     walls: wallCache.get(level)[wallVariant], terrain: ground.join('') + markings.join(''),
-    overlay: overlay.join('') + borders.join(''), actors: actors.join(''),
+    overlay: overlay.join('') + borders.join(''), actors: actors.join('') + forecasts.join(''),
   };
 }
 export function boardMarkup(frame) {

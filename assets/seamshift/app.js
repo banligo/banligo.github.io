@@ -6,6 +6,8 @@ import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
 import { patchBoard, setMarkupIfChanged } from './renderer.js';
 import { fitViewport } from './viewport.js';
 import { icon } from './icons.js';
+import { playerArt } from './sprites.js';
+import { routeHint } from './route-hints.js';
 import { createActionQueue, swipeDirection, cellFromClient } from './input.js';
 import { loadProgress, recordWin, saveProgress, unlockedLevel, resetProgress } from './progress.js';
 const $ = selector => document.querySelector(selector);
@@ -13,6 +15,7 @@ const modeNames = { plane: '平面', cylinder: '环绕', mobius: '扭转', torus
 const shapeNames = { straight: '直路', corner: '弯路', tee: '三岔路', cross: '十字路' };
 const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const storage = { getItem: name => localStorage.getItem(name), removeItem: name => localStorage.removeItem(name), setItem: (name, value) => localStorage.setItem(name, value) };
+let entered = false;
 let progress = loadProgress(storage, levels), level = getLevel(progress.currentLevel);
 let session = createSession(level, progress.snapshot), selected = null, view = session.state.world==='dual'?'dual':'primal', previewState = null;
 let toastTimer, advanceTimer, gesture = null, ignorePieceClickUntil = 0, hintCount = 0, hintRequest = 0, worker = null, advancing = false, longPressTimer, suppressHintClick = false, saveTimer = null, lightweight = false;
@@ -103,7 +106,7 @@ function burst(position, color = '#c49b51') {
   $('#particles').innerHTML = Array.from({ length: 10 }, (_, i) => `<i class="particle" style="left:${screen.x - bounds.left}px;top:${screen.y - bounds.top}px;background:${color};--dx:${Math.cos(i * Math.PI / 5) * 42}px;--dy:${Math.sin(i * Math.PI / 5) * 35}px"></i>`).join('');
 }
 function perform(action) {
-  if (session.state.status !== 'playing' || document.querySelector('dialog[open]') || advancing) return;
+  if (!entered || session.state.status !== 'playing' || document.querySelector('dialog[open]') || advancing) return;
   const before = session.state, result = session.act(action); previewState = null; hintRequest++;
   if (!result.valid) { flashInvalid(result.message); return; }
   checkDiscoveries(before, action); renderControls(); renderMap(before);
@@ -201,6 +204,7 @@ function hint() {
     discover('math-search');persist();
     tell(action ? `下一步可以${actionLabel(action)}。` : '当前搜索没找到出口；试着收回碎片，或撤销几步。');
   };
+  const known=routeHint(level,session.state);if(known){finish(known);return;}
   try {
     worker ||= new Worker(new URL('./hint-worker.js', import.meta.url), { type: 'module' });
     worker.onmessage = ({ data }) => { if (data.request === request) finish(data.action); };
@@ -286,6 +290,7 @@ document.addEventListener('click', event => {
   if (button.dataset.direction) { actionQueue.push({ type: 'move', direction: button.dataset.direction }); return; }
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
+    'enter-game': enterGame,
     'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll, 'cancel-reset':()=>showDialog('levels-dialog'),
     'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'), 'new-discovery-button':()=>showDialog('new-discoveries-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
@@ -316,7 +321,7 @@ document.addEventListener('pointerout', event => {
 });
 let lastKey = 0;
 document.addEventListener('keydown', event => {
-  if (event.ctrlKey || event.metaKey || event.altKey || document.querySelector('dialog[open]')) return;
+  if (!entered || event.ctrlKey || event.metaKey || event.altKey || document.querySelector('dialog[open]')) return;
   const key = event.key.toLowerCase();
   if (advancing) { if (['enter', ' '].includes(key)) { event.preventDefault(); advance(); } return; }
   if (event.target.matches('[data-map-piece],[data-slot]') && ['enter', ' '].includes(key)) {
@@ -343,10 +348,15 @@ document.addEventListener('keydown', event => {
 });
 window.addEventListener('pagehide', () => { if (!advancing) flushPersistence(); });
 document.addEventListener('visibilitychange', () => { if (document.hidden && !advancing) flushPersistence(); });
+function enterGame() {
+  if (entered) return;
+  entered = true; $('#start-screen').hidden = true; $('#game').hidden = false; $('#game').inert = false;
+  render();
+  if (session.state.status === 'won' && level.id === levels.length) {
+    $('#ending-score').textContent = `共 ${levels.length} 段旅程，收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / ${levels.length*3} 颗星。`;
+    $('#ending-dialog').showModal();
+  } else { persist(); teachOnce(); $('#board').focus({preventScroll:true}); }
+}
 hydrateIcons(); render();
-if (session.state.status === 'won' && level.id === levels.length) {
-  $('#ending-score').textContent = `共 ${levels.length} 段旅程，收集 ${Object.values(progress.results).reduce((s, r) => s + r.stars, 0)} / ${levels.length*3} 颗星。`;
-  $('#ending-dialog').showModal();
-} else { persist(); teachOnce(); }
-
+$('#start-art').innerHTML = `<svg viewBox="0 0 320 230"><ellipse cx="160" cy="196" rx="115" ry="15" fill="#c5b58e" opacity=".2"/><path d="M30 160H105V94H226V43H281" fill="none" stroke="#c5b38d" stroke-width="30" stroke-linejoin="round"/><path d="M30 160H105V94H226V43H281" fill="none" stroke="#f0e3bf" stroke-width="22" stroke-linejoin="round"/><path d="M118 94H153" stroke="#e9dfc6" stroke-width="33"/><path d="M119 80v28M128 80v28M137 80v28M146 80v28" stroke="#9a7851" stroke-width="4"/><g transform="translate(80 146) scale(2)">${playerArt()}</g><path d="m254 24 4 8 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1Z" fill="#d5a54d"/><path d="M10 38q48-28 68 1M254 178q40 11 50-17" fill="none" stroke="#84967a" stroke-width="2" stroke-dasharray="4 6"/></svg>`;
 setTimeout(()=>$('#boot-fade').remove(),900);

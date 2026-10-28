@@ -934,7 +934,7 @@
   },
   {
     "id": 10,
-    "revision": 13,
+    "revision": 14,
     "title": "First Mastery",
     "normal": [
       {
@@ -971,12 +971,12 @@
         "direction": "right"
       },
       {
-        "type": "move",
-        "direction": "right"
-      },
-      {
         "type": "topology",
         "value": "plane"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       },
       {
         "type": "move",
@@ -1077,7 +1077,7 @@
     "n3Opt": 17,
     "knownLimitations": [],
     "threeStarLimit": 19,
-    "starExpanded": 25235
+    "starExpanded": 25242
   },
   {
     "id": 11,
@@ -1272,7 +1272,7 @@
   },
   {
     "id": 12,
-    "revision": 13,
+    "revision": 14,
     "title": "First Light",
     "normal": [
       {
@@ -1344,35 +1344,15 @@
       },
       {
         "type": "move",
-        "direction": "left"
+        "direction": "up"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
       },
       {
         "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
+        "direction": "up"
       },
       {
         "type": "place",
@@ -1388,38 +1368,38 @@
         "direction": "down"
       },
       {
-        "type": "place",
-        "pieceId": "shield",
-        "slotId": "4,3"
+        "type": "move",
+        "direction": "left"
       },
       {
-        "type": "rotate",
-        "pieceId": "shield"
+        "type": "move",
+        "direction": "left"
       },
       {
-        "type": "wait"
+        "type": "move",
+        "direction": "up"
       },
       {
-        "type": "rotate",
-        "pieceId": "shield"
+        "type": "move",
+        "direction": "up"
       },
       {
-        "type": "wait"
+        "type": "move",
+        "direction": "up"
       },
       {
-        "type": "place",
-        "pieceId": "shield",
-        "slotId": "3,4"
+        "type": "topology",
+        "value": "plane"
       },
       {
         "type": "move",
         "direction": "right"
       }
     ],
-    "n3Opt": 22,
+    "n3Opt": 17,
     "knownLimitations": [],
-    "threeStarLimit": 25,
-    "starExpanded": 2936
+    "threeStarLimit": 20,
+    "starExpanded": 474
   },
   {
     "id": 13,
@@ -1556,156 +1536,398 @@
   },
   {
     "id": 14,
-    "revision": 11,
+    "revision": 14,
     "title": "Shifting Domains",
     "normal": [
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "place",
-        "pieceId": "bend",
-        "slotId": "6,7"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      }
-    ],
-    "star": [
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "down"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "shift"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
-      {
-        "type": "move",
-        "direction": "right"
-      },
       {
         "type": "place",
         "pieceId": "reed",
         "slotId": "5,6"
       },
       {
+        "type": "place",
+        "pieceId": "bend",
+        "slotId": "7,6"
+      },
+      {
         "type": "move",
         "direction": "right"
       },
       {
         "type": "move",
         "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      }
+    ],
+    "star": [
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "5,6"
       },
       {
         "type": "place",
         "pieceId": "bend",
+        "slotId": "7,6"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      }
+    ],
+    "n3Opt": null,
+    "threeStarLimit": 55,
+    "knownLimitations": [
+      "Checkpoint routes are verified using the real engine; global optimum not proved."
+    ],
+    "mechanismChecks": {
+      "routeCounterfactuals": {
+        "noIgnition": "lost",
+        "noBridge": "invalid",
+        "noRoomRotation": "invalid",
+        "noKey": "lost",
+        "noRift": "invalid",
+        "noTopology": "lost"
+      },
+      "scope": "Removing a mechanism breaks this verified strategy; this is not a proof that every alternative is impossible."
+    }
+  },
+  {
+    "id": 15,
+    "revision": 14,
+    "title": "The Last Seam",
+    "normal": [
+      {
+        "type": "place",
+        "pieceId": "reed",
+        "slotId": "4,7"
+      },
+      {
+        "type": "place",
+        "pieceId": "fork",
         "slotId": "6,7"
       },
       {
@@ -1714,167 +1936,42 @@
       },
       {
         "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
         "direction": "right"
-      }
-    ],
-    "n3Opt": 26,
-    "knownLimitations": [],
-    "threeStarLimit": 29,
-    "starExpanded": 924,
-    "normalPlans": [
-      {
-        "label": "周期边界绕行",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "topology",
-            "value": "torus"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "rotate",
-            "pieceId": "bend"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "6,7"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      },
-      {
-        "label": "平面双界绕行",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "shift"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "6,7"
-          },
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
-      }
-    ]
-  },
-  {
-    "id": 15,
-    "revision": 12,
-    "title": "The Last Seam",
-    "normal": [
-      {
-        "type": "move",
-        "direction": "left"
-      },
-      {
-        "type": "topology",
-        "value": "mobius"
       },
       {
         "type": "move",
-        "direction": "left"
+        "direction": "right"
       },
       {
         "type": "move",
-        "direction": "left"
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
       },
       {
         "type": "move",
         "direction": "up"
       },
       {
-        "type": "rotate",
-        "pieceId": "bend"
+        "type": "move",
+        "direction": "down"
       },
       {
-        "type": "rotate",
-        "pieceId": "bend"
+        "type": "shift"
       },
       {
-        "type": "place",
-        "pieceId": "bend",
-        "slotId": "5,6"
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
@@ -1882,30 +1979,100 @@
       },
       {
         "type": "move",
-        "direction": "left"
+        "direction": "down"
       },
       {
-        "type": "move",
-        "direction": "left"
-      }
-    ],
-    "star": [
+        "type": "shift"
+      },
       {
         "type": "move",
         "direction": "up"
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
       },
       {
         "type": "topology",
         "value": "torus"
       },
       {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      }
+    ],
+    "star": [
+      {
         "type": "place",
-        "pieceId": "barrier",
-        "slotId": "5,6"
+        "pieceId": "reed",
+        "slotId": "4,7"
+      },
+      {
+        "type": "place",
+        "pieceId": "fork",
+        "slotId": "6,7"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
@@ -1917,10 +2084,6 @@
       },
       {
         "type": "move",
-        "direction": "up"
-      },
-      {
-        "type": "move",
         "direction": "right"
       },
       {
@@ -1933,179 +2096,370 @@
       },
       {
         "type": "move",
-        "direction": "up"
+        "direction": "right"
       },
       {
         "type": "move",
         "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       },
       {
         "type": "move",
         "direction": "left"
-      }
-    ],
-    "n3Opt": 13,
-    "knownLimitations": [],
-    "threeStarLimit": 16,
-    "starExpanded": 2155,
-    "normalPlans": [
-      {
-        "label": "翻转边缘与拼图改道",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "topology",
-            "value": "mobius"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "rotate",
-            "pieceId": "bend"
-          },
-          {
-            "type": "rotate",
-            "pieceId": "bend"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "5,6"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          }
-        ]
       },
       {
-        "label": "断桥后从上下边缘绕行",
-        "actions": [
-          {
-            "type": "move",
-            "direction": "down"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "topology",
-            "value": "torus"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "place",
-            "pieceId": "bend",
-            "slotId": "3,5"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "right"
-          }
-        ]
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "up"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
+      },
+      {
+        "type": "shift"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "left"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "topology",
+        "value": "torus"
+      },
+      {
+        "type": "move",
+        "direction": "right"
+      },
+      {
+        "type": "move",
+        "direction": "down"
       }
+    ],
+    "alternateStar": {
+      "label": "扭转边界绕行",
+      "actions": [
+        {
+          "type": "place",
+          "pieceId": "reed",
+          "slotId": "4,7"
+        },
+        {
+          "type": "place",
+          "pieceId": "fork",
+          "slotId": "6,7"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        },
+        {
+          "type": "move",
+          "direction": "up"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "up"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        },
+        {
+          "type": "shift"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        },
+        {
+          "type": "shift"
+        },
+        {
+          "type": "move",
+          "direction": "up"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        },
+        {
+          "type": "shift"
+        },
+        {
+          "type": "wait"
+        },
+        {
+          "type": "move",
+          "direction": "up"
+        },
+        {
+          "type": "move",
+          "direction": "up"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "shift"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "topology",
+          "value": "mobius"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "left"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "topology",
+          "value": "torus"
+        },
+        {
+          "type": "move",
+          "direction": "right"
+        },
+        {
+          "type": "move",
+          "direction": "down"
+        }
+      ]
+    },
+    "n3Opt": null,
+    "threeStarLimit": 47,
+    "knownLimitations": [
+      "Checkpoint routes are verified using the real engine; global optimum not proved."
     ],
     "mechanismChecks": {
-      "withoutTopology": {
-        "actions": null,
-        "exhausted": true,
-        "certificate": "No path in the optimistic union of every permitted geometry"
+      "routeCounterfactuals": {
+        "noIgnition": "lost",
+        "noBridge": "invalid",
+        "noRoomRotation": "invalid",
+        "noKey": "lost",
+        "noRift": "invalid",
+        "noTopology": "lost"
       },
-      "withShadow": {
-        "normalTurns": 11
-      },
-      "withoutShadow": {
-        "normalTurns": 8,
-        "actions": [
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "topology",
-            "value": "mobius"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "up"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          },
-          {
-            "type": "move",
-            "direction": "left"
-          }
-        ],
-        "statusWhenReplayedWithShadow": "lost"
-      },
-      "scope": "Shadow is removed only in this counterfactual test, never in campaign play."
+      "scope": "Removing a mechanism breaks this verified strategy; this is not a proof that every alternative is impossible."
     }
   }
 ]

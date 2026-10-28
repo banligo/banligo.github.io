@@ -471,3 +471,56 @@ body[data-world="torus"] { background:#d9dfd1; }
 
 /* Keep the notebook controls visible as its content scrolls. */
 #discoveries-dialog .dialog-header { position:sticky;top:-20px;z-index:3;background:#eee5ce;padding:4px 0 8px; }
+
+/* One toolbar, larger type and an unobstructed map. */
+:root { font-size:15px; }
+.text-button,.quiet-button,.message { font-size:14px; }
+.small-hud { font-size:13px;gap:10px; }
+.small-hud h1 { font-size:15px;max-width:43%; }
+#chapter-number { font-size:12px; }
+#moves { min-width:44px; }
+#held-star svg { width:17px;height:17px; }
+#best-stars svg { width:13px;height:13px; }
+.discovery-strip { display:flex;align-items:center;justify-content:center;gap:8px; }
+.new-discovery-button,.shift-button { display:inline-flex;align-items:center;justify-content:center;min-height:44px;font-size:14px; }
+.discovery-strip>.shift-button { position:static;transform:none;padding:0 12px;border:1px solid #ab98ac;border-radius:5px;background:#e4d9e3;color:#6c5874; }
+.shift-button:not(:disabled) { border-color:#7a5d86;color:#654972; }
+.map-stage,.map-stage:has(.shift-button:not([hidden])) { padding:0;max-width:calc(100cqh * var(--map-aspect,1));max-height:calc(100cqw / var(--map-aspect,1)); }
+.mode-buttons button { font-size:12px; }
+.tray-label { font-size:12px; }
+.rule-card h3,.help-section-title,.level-option strong,.math-note h4 { font-size:16px; }
+.rule-card p,.help-rules,.help-shortcuts,.dialog-note,.current-goal,.math-note p,.math-note.locked p { font-size:14px;line-height:1.8; }
+.level-option small { font-size:12px; }
+.math-note.locked h4 { font-size:14px; }
+.shadow-next-arrow { pointer-events:none;filter:drop-shadow(0 2px 2px #51396066); }
+.start-screen { height:var(--app-height,100dvh);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:28px 24px;background:radial-gradient(ellipse at 50% 46%,#f5ecd7,transparent 65%);text-align:center; }
+.start-eyebrow { color:#8f8066;font:11px Georgia,serif;letter-spacing:3px; }
+.start-screen h1 { font:clamp(38px,9vw,64px) Georgia,serif;letter-spacing:4px;color:#546a59;margin:16px 0 12px; }
+.start-subtitle { color:#85765c;font-size:15px; }
+.start-art { width:min(320px,72vw);margin:12px 0 20px; }
+.start-art svg { display:block;width:100%; }
+.enter-game { display:flex;align-items:center;justify-content:space-between;gap:40px;font-size:17px;min-height:54px;min-width:210px;padding:12px 23px;background:#758b71;color:#fff8e6;border:1px solid #526c54;box-shadow:0 4px 0 #526c54;border-radius:6px; }
+.enter-game:hover:not(:disabled) { color:#fff8e6;background:#657f63; }
+.start-caption { margin-top:22px;font-size:12px;color:#9a8c72; }
+@media(max-width:600px) {
+ .small-hud,.small-hud h1 { font-size:12px; }
+ .small-hud h1 { max-width:37%; }
+ #chapter-number { font-size:11px; }
+ .small-hud { gap:6px; }
+ #best-stars svg { width:11px;height:11px; }
+ .mode-buttons button,#wait-button { font-size:11px; }
+ .rule-card { grid-template-columns:80px minmax(0,1fr);gap:5px 10px; }
+ .rule-card>svg { width:80px; }
+ .rule-card h3 { font-size:15px; }
+ .rule-card p { font-size:13px; }
+}
+@media(max-height:520px) {
+ .start-screen { display:grid;grid-template-columns:1fr 1fr;grid-template-rows:30px 65px 40px 65px 30px;align-content:center;column-gap:20px; }
+ .start-art { grid-column:1;grid-row:1/6;width:min(280px,38vw);margin:0;justify-self:center; }
+ .start-eyebrow,.start-screen h1,.start-subtitle,.enter-game,.start-caption { grid-column:2;margin:0;justify-self:center; }
+ .start-screen h1 { font-size:32px; }
+ .start-eyebrow { font-size:9px;letter-spacing:2px; }
+}
+
+.discovery-strip>.shift-button:active { transform:translateY(1px); }
+#new-discoveries-dialog .dialog-header { justify-content:flex-end;margin:0; }

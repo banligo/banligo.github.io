@@ -37,31 +37,33 @@ const definitions=[
   lesson:'星片一直在那里；先引开小兽，再选安全的归路。',hints:['靠近星片前，先看小兽的下一步。','可以从同一行的边缘绕到钥匙附近，再踩机关搭好归途。']},
  {id:10,title:'First Mastery',subtitle:'第一束织成的光',map:['####.####','.PQBB...K','#.##.#.##','#....#M_#','####_####','###.D.E##','####.#.##','####.#.##','####...##'],modes:all,scales:[1],
   bridges:[bridge('crossing',[[3,1],[4,1]])],controls:[control('crossing-switch',2,1,'bridge',{bridge:'crossing'})],
-  shadow:[3,4],beacon:[6,4],shadowSpeed:4,circuit:{lamp:[6,4],source:{x:2,y:1},receiver:{x:6,y:5},initialStarted:true,darkCells:[{x:6,y:5}]},keyNoise:{radius:4},alertRadius:1,
+  shadow:[3,4],beacon:[6,4],shadowSpeed:4,circuit:{lamp:[6,4],source:{x:5,y:1},receiver:{x:6,y:5},initialStarted:true,darkCells:[{x:6,y:5}]},keyNoise:{radius:4},alertRadius:1,
   pieces:[piece('shield','straight',0,'sage'),piece('bend','corner',2,'clay')],star:{x:4,y:8},
   lesson:'准备道路、守好灯，再给小兽留下一条错误的路。',hints:['先拼好退路，再从边界接近钥匙。','桥接通后也会成为屏障的一部分；穿越黑暗前，确认灯仍然亮着。']},
  {id:11,title:'Mirror Walk',subtitle:'裂隙另一侧',map:['#######','#P.F###','#######','#######','#F#F.E#','#.#.###','#######'],modes:['plane'],
   rifts:[rift('near',3,1,3,2),rift('far',3,4,3,4),rift('star',1,4,1,4)],shadow:[5,3],beacon:[5,5],shadowSpeed:3,star:{x:1,y:5},
   lesson:'裂隙的另一侧，也有道路。',hints:['走到双色菱形，再按“双界”或 E；紫色世界走角点。','星片在第三处裂隙的普通世界一侧，不能在紫色世界直接拾取。']},
- {id:12,title:'First Light',subtitle:'亲手点亮',map:['###.###','#P...Q#','#.#.###','#..._.#','###_###','#...E##','###.###'],modes:['plane'],scales:[1],shadow:[2,4],beacon:[5,4],shadowSpeed:4,circuit:{lamp:[5,4],source:{x:2,y:1},receiver:{x:4,y:5},darkCells:[{x:4,y:5}]},
-  controls:[control('ignite',5,1,'ignite',{once:true})],pieces:[piece('shield','straight',0,'sage')],star:{x:1,y:3},
-  lesson:'踩下发电地板，能量才会开始输送。',hints:['金色源点与灯之间需要一条真实相通的道路。','拼好竖直屏障，踩点火地板；短路解除只表示安全，并不代表已经启动。']},
+ {id:12,title:'First Light',subtitle:'亲手点亮',map:['###.#.#','#P...Q#','#.#.###','#..._.#','###_###','#...E##','###.#.#'],modes:['plane','torus'],scales:[1],shadow:[2,4],beacon:[5,4],shadowSpeed:4,circuit:{lamp:[5,4],source:{x:2,y:1},receiver:{x:4,y:5},darkCells:[{x:4,y:5}]},
+  controls:[control('ignite',5,1,'ignite',{once:true})],pieces:[piece('shield','straight',0,'sage')],star:{x:5,y:6},
+  lesson:'启动发电机，借上下接缝取星，再回来守住灯。',hints:['从火纹地板上方走到地图边缘；环面能带你到孤立的星片。','取星后回到平面，接好竖直道路保护灯，充满两格再进终点。']},
  {id:13,title:'Moving Territories',subtitle:'转动领地',map:['#########','###RRR###','#PQRRR.##','###RRR.##','#####K...','#####.Q.M','#####RRR#','#####RRR#','#####RRR#','######DE#'],modes:['plane'],
   territories:[{id:'blue',x:2,y:2},{id:'clay',x:6,y:5},{id:'sage',x:1,y:7}],rooms:[room('north',3,1,'blue'),room('south',5,6,'clay',true)],
   controls:[control('north-turn',2,2,'room',{room:'north',direction:1}),control('south-turn',6,5,'room',{room:'south',direction:-1})],alertRadius:2,star:{x:5,y:5},
   lesson:'踩同色箭头，远处的房间就会转向。',hints:['每块地面属于最近的控制点，同色边框标出对应房间。','先让上方房间横向，再让下方房间纵向；小兽也会沿转好的路前进。']},
- {id:14,title:'Shifting Domains',subtitle:'领地之间的裂缝',map:['######.##','###RRR.##','#PQRRRF##','###RRR###','#########','#RRR##F##','.RRRF_Q##','#RRR##_E#','######.##'],modes:['plane','torus'],
-  territories:[{id:'blue',x:2,y:2},{id:'clay',x:6,y:6},{id:'sage',x:1,y:8}],rooms:[room('entry',3,1,'blue'),room('reward',1,5,'clay',true)],
-  controls:[control('entry-turn',2,2,'room',{room:'entry'}),control('reward-turn',6,6,'room',{room:'reward'})],
-  rifts:[rift('entry',6,2,6,3),rift('return',6,5,6,5),rift('reward',4,6,4,6)],pieces:[piece('bend','corner',0,'sage'),piece('reed','straight',1)],
-  shadow:[2,4],beacon:[4,5],shadowSpeed:4,star:{x:0,y:6},
-  lesson:'房间可以转向，裂隙也能绕行；不止一种归路。',hints:['先转开普通世界的入口，再比较紫线与上下边缘。','星片在另一片领地；可以先经过奖励裂隙，再回到归途机关。']},
- {id:15,title:'The Last Seam',subtitle:'最后一道缝',map:['#.#######','#.#######','.PBB..M##','.Q#######','#########','###_E...#','###.#__..','##......#','#..######'],modes:['plane','mobius','torus'],
-  bridges:[bridge('escape',[[2,2],[3,2]],true)],controls:[control('cut',1,3,'bridge',{bridge:'escape'})],
-  pieces:[piece('bend','corner',1,'clay'),piece('barrier','straight',0,'sage')],hunterInitial:'alert',alertRadius:5,
-  shadow:[7,6],beacon:[5,6],shadowSpeed:4,star:{x:5,y:7},
-  lesson:'守桥者已警觉；断桥留住它，再沿翻转或上下接缝绕行。',
-  hints:['上、下同色边缘和左、右反序边缘，通向同一个下方区域。','紫色裂痕扫过终点和星片；可以绕下方小路，或用竖直拼图改变影子的紫线。']},
+ {id:14,title:'Shifting Domains',subtitle:'领地之间的裂缝',map:['######.##','###RRRQ##','#PQRRRF##','M##RRR###','KBBFQ####','#RRR##F##','.RRRF_Q_#','#RRR##DE#','######.##'],modes:['plane','torus'],
+  territories:[{id:'blue',x:2,y:2},{id:'clay',x:2,y:6}],rooms:[room('entry',3,1,'blue'),room('reward',1,5,'clay')],
+  controls:[control('entry-turn',2,2,'room',{room:'entry'}),control('reward-turn',6,6,'room',{room:'reward'}),control('ignite',6,1,'ignite',{once:true}),control('key-bridge',4,4,'bridge',{bridge:'key-way'})],
+  bridges:[bridge('key-way',[[1,4],[2,4]])],keyNoise:{radius:4},alertRadius:1,
+  rifts:[rift('entry',6,2,6,3),rift('key',3,4,3,4),rift('return',6,5,6,5),rift('reward',4,6,4,6)],pieces:[piece('bend','corner',2,'clay'),piece('reed','straight',1,'sage')],
+  shadow:[2,4],beacon:[4,5],shadowSpeed:4,circuit:{lamp:[7,7],source:{x:6,y:0},receiver:{x:7,y:7},darkCells:[{x:7,y:7}]},star:{x:0,y:6},
+  lesson:'转动领地，穿过裂隙取钥匙，再接通灯火。',hints:['先转开蓝房间，启动发电。钥匙在另一处裂隙外，桥纹地板能接上它。','红房间最初朝上下；转到左右才能取星。终点旁的两条道路围成一圈，可挡住短路。']},
+ {id:15,title:'The Last Seam',subtitle:'最后一道缝',map:['######.###','##RRR#Q###','.PRRR.F###','#QRRR#####','#####QBBKM','#####F####','#RRR######','.RRR_Q_F..','#RRR#DE###','######.###'],modes:['plane','mobius','torus'],
+  territories:[{id:'blue',x:1,y:3},{id:'clay',x:2,y:7}],rooms:[room('entry',2,1,'blue'),room('reward',1,6,'clay')],
+  controls:[control('entry-turn',1,3,'room',{room:'entry'}),control('reward-turn',5,7,'room',{room:'reward',direction:-1}),control('ignite',6,1,'ignite',{once:true}),control('key-bridge',5,4,'bridge',{bridge:'last-bridge'})],
+  bridges:[bridge('last-bridge',[[6,4],[7,4]])],keyNoise:{radius:4},alertRadius:1,
+  rifts:[rift('entry',6,2,6,3),rift('key',5,5,5,5),rift('return',7,7,7,7)],pieces:[piece('fork','tee',2,'clay'),piece('reed','straight',1,'sage')],
+  shadow:[7,4],beacon:[4,6],shadowSpeed:3,circuit:{lamp:[6,8],source:{x:6,y:0},receiver:{x:6,y:8},darkCells:[{x:6,y:8}]},star:{x:1,y:7},
+  lesson:'把转动、双界、桥与灯，织进最后一条归路。',hints:['启动电源后，从紫线进入右侧小岛取钥匙；带铃钥匙会叫醒守路者。','转开红房间取星，拼好终点旁的小环挡住短路。扭转可以绕到下方，环面能接通供电。']},
 
 ];
 export const levels=definitions.map((l,i)=>({revision:11,legacyRevision:i<10?[2,1,3,3,3,2,2,3,4,4][i]:undefined,seed:103+i*103,initialScale:1,initialTopology:'plane',radii:[1.4],scales:[1],bridges:[],radiusLinks:[],pieces:[],controls:[],rifts:[],rooms:[],territories:[],shadowSpeed:0,goalText:'找到终点；星片是可选奖励。',levelObjectives:[{type:'reachGoal'}],...l,width:l.map[0].length,height:l.map.length}));
@@ -71,6 +73,7 @@ for(const l of levels){
   if([2,4,5,6,7,8,9,10,12,13,15].includes(l.id))l.revision=12;
   if(l.id===2)l.revision=13;
   if([4,5,6,7,8,10,12].includes(l.id))l.revision=13;
+  if([10,12,14,15].includes(l.id))l.revision=14;
   const record=verified.find(p=>p.id===l.id&&p.revision===l.revision);
   l.n3Opt=record?.n3Opt??null;l.threeStarLimit=record?.threeStarLimit??80;
 
