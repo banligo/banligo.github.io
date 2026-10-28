@@ -11,7 +11,7 @@ const definitions=[
   bridges:[bridge('reed',[[3,1],[4,1]]),bridge('clay',[[5,4],[5,5]],false,'clay')],
   controls:[control('first',2,1,'bridge',{bridge:'reed'}),control('second',5,3,'bridge',{bridge:'clay'})],scales:[1],modes:['plane'],star:{x:2,y:3},
   lesson:'踩同纹地板，让两座断桥重新相连。',hints:['机关上的双横纹，与桥的纹样相同。','拿到星片后，再次进入机关会改变桥的状态；先看桥有没有接好。']},
- {id:2,title:'Monster & Boundaries',subtitle:'另一边的小兽',map:['#######','.P####K','..#####','..#####','MD#####','.E#####','#######'],modes:['plane','cylinder','mobius'],scales:[1],keyNoise:{radius:4},alertRadius:1,star:{x:0,y:2},
+ {id:2,title:'Monster & Boundaries',subtitle:'另一边的小兽',map:['#######','.P####K','..#####','..#####','M######','DE#####','#######'],modes:['plane','cylinder','mobius'],scales:[1],keyNoise:{radius:4},alertRadius:1,star:{x:0,y:2},
   lesson:'带铃钥匙会传出声音；先看小兽的警戒，再绕行。',hints:['同一行的另一边有钥匙，扭转后另一边换了一行。','先规划退路；小兽先警觉一回合，之后每回合走一步。']},
  {id:3,title:'Puzzle & Torus',subtitle:'上下相接的织片',map:['##._###','##.P###','#._####','#######','#######','###_E##','##._###'],modes:['plane','torus'],scales:[1],
   pieces:[piece('reed'),piece('bend','corner',3,'clay'),piece('fork','tee',0,'sage')],star:{x:1,y:2},
@@ -69,6 +69,7 @@ for(const l of levels){
   l.slots=[];for(let y=0;y<l.height;y++)for(let x=0;x<l.width;x++)if(buildable(l,{x,y}))l.slots.push({id:`${x},${y}`,x,y});
   l.pieces=l.pieces.map(p=>({...p,allowedSlots:l.slots.map(s=>s.id)}));
   if([2,4,5,6,7,8,9,10,12,13,15].includes(l.id))l.revision=12;
+  if(l.id===2)l.revision=13;
   const record=verified.find(p=>p.id===l.id&&p.revision===l.revision);
   l.n3Opt=record?.n3Opt??null;l.threeStarLimit=record?.threeStarLimit??80;
 

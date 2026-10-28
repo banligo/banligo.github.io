@@ -1,5 +1,5 @@
 import { levels, getLevel } from './levels.js';
-import { referenceLessons, lessonCards,notebookCards,observeDiscoveries,pocketDiscoveryCards } from './teaching.js';
+import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js';
 import { createSession, preview, score, riftAccess, lampSupply } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
@@ -40,7 +40,9 @@ function renderMap(previous = null) {
   $('#view-button').setAttribute('aria-label', `当前${view === 'dual' ? '裂隙' : '道路'}视图，点击切换`);
 }
 function renderTray() {
-  $('#puzzle-tray').hidden = !level.pieces.length;
+  $('#puzzle-tray').hidden = false;
+  $('#puzzle-tray').classList.toggle('empty-tray', !level.pieces.length);
+  $('#puzzle-tray').inert = !level.pieces.length;
   setMarkupIfChanged($('#pieces'), session.state.pieces.map((piece, i) => {
     const definition = level.pieces.find(p => p.id === piece.id);
     return `<button class="piece-button ${piece.slot ? 'placed' : ''}" data-piece="${piece.id}" aria-pressed="${piece.id === selected}" aria-label="${shapeNames[definition.shape]}碎片 ${i + 1}${piece.slot ? '，已放置' : '，选择后点击空位'}" title="${piece.id === selected ? '再点旋转' : '选择碎片'}">${pieceIcon(piece, definition)}</button>`;
@@ -52,7 +54,7 @@ function renderTray() {
 function renderControls() {
   const state = session.state;
   if($('#mode-buttons').dataset.count !== String(level.modes.length)) $('#mode-buttons').dataset.count=String(level.modes.length);
-  setMarkupIfChanged($('#mode-buttons'), level.modes.map(value => `<button data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
+  setMarkupIfChanged($('#mode-buttons'), ['plane','cylinder','mobius','torus'].map(value => `<button class="${level.modes.includes(value)?'':'unavailable-mode'}" ${level.modes.includes(value)?'':'tabindex="-1" aria-hidden="true"'} data-topology="${value}" aria-label="${modeNames[value]}空间" aria-pressed="${state.topology === value}" ${!level.modes.includes(value) || state.topology === value ? 'disabled' : ''}>${icon(value)}<span>${modeNames[value]}</span></button>`).join(''));
   $('#shift-button').hidden=!level.rifts.length;
   $('#shift-button').textContent=state.world==='dual'?'回到道路 · E':'进入裂隙 · E';
   const access=riftAccess(state,level);$('#shift-button').disabled=!access.available;$('#shift-button').title=access.message;
@@ -66,7 +68,7 @@ function render() {
   const state = session.state;
   setWorld(state.topology);
   renderNewMechanisms();
-  $('#map-stage').style.setProperty('--map-aspect', (level.width * CELL + PADDING * 2) / (level.height * CELL + PADDING * 2));
+  $('#map-stage').style.setProperty('--map-aspect', 1);
   $('#level-title').textContent = level.subtitle; $('#chapter-number').textContent = `${String(level.id).padStart(2,'0')} / ${String(levels.length).padStart(2,'0')}`;
   $('#moves').textContent = `${state.turn} 步`;
   $('#best-stars').innerHTML = starsMarkup(progress.results[level.id]?.stars || 0);
@@ -77,7 +79,9 @@ function render() {
   renderControls(); renderMap();
 }
 function renderNewMechanisms(){
- $('#new-discovery-button').title=`第 ${level.id} 关的新发现，已收入口袋说明书`;
+ const available=introducedLessons(level).length>0;
+ $('#new-discovery-button').hidden=!available;
+ $('#new-discovery-button').title=`第 ${level.id} 关的新发现`;
 }
 function teachOnce(){
  for(const id of observeDiscoveries(level,session.state))discover(id);
@@ -165,16 +169,15 @@ function showDialog(id) {
   if (advancing) return;
   actionQueue.clear(); previewState = null; renderMap(); closeDialogs();
   if (id === 'levels-dialog') renderLevels();
-  if(id==='help-dialog'){
-    setMarkupIfChanged($('#pocket-current-rules'),pocketDiscoveryCards(level,session.state,progress));
-    setMarkupIfChanged($('#help-rule-cards'),lessonCards(referenceLessons(level,progress)));
-  }
+  if(id==='new-discoveries-dialog')setMarkupIfChanged($('#pocket-current-rules'),lessonCards(introducedLessons(level)));
+  if(id==='help-dialog')setMarkupIfChanged($('#help-rule-cards'),lessonCards(lessons));
   if (id === 'discoveries-dialog') {
     $('#discovery-dot').hidden = true;
     $('#discovery-cards').innerHTML=notebookCards(level,progress);
   }
   $(`#${id}`).showModal();
-  if(id==='help-dialog')$('#help-dialog').scrollTop=0;
+  $(`#${id}`).scrollTop=0;
+  if(id==='reset-dialog')$('#cancel-reset').focus();
 }
 function selectPiece(id) { if (session.state.status !== 'playing') return; selected = id; renderTray(); renderMap(); }
 function cycleView() { view = view === 'primal' ? 'dual' : 'primal'; renderMap(); }
@@ -285,8 +288,8 @@ document.addEventListener('click', event => {
   if (button.dataset.direction) { actionQueue.push({ type: 'move', direction: button.dataset.direction }); return; }
   if (button.dataset.topology) { actionQueue.push({ type: 'topology', value: button.dataset.topology }); return; }
   const actions = {
-    'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll,
-    'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'), 'new-discovery-button':()=>showDialog('help-dialog'),
+    'menu-restart-button': restart, 'reset-all-button': () => showDialog('reset-dialog'), 'confirm-reset': resetAll, 'cancel-reset':()=>showDialog('levels-dialog'),
+    'levels-button': () => showDialog('levels-dialog'), 'help-button': () => showDialog('help-dialog'), 'new-discovery-button':()=>showDialog('new-discoveries-dialog'),
     'discoveries-button': () => showDialog('discoveries-dialog'), 'undo-button': undo, 'recover-button': undo,
     'restart-button': restart, 'lost-restart-button': restart, 'view-button': cycleView,
     'hint-button': () => { if (!suppressHintClick) hint(); suppressHintClick = false; },

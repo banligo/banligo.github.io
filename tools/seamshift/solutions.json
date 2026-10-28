@@ -110,7 +110,7 @@
   },
   {
     "id": 2,
-    "revision": 12,
+    "revision": 13,
     "title": "Monster & Boundaries",
     "normal": [
       {
@@ -187,7 +187,7 @@
     "n3Opt": 10,
     "knownLimitations": [],
     "threeStarLimit": 12,
-    "starExpanded": 77
+    "starExpanded": 71
   },
   {
     "id": 3,

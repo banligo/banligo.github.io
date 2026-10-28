@@ -46,37 +46,16 @@ export function observeDiscoveries(level,state,action=null,before=null){
  return [...new Set(ids)];
 }
 export const referenceLessons=(level,progress)=>lessons.filter(l=>progress.discoveries.includes(l.id));
-export const introducedLessons=level=>lessons.filter(l=>(levelTopics[level.id]??['road']).includes(l.id));
-export const pendingLessons=(level,progress)=>referenceLessons(level,progress); // Persistent, never consumed by a timer.
-const levelTopics={1:['bridge'],2:['hunter-sleep','key-noise'],3:['pieces','topologies'],4:['hunter-sleep','trap'],5:['bridge','hunter-awake'],6:['lamp'],7:['energy'],8:['dark','key-noise'],9:['star','hunter-awake'],10:['trap','dark'],11:['rift'],12:['ignite'],13:['room','hunter-sleep'],14:['rift','room'],15:['bridge','shadow']};
-const summary={
- 1:['踩同纹地板，桥梁会切换；桥上有人时不会断桥。'],
- 2:['闭眼不攻击；先警觉一回合，再追击。','带铃钥匙沿道路传声 4 步，普通钥匙不响。'],
- 3:['点空白地面建路；上面有人时不能改动。','环面的上边，也接着下边。'],
- 4:['进入 1 步道路警戒范围后，小兽先警觉一回合。','紫裂痕是影子当前影响的地板。'],
- 5:['踩机关断桥，能切断追击；棕箭头是下一回合。'],
- 6:['供能连通且没有短路时，每过一回合，灯充电一格。'],
- 7:['短路立刻熄灯并归零；安全供能后按回合重新充电。'],
- 8:['灯亮，灰灯印地板才安全。','带铃钥匙沿道路传声 6 步，先警觉再追击。'],
- 9:['星片就在道路上；先看小兽的警戒与棕色箭头。'],
- 10:['紫裂痕属于影子；灰灯印需要照明，二者不同。'],
- 11:['眼睛只查看；进入裂隙 / E 才真正切换世界。'],
- 12:['踩下发电地板，能量才会开始输送。'],
- 13:['同色箭头转动房间；房间里有人不能转。','小兽只在道路 2 步内警觉，普通钥匙不会响。'],
- 14:['转动同色房间，再经裂隙或上下接缝绕行。'],
- 15:['守桥者已警觉；断桥留住它，利用翻转或上下接缝。','影子每 4 回合走一步；紫裂痕与菱形提示危险。'],
-};
-export function pocketDiscoveryCards(level,state,progress){
- return (summary[level.id]??[level.lesson]).map((text,i)=>{const topics=levelTopics[level.id]??['road'],id=topics[Math.min(i,topics.length-1)],rule=lessons.find(l=>l.id===id),known=progress.discoveries.includes(id);let image=rule.art;
- const drawings={bridge:controlArt(),shadow:shadowArt(),trap:trapArt(),lamp:lampArt(true),energy:lampArt(true),dark:darkFloorArt(),ignite:controlArt('ignite'),rift:riftArt(),room:controlArt('room','#78939c'),star:`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`,'key-noise':keyArt()+noiseArt()};
- if(id==='hunter-sleep'||id==='hunter-awake')drawings[id]=hunterArt(state.hunterStates.some(m=>m!=='sleeping'));
- if(drawings[id])image=art(drawings[id]).replace('-60 -32 120 66','-27 -28 54 56');
- if(id==='topologies')image=boundaryDiagram(state.topology);
- return `<div class="current-rule" data-rule="${id}">${known?image:art('<circle r="7" fill="none" stroke="#aaa18a"/>')}<span>${known?text:'尚未发现 · 观察地图上的变化'}</span></div>`;}).join('');
+export function introducedLessons(level){
+ const cards=lessons.filter(l=>(levelTopics[level.id]??[]).includes(l.id)).map(l=>l.id==='topologies'?{...l,title:'三种边界',modes:level.modes,text:'平面封闭；环绕连接左右同一行；扭转连接左右相反一行。点空间按钮或按 T，同色边缘标记会告诉你出口通向哪里。'}:l.id==='key-noise'?{...l,text:`这把钥匙带铃；拾取的声音沿当前接通的道路传 ${level.keyNoise.radius} 步。听见的小兽先警觉一回合，下一有效回合才追击。`}:l);
+ if(level.id===3)cards.push({...lessons.find(l=>l.id==='topologies'),id:'torus',title:'上下也相接',modes:['plane','torus'],text:'环面不仅连接左右，上边也接着下边。相同颜色的边缘标记是一对真实通路。'});
+ return cards;
 }
+export const pendingLessons=(level,progress)=>referenceLessons(level,progress); // Persistent, never consumed by a timer.
+const levelTopics={1:['bridge'],2:['hunter-sleep','hunter-awake','key','key-noise','topologies'],3:['pieces'],4:['shadow','trap'],5:[],6:['lamp','energy','dark'],7:[],8:[],9:[],10:[],11:['rift'],12:['ignite'],13:['room'],14:[],15:[]};
 const boundaryDiagram=mode=>`<svg viewBox="0 0 64 48" aria-hidden="true"><rect x="13" y="9" width="38" height="30" rx="2" fill="#ded1ad" stroke="#b9ad90"/><path d="M25 9v30M39 9v30M13 19h38M13 29h38" stroke="#c2b592" stroke-width=".6"/>${mode==='plane'?'<path d="M10 9v30M54 9v30M13 6h38M13 42h38" stroke="#9e957e"/>':mode==='mobius'?'<path d="M4 13 60 35M4 35 60 13" stroke="#ac7d6b" stroke-width="1.5"/>':'<path d="M4 24h56m-5-4 5 4-5 4" fill="none" stroke="#7d936e" stroke-width="1.5"/>'}${mode==='torus'?'<path d="M32 2v44m-4-5 4 5 4-5" fill="none" stroke="#6c8892" stroke-width="1.5"/>':''}</svg>`;
-const topologyArt=()=>`<div class="topology-reference">${[['plane','平面','不连接'],['cylinder','环绕','左右同向'],['mobius','扭转','左右反序'],['torus','环面','左右＋上下']].map(([id,name,rule])=>`<div>${boundaryDiagram(id)}<b>${name}</b><small>${rule}</small></div>`).join('')}</div>`;
-export const lessonCards=cards=>cards.map(l=>`<article class="rule-card">${l.id==='topologies'?topologyArt():l.art}<h3>${l.title}</h3><p>${l.text}</p></article>`).join('');
+const topologyArt=(modes=['plane','cylinder','mobius','torus'])=>`<div class="topology-reference">${[['plane','平面','不连接'],['cylinder','环绕','左右同向'],['mobius','扭转','左右反序'],['torus','环面','左右＋上下']].filter(([id])=>modes.includes(id)).map(([id,name,rule])=>`<div>${boundaryDiagram(id)}<b>${name}</b><small>${rule}</small></div>`).join('')}</div>`;
+export const lessonCards=cards=>cards.map(l=>`<article class="rule-card">${l.modes||l.id==='topologies'?topologyArt(l.modes):l.art}<h3>${l.title}</h3><p>${l.text}</p></article>`).join('');
 
 // Discoveries notebook: definitions, scope and links; no duplicated game-legend gallery.
 const note=(id,group,title,intuition,definition,game,connection)=>({id,group,title,intuition,definition,game,connection});

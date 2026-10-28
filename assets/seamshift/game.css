@@ -404,3 +404,67 @@ body[data-world="torus"] { background:#d9dfd1; }
 .pocket-discoveries .current-rule { font-size:12px;line-height:1.8;align-items:flex-start; }
 .pocket-discoveries .current-rule>svg { flex:0 0 32px;width:32px;height:32px; }
 @media(max-height:520px) and (min-width:480px) { .discovery-strip { grid-column:1/-1;display:flex;padding:0;min-height:44px; } }
+
+/* Shared frame: every chapter reserves the same HUD, map and console space. */
+.game { grid-template-rows:48px 28px 44px minmax(0,1fr) 24px 126px; }
+.game-header { min-height:48px; }
+.chapter { display:block; }
+.small-hud { position:static;display:flex;gap:12px;white-space:nowrap;min-width:0; }
+.small-hud h1 { font-size:12px;font-weight:500;overflow:hidden;text-overflow:ellipsis;max-width:45%; }
+#chapter-number { font-size:10px;flex-shrink:0; }
+#moves { min-width:34px;font-variant-numeric:tabular-nums; }
+.discovery-strip { position:relative;min-height:44px;gap:8px; }
+#power-status { font-size:10px;white-space:nowrap; }
+.dock { height:126px;display:flex;flex-direction:column; }
+.puzzle-tray { flex:0 0 66px;height:66px;margin:0; }
+.empty-tray { visibility:hidden;pointer-events:none; }
+.mode-buttons { display:grid;grid-template-columns:repeat(4,52px);gap:0; }
+.mode-buttons .unavailable-mode { visibility:hidden;pointer-events:none; }
+.map-stage { --map-aspect:1; }
+.reset-actions { display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px; }
+.reset-actions .paper-button { padding:10px 6px;min-height:48px;font-size:12px;box-shadow:none; }
+.reset-actions .danger-button { color:#fff3df;background:#95614e;border-color:#80513f; }
+#reset-dialog h2 { font-size:20px;font-weight:500; }
+#reset-dialog p { font-size:12px;color:#85745d; }
+#new-discoveries-dialog .dialog-note { margin-top:16px; }
+@media(pointer:coarse),(max-width:1366px) {
+ .game { grid-template-rows:48px 28px 44px minmax(0,1fr) 24px 234px; }
+ .dock { height:234px; }
+ .puzzle-tray { flex-basis:74px;height:74px; }
+ .mode-buttons { display:grid;grid-template-columns:repeat(4,52px); }
+}
+@media(max-width:600px) and (min-height:521px) {
+ .game { grid-template-rows:48px 26px 44px minmax(0,1fr) 24px 192px; }
+ .dock { height:192px; }
+ .puzzle-tray { flex-basis:58px;height:58px;min-height:58px; }
+ .small-hud { gap:7px;font-size:10px; }
+ .small-hud h1 { font-size:11px;max-width:38%; }
+ #chapter-number { font-size:9px; }
+ #best-stars { gap:1px; }
+ .control-deck,.control-deck:has(.mode-buttons:not([data-count="4"])) { grid-template-columns:minmax(0,1fr) 134px;grid-template-rows:134px;gap:0 4px; }
+ .world-controls { display:contents; }
+ .mode-buttons,.control-deck:has(.mode-buttons:not([data-count="4"])) .mode-buttons { display:grid;grid-template-columns:repeat(4,44px);grid-column:1;grid-row:1;align-self:start;justify-self:center; }
+ .tools,.control-deck:has(.mode-buttons:not([data-count="4"])) .tools { display:grid;grid-template-columns:repeat(3,44px);grid-column:1;grid-row:1;align-self:end;justify-self:center;margin-bottom:5px; }
+ .dpad,.control-deck:has(.mode-buttons:not([data-count="4"])) .dpad { grid-column:2;grid-row:1; }
+ #power-status { font-size:9px; }
+}
+@media(max-width:359px) and (min-height:521px) {
+ .game { grid-template-rows:44px 26px 44px minmax(0,1fr) 24px 236px; }
+ .dock { height:236px; }
+ .control-deck,.control-deck:has(.mode-buttons:not([data-count="4"])) { grid-template-columns:minmax(0,1fr) 134px;grid-template-rows:44px 134px; }
+ .mode-buttons,.control-deck:has(.mode-buttons:not([data-count="4"])) .mode-buttons { grid-column:1/-1;grid-row:1; }
+ .tools,.control-deck:has(.mode-buttons:not([data-count="4"])) .tools { grid-column:1;grid-row:2;align-self:center;grid-template-columns:repeat(2,44px); }
+ .dpad,.control-deck:has(.mode-buttons:not([data-count="4"])) .dpad { grid-column:2;grid-row:2; }
+ .small-hud { gap:5px; }
+ .small-hud h1 { max-width:35%;font-size:10px; }
+}
+@media(max-height:520px) and (min-width:480px) {
+ .game { grid-template-columns:minmax(0,1fr) 310px;grid-template-rows:44px 26px 44px minmax(0,1fr) 24px; }
+ .small-hud { grid-column:1/-1;grid-row:2;width:100%; }
+ .discovery-strip { grid-column:1/-1;grid-row:3; }
+ .arena { grid-row:4; }
+ .message { grid-row:5; }
+ .dock { grid-row:4/6;height:178px; }
+ .puzzle-tray { position:absolute;flex-basis:auto;height:134px; }
+ .control-deck { grid-template-rows:44px 134px; }
+}
