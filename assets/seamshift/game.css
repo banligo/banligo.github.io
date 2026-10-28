@@ -468,3 +468,6 @@ body[data-world="torus"] { background:#d9dfd1; }
  .puzzle-tray { position:absolute;flex-basis:auto;height:134px; }
  .control-deck { grid-template-rows:44px 134px; }
 }
+
+/* Keep the notebook controls visible as its content scrolls. */
+#discoveries-dialog .dialog-header { position:sticky;top:-20px;z-index:3;background:#eee5ce;padding:4px 0 8px; }

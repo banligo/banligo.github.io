@@ -6,23 +6,23 @@ const art=body=>`<svg viewBox="-60 -32 120 66" aria-hidden="true">${body}</svg>`
 const pair=(a,b)=>art(`<g transform="translate(-30 0) scale(.8)">${a}</g><g transform="translate(30 0) scale(.8)">${b}</g>`);
 // Pocket manual: game actions only. Mathematical material lives separately below.
 export const lessons=[
- {id:'road',title:'移动与等待',text:'方向键 / WASD / 地图滑动移动；Space 或等待原地过一回合。无效操作不计回合；Z 撤销、R 重开。',art:art(playerArt())},
- {id:'bridge',title:'同纹机关与桥',text:'每次重新踩入同纹地板，桥切换一次。桥上有人时不会断桥；桥不是用底部按钮开关的。',art:pair(controlArt(),bridgeArt(true))},
- {id:'pieces',title:'自由建路',text:'选碎片，点空白地面放下；再点旋转，可收回、交换和拖放。玩家或小兽在上面时不能改动。',art:pieceIcon({rotation:0},{shape:'corner',color:'clay'})},
- {id:'topologies',title:'四种空间',text:'平面：四边封闭。环绕：左右同一行。扭转：左右相反一行。环面：左右和上下都连接。点模式按钮或按 T；同色边缘标记相连。',art:''},
- {id:'hunter-sleep',title:'睡眠与警戒',text:'闭眼的小兽不移动、不攻击。淡金虚线格是它真实能听见脚步的道路范围，墙和断桥会挡住。进入范围后先睁眼警觉，本回合不移动。',art:art(hunterArt(false))},
- {id:'hunter-awake',title:'先警觉，再追击',text:'“! 警觉”这一回合不移动；下一有效回合开始追一步。棕色箭头和三角格是原地等待后它会到的位置，换路后预测立即更新。',art:art(hunterArt(true))},
- {id:'key',title:'普通钥匙与门',text:'走到钥匙上自动拾取，只计这次移动的一回合。普通钥匙只开门，不会把整张地图的小兽吵醒。',art:pair(keyArt(),doorArt())},
- {id:'key-noise',title:'带铃钥匙',text:'带声波记号的钥匙会响。声音只沿接通的道路传到本关注明的步数；听见的小兽也先警觉一回合，不会免费扑来。',art:art(keyArt()+noiseArt())},
- {id:'shadow',title:'紫线里的影子',text:'影子只走角点之间的紫线。接通一条玩家道路，会挡住交叉的紫线；影子改道，身边的危险格也跟着变。',art:art('<path d="M-50 0H50" stroke="#795c85" stroke-width="3"/>'+shadowArt())},
- {id:'trap',title:'危险与下一步',text:'紫色裂痕是影子当前影响的地板；空心菱形是下一回合新增危险。回合结束仍在危险格会失败。棕色三角属于普通小兽，与影子不同。',art:pair(trapArt(),'<path d="M0-12 11 0 0 12-11 0Z" fill="none" stroke="#96799b" stroke-width="2"/>')},
- {id:'lamp',title:'灯每回合充一格',text:'发电已启动、供能道路相连、没有短路，每次有效操作就充一格。移动、等待、拼图和换空间都一样。无效操作和撤销不充电。',art:art(lampArt(true)+energyArt(2,false))},
- {id:'energy',title:'看清 0/2、1/2、2/2',text:'充满 2/2 灯才亮。紫线短路立即熄灯并归零；断供停止充电。修好后仍需按回合充电，不能瞬间回满。',art:pair(lampArt(true)+energyArt(2),lampArt(false)+energyArt(0,true))},
- {id:'dark',title:'灰灯印地板',text:'灰色斜纹、角上的灰灯印表示这里需要灯光。灯亮后恢复安全；它与紫色裂痕是两种不同危险，不会重复画两层阴影。',art:art(darkFloorArt())},
- {id:'ignite',title:'踩下发电地板',text:'火纹地板把发电机从 OFF 变为 ON，离开后仍运行。条件已满足时，踩下的这一回合就能充第一格；亮起的金色虚线显示能量沿哪条路输送。',art:pair(controlArt('ignite'),lampArt(true))},
- {id:'rift',title:'查看，与真正进入',text:'眼睛只切换显示。旁边的进入裂隙按钮 / E 才切换世界，且只能站在双色裂隙上使用。另一侧危险或被占据就不能进入；紫色世界不能拾取普通物品或完成普通终点。',art:art(riftArt())},
- {id:'room',title:'同色箭头与房间',text:'踩同色箭头，让对应房间转九十度。箭头方向就是转向；房间里还有角色时拒绝旋转。',art:pair(controlArt('room','#78939c'),controlArt('room','#b18065',-1))},
- {id:'star',title:'可选星片',text:'普通世界走到金色星片上即可拾取，星片从开始就可见。它不影响普通通关；三星还需达到通关后显示的步数目标。',art:art(`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`)},
+ {id:'road',title:'移动与等待',text:'方向键或滑动移动；等待可让时间前进。Z 撤销，R 重来。',art:art(playerArt())},
+ {id:'bridge',title:'同纹机关与桥',text:'踩同纹地板开关桥。桥上有人时不能断桥。',art:pair(controlArt(),bridgeArt(true))},
+ {id:'pieces',title:'自由建路',text:'选择碎片，在空地放下；可以旋转、交换或收回。上面有人时不能改动。',art:pieceIcon({rotation:0},{shape:'corner',color:'clay'})},
+ {id:'topologies',title:'四种空间',text:'平面不相连；环绕连接左右；扭转连接左右反向的行；环面连接左右和上下。',art:''},
+ {id:'hunter-sleep',title:'睡眠与警戒',text:'小兽睡着时不动。进入虚线范围，它会先警觉。',art:art(hunterArt(false))},
+ {id:'hunter-awake',title:'先警觉，再追击',text:'警觉一回合后，小兽开始沿道路追你。棕色箭头提示下一步。',art:art(hunterArt(true))},
+ {id:'key',title:'普通钥匙与门',text:'走到钥匙上拾取，再通过门。',art:pair(keyArt(),doorArt())},
+ {id:'key-noise',title:'带铃钥匙',text:'带铃的钥匙会沿道路传出声音，听到的小兽会警觉。',art:art(keyArt()+noiseArt())},
+ {id:'shadow',title:'紫线里的影子',text:'影子沿紫线移动。接通道路可以挡住交叉的紫线。',art:art('<path d="M-50 0H50" stroke="#795c85" stroke-width="3"/>'+shadowArt())},
+ {id:'trap',title:'危险与下一步',text:'避开紫色裂痕；空心菱形提示下一回合的危险。',art:pair(trapArt(),'<path d="M0-12 11 0 0 12-11 0Z" fill="none" stroke="#96799b" stroke-width="2"/>')},
+ {id:'lamp',title:'灯每回合充一格',text:'接通电源并避开短路，灯每回合充一格。',art:art(lampArt(true)+energyArt(2,false))},
+ {id:'energy',title:'看清 0/2、1/2、2/2',text:'充到 2/2 灯才亮；短路会清零，断供会熄灯。',art:pair(lampArt(true)+energyArt(2),lampArt(false)+energyArt(0,true))},
+ {id:'dark',title:'灰灯印地板',text:'灰灯印处需要灯光；灯灭时不要走上去。',art:art(darkFloorArt())},
+ {id:'ignite',title:'踩下发电地板',text:'踩火纹地板启动发电机。金色虚线显示供电路线。',art:pair(controlArt('ignite'),lampArt(true))},
+ {id:'rift',title:'查看，与真正进入',text:'眼睛只切换视图。站在裂隙上按 E 可进入另一侧；危险或被占据时不能进入。',art:art(riftArt())},
+ {id:'room',title:'同色箭头与房间',text:'踩同色箭头旋转房间。房间里有人时不能旋转。',art:pair(controlArt('room','#78939c'),controlArt('room','#b18065',-1))},
+ {id:'star',title:'可选星片',text:'收集星片并在目标步数内通关，就能获得三星。',art:art(`<path d="${starPath}" fill="#e9b54e" stroke="#ad7f32"/>`)},
 ];
 export function observeDiscoveries(level,state,action=null,before=null){
  const ids=['road','star'];
@@ -47,8 +47,8 @@ export function observeDiscoveries(level,state,action=null,before=null){
 }
 export const referenceLessons=(level,progress)=>lessons.filter(l=>progress.discoveries.includes(l.id));
 export function introducedLessons(level){
- const cards=lessons.filter(l=>(levelTopics[level.id]??[]).includes(l.id)).map(l=>l.id==='topologies'?{...l,title:'三种边界',modes:level.modes,text:'平面封闭；环绕连接左右同一行；扭转连接左右相反一行。点空间按钮或按 T，同色边缘标记会告诉你出口通向哪里。'}:l.id==='key-noise'?{...l,text:`这把钥匙带铃；拾取的声音沿当前接通的道路传 ${level.keyNoise.radius} 步。听见的小兽先警觉一回合，下一有效回合才追击。`}:l);
- if(level.id===3)cards.push({...lessons.find(l=>l.id==='topologies'),id:'torus',title:'上下也相接',modes:['plane','torus'],text:'环面不仅连接左右，上边也接着下边。相同颜色的边缘标记是一对真实通路。'});
+ const cards=lessons.filter(l=>(levelTopics[level.id]??[]).includes(l.id)).map(l=>l.id==='topologies'?{...l,title:'三种边界',modes:level.modes,text:'平面封闭；环绕连接左右同一行；扭转连接左右相反的行。'}:l.id==='key-noise'?{...l,text:`钥匙声沿道路传 ${level.keyNoise.radius} 步；听到的小兽先警觉。`}:l);
+ if(level.id===3)cards.push({...lessons.find(l=>l.id==='topologies'),id:'torus',title:'上下也相接',modes:['plane','torus'],text:'环面的左右相连，上下也相连。'});
  return cards;
 }
 export const pendingLessons=(level,progress)=>referenceLessons(level,progress); // Persistent, never consumed by a timer.
@@ -57,28 +57,28 @@ const boundaryDiagram=mode=>`<svg viewBox="0 0 64 48" aria-hidden="true"><rect x
 const topologyArt=(modes=['plane','cylinder','mobius','torus'])=>`<div class="topology-reference">${[['plane','平面','不连接'],['cylinder','环绕','左右同向'],['mobius','扭转','左右反序'],['torus','环面','左右＋上下']].filter(([id])=>modes.includes(id)).map(([id,name,rule])=>`<div>${boundaryDiagram(id)}<b>${name}</b><small>${rule}</small></div>`).join('')}</div>`;
 export const lessonCards=cards=>cards.map(l=>`<article class="rule-card">${l.modes||l.id==='topologies'?topologyArt(l.modes):l.art}<h3>${l.title}</h3><p>${l.text}</p></article>`).join('');
 
-// Discoveries notebook: definitions, scope and links; no duplicated game-legend gallery.
-const note=(id,group,title,intuition,definition,game,connection)=>({id,group,title,intuition,definition,game,connection});
+// Short notes connect each discovery to something the player has seen.
+const note=(id,group,title,text)=>({id,group,title,text});
 export const mathNotes=[
- note('math-rgg','随机几何','Random Geometric Graph','距离足够近的点才连边。','V 是给定点集，E(r) = {{i,j}: d(i,j) ≤ r}。','当前版本没有主动改变连接半径的关卡；机关桥由触发地板控制，并非随机几何边。','与距离、尺度过滤有关；不能把每次手工断桥称为随机几何相变。'),
- note('math-radius','随机几何','连接半径与尺度','半径控制哪些几何关系能被看见。','r₁ ≤ r₂ 时，固定点集上的 E(r₁) ⊆ E(r₂)。','本版关卡固定尺度，不提供半径按钮。遇到实际距离连接机制后才解锁此页。','改变拓扑或手动开关桥梁通常不满足这个单调关系。'),
- note('math-filtration','随机几何','Filtration','逐步加入结构，形成嵌套的一族空间。','过滤满足 X(r₁) ⊆ X(r₂)，r₁ ≤ r₂；还可由图建立旗复形。','目前的拼图可增加也可删除边，因此其任意操作序列不自动构成过滤。','持久同调需要明确过滤参数；有限地图的连通改变也不等于严格渗流临界现象。'),
- note('math-voronoi','随机几何','Voronoi Tessellation','每个位置归最近的控制点。','Rᵢ = {x : d(x,sᵢ) ≤ d(x,sⱼ), 对所有 j}。','房间关按格中心的欧氏距离计算归属；相等时按配置顺序确定。地板控制该领地对应房间。','这是确定的几何划分；房间旋转是另一项离散变换，不会重新随机生成领地。'),
- note('math-plane','空间拓扑','Plane 与边界','地图边缘结束，不能从另一侧回来。','本游戏采用有边界的有限矩形方格域，不识别相对边。','“平面”模式中的普通道路与影子路线都没有周期接缝；并不是模拟整个无穷平面。','外部面的处理会影响对偶图；这里采用省略外部通路的边界约定。'),
- note('math-cylinder','空间拓扑','Cylinder','把左右边缘按相同方向粘起来。','(0,y) ∼ (W,y)，上下边仍有边界。','从一侧进入另一侧同一行；小兽也使用这些真实邻接边。','只有一个独立周期方向；与上下也周期连接的环面不同。'),
- note('math-mobius','空间拓扑','Möbius Strip','边缘识别时，行序发生反转。','(0,y) ∼ (W,H−y)；格中心索引对应 y → H−1−y。','普通格中心与对偶角点各用自己的正确坐标公式，不能混用半格位置。','这是非定向的边界识别；从边缘回来时，局部方向可能翻转。'),
- note('math-torus','空间拓扑','Torus','两个独立方向都能绕回来。','(x,y) ∼ (x+W,y) ∼ (x,y+H)。','左右与上下都生成真实周期邻接；对偶网络同时包含两类接缝。','环面上的一个绕圈通常不能直接当成平面上的封闭围墙。'),
- note('math-boundary','空间拓扑','周期边界识别','边缘相连是邻接规则，不是任意传送。','邻点先加单位方向，再按当前空间的识别关系映射。','相同边缘标记表示同一连接，墙和拼图端口仍然限制是否真的可走。','原始与对偶坐标不同，但必须使用相容的边界映射。'),
- note('math-loops','空间拓扑','Non-contractible Loops','有些绕圈无法在空间内部缩成一点。','环面的基本群为 ℤ × ℤ；绕两个周期方向的环有不同绕数。','一条跨越接缝的闭合道路，未必把影子与灯分到两侧。','应直接检查实际连通性，而不能沿用平面“围起来就隔开”的直觉。'),
- note('math-connectivity','图论与对偶','Graph Connectivity','两点之间存在一条路，就属于同一连通分支。','u ∼ v 当且仅当存在路径 u=v₀,…,vₙ=v。','道路、机关桥、拼图与空间共同决定当前图；安全性还要考虑回合中的居民。','静态可达不代表动态可通关，因此求解还需要完整状态搜索。'),
- note('math-cut','图论与对偶','Graph Cuts','移除某些连接后，原本相通的区域可能分开。','对顶点子集 S，边割 δ(S) 包含恰有一个端点位于 S 的边。','断桥同时关闭桥格及其邻接边；它能切断小兽追击，但未必是最小割。','打开原始道路也可能切断交叉的影子路线，两种图的效果相反。'),
- note('math-dual','图论与对偶','Primal / Dual Graph','道路中心与道路之间，可以各有一套连线。','在固定嵌入网络中，每条原始边对应一条与之相交的对偶边。','本游戏在固定方格的交叉边上实行开闭互补；原始边开，则交叉紫线关。角点不是玩家格中心。','不是重新计算任意嵌入的全部合并面；边界约定和周期识别也必须参与建图。'),
- note('math-cut-cycle','图论与对偶','Cut–Cycle Duality','在适当的平面图中，割和对偶闭环有对应关系。','有限连通平面图包含外部面时，极小边割对应对偶中的圈。','游戏有省略外部面的边界和周期空间，因此以真实图搜索验证是否隔开影子。','环面上非收缩环不一定分割空间，不能直接套用平面结论。'),
- note('math-dynamic','图论与对偶','动态图结构','一个操作改变的可能是整张可通行网络。','Gₜ = (Vₜ,Eₜ)，由当前桥、端口、房间方向和边界决定。','拼图、机关桥和房间旋转后，怪物及能量都重新使用当前真实图。','预测必须基于同一个状态转移，不能沿用上回合缓存的旧路线。'),
- note('math-bfs','游戏与算法','BFS / A*','逐层找路，或用可靠的下界引导搜索。','无权图 BFS 按边数逐层扩展；A* 使用 f(n)=g(n)+h(n)。','小兽在当前道路图用 BFS 找一步；关卡求解器在完整状态图上搜索。','A* 的最优保证需要可采纳的启发式和正确的状态去重。'),
- note('math-search','游戏与算法','State-space Search','位置相同，不代表局面相同。','状态包含角色、世界、怪物阶段、时钟、机关、拼图、收集物和灯。','通关搜索逐步调用真实游戏引擎，并重放每一个操作；只检查地图连通不够。','预算耗尽只意味着尚未证明，不能写成无解或伪造最优。'),
- note('math-shortest','游戏与算法','最优路径与最优策略','最短移动路线，未必是最少操作策略。','每个有效操作成本为 1；三星搜索另要求实际收集星片。','旋转、等待、换空间也计步，普通通关最优与三星最优分别计算。','松弛敌人和机关约束只能用于下界，最终胜利仍由真实转移判定。'),
- note('math-dynamics','游戏与算法','离散动力系统','世界在每个有效回合后更新一次。','Sₜ₊₁ = F(Sₜ,aₜ)，无效输入保持 S 不变。','先处理玩家与道路，再处理怪物、供能与危险；警觉有明确的一回合反应时间。','Undo 恢复过去的完整 S，不是再模拟一个额外回合。'),
- note('math-energy','游戏与算法','能量传输网络','供能路径与短路路径是两个不同的问题。','安全供能时 qₜ₊₁=min(qmax,qₜ+1)；短路时 qₜ₊₁=0。','电源到接收格按道路图判连通，影子到灯按紫色网络判短路；还需已启动。','这是连通性与整数计数的游戏模型，不是电压、电阻的完整电路模拟。'),
+ note('math-rgg','随机几何','随机几何图','距离足够近的点之间可以连线。'),
+ note('math-radius','随机几何','连接半径','把半径变大，能连接到的点也会增多。'),
+ note('math-filtration','随机几何','逐层变化','逐步增加连接，可以观察空间如何变化。'),
+ note('math-voronoi','随机几何','最近的控制点','每块地属于离它最近的控制点。游戏里的颜色显示这些区域。'),
+ note('math-plane','空间拓扑','平面','地图边缘是终点，不能从另一侧回来。'),
+ note('math-cylinder','空间拓扑','环绕','左右边缘接在一起，从一侧出去会回到另一侧的同一行。'),
+ note('math-mobius','空间拓扑','扭转','左右边缘反向接在一起：从上方出去，会从另一侧下方回来。'),
+ note('math-torus','空间拓扑','环面','左右相接，上下也相接，就像一张可以绕回来的地图。'),
+ note('math-boundary','空间拓扑','相连的边缘','相同标记的边缘彼此相接；道路也要接通才能通过。'),
+ note('math-loops','空间拓扑','绕空间一圈','环面上的路可以绕回起点，却不一定把里面和外面分开。'),
+ note('math-connectivity','图论与对偶','道路连通','两处之间有路可走，它们就是连通的。'),
+ note('math-cut','图论与对偶','切断道路','断开一座桥，可能让原本相连的地方分开，小兽也就过不来了。'),
+ note('math-dual','图论与对偶','两张交叉的网','玩家走地板上的路，影子走角点间的紫线。道路接通时，会挡住交叉的紫线。'),
+ note('math-cut-cycle','图论与对偶','围住与隔开','在平面上，围成一圈常能隔开两边；接上环面后，要再检查是否能绕过去。'),
+ note('math-dynamic','图论与对偶','会变化的地图','转动房间、接桥或拼路后，角色和能量都会使用新的道路。'),
+ note('math-bfs','游戏与算法','寻找近路','小兽会沿当前接通的道路，寻找通向玩家的短路。'),
+ note('math-search','游戏与算法','寻找通关方法','找路时还要考虑怪物、桥和灯：位置相同，局面也可能不同。'),
+ note('math-shortest','游戏与算法','最少步数','移动、等待和改变地图都算一步。拿星片的最短路线可能更长。'),
+ note('math-dynamics','游戏与算法','回合中的变化','每次有效操作后，怪物和灯都会更新；撤销可以回到上一步。'),
+ note('math-energy','游戏与算法','能量的道路','电源沿道路供能；影子沿紫线造成短路。观察两张网，保护灯光。'),
 ];
-export const notebookCards=(level,progress)=>['随机几何','空间拓扑','图论与对偶','游戏与算法'].map(group=>`<section class="math-category"><h3>${group}</h3>${mathNotes.filter(n=>n.group===group).map(n=>{const known=progress.discoveries.includes(n.id);return `<article class="math-note ${known?'':'locked'}"><h4>${n.title}</h4>${known?`<p>${n.intuition}</p><p class="math-definition">${n.definition}</p><p><b>在游戏中：</b>${n.game}</p><p><b>联系：</b>${n.connection}</p>`:'<p>尚未体验相关变化。</p>'}</article>`;}).join('')}</section>`).join('');
+export const notebookCards=(level,progress)=>['随机几何','空间拓扑','图论与对偶','游戏与算法'].map(group=>`<section class="math-category"><h3>${group}</h3>${mathNotes.filter(n=>n.group===group).map(n=>{const known=progress.discoveries.includes(n.id);return `<article class="math-note ${known?'':'locked'}"><h4>${n.title}</h4><p>${known?n.text:'继续探索后解锁。'}</p></article>`;}).join('')}</section>`).join('');

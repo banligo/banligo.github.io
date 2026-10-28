@@ -1,6 +1,6 @@
 import { levels, getLevel } from './levels.js';
 import { lessons, introducedLessons, lessonCards,notebookCards,observeDiscoveries } from './teaching.js';
-import { createSession, preview, score, riftAccess, lampSupply } from './engine.js';
+import { createSession, preview, score, riftAccess } from './engine.js';
 import { slotAt } from './pieces.js';
 import { renderBoardLayers, pieceIcon, CELL, PADDING } from './board.js';
 import { patchBoard, setMarkupIfChanged } from './renderer.js';
@@ -59,8 +59,6 @@ function renderControls() {
   $('#shift-button').textContent=state.world==='dual'?'回到道路 · E':'进入裂隙 · E';
   const access=riftAccess(state,level);$('#shift-button').disabled=!access.available;$('#shift-button').title=access.message;
   $('#shift-button').setAttribute('aria-label',state.world==='dual'?'返回道路世界（E）':'进入裂隙（E）');
-  $('#power-status').hidden=!level.circuit;
-  if(level.circuit){const supply=lampSupply(state,level),names={unpowered:'断供',ready:'待启动',charging:'充电',lit:'灯亮',shorted:'短路'};$('#power-status').textContent=`发电 ${supply.started?'ON':'OFF'} · 电量 ${state.lampCharge}/${supply.maxCharge} · ${names[state.lampStatus]}`;}
   $('#game').dataset.layer=state.world;
   $('#undo-button').disabled = !session.undoCount; $('#hint-button').disabled = state.status !== 'playing'; renderTray();
 }
