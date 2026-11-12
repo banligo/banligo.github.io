@@ -138,6 +138,29 @@ nav a { padding: 8px 0; }
 .study-content ul { margin: 0; padding-left: 20px; }
 .study-content li { margin-bottom: 13px; padding-left: 4px; }
 .study-content a { border-bottom: 1px solid #d7d5cb; }
+.study-content a[href$=".pdf"] {
+  display: inline-block;
+  margin: 2px 0 2px 5px;
+  padding: 1px 8px;
+  border: 1px solid #b8c8d6;
+  border-radius: 5px;
+  background: #edf3f8;
+  color: #285579;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.8;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .15s, border-color .15s;
+}
+.study-content a[href$=".pdf"]:hover {
+  background: #dceaf5;
+  border-color: #6286a4;
+}
+.study-content a[href$=".pdf"]:focus-visible {
+  outline: 2px solid #285579;
+  outline-offset: 3px;
+}
 .study-content code { font-family: inherit; font-size: 11px; color: var(--muted); margin-right: 7px; }
 @media (max-width: 520px) {
   .study-heading { padding-top: 28px; }

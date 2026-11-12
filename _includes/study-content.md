@@ -6,8 +6,8 @@
 ## 学位论文
 {: #theses }
 
-- `2024.6` Bachelor thesis [🔗](/assets/documents/BScThesis-heyingqiu.pdf) slides [🔗](/assets/documents/BScThesisPPT-heyingqiu.pdf)
-- `2026.7` Master thesis [🔗](/assets/documents/Yingqiu_MSreport202607.pdf) slides [🔗](/assets/documents/202607_defense_MS_Yingqiu_final.pdf)
+- `2024.6` Bachelor thesis [PDF](/assets/documents/BScThesis-heyingqiu.pdf) [Slide](/assets/documents/BScThesisPPT-heyingqiu.pdf)
+- `2026.7` Master thesis [PDF](/assets/documents/Yingqiu_MSreport202607.pdf) [Slide](/assets/documents/202607_defense_MS_Yingqiu_final.pdf)
 - `2029.7` Doctor thesis
 
 ## 课程笔记
@@ -23,7 +23,8 @@
 
 
 - `2026.11.24~27` [PTChat: Cosmological Perturbation Theory in the era of stage IV surveys](https://indico.in2p3.fr/event/39928/overview), Panasonic Auditorium, Yukawa Hall, Yukawa Institute, Kyoto University, 参加
-- `2026.10.26~30` [Filaments in the multi-scale Universe: understanding their role and detectability](https://indico.ipmu.jp/event/522/overview), Kavli IPMU, Contributed Talk
+- `2026.11.17` SOKENDAI / KEK Student Day 2026, Poster: “Critical points and Betti numbers in 2D random fields” [Poster]({{ '/assets/documents/slides/202611_sokendai_studentday.pdf' | relative_url }})
+- `2026.10.26~30` [Filaments in the multi-scale Universe: understanding their role and detectability](https://indico.ipmu.jp/event/522/overview), Kavli IPMU, Contributed Talk [Slide]({{ '/assets/documents/slides/202610_filament_conf.pdf' | relative_url }})
 - `2026.08.07~13` [30th International Summer Institute on Phenomenology of Elementary Particle Physics and Cosmology (SI2026)](https://indico.global/event/15770/), Fuji Calm, 参加
 - `2026.06.22` [iTHEMS Cosmology Forum n°6 - Cosmological Collider Physics](https://ithems.riken.jp/en/events/ithems-cosmology-forum-n06-cosmological-collider-physics), RIKEN iTHEMS, 参加
 - `2026.05.28~29` [宇宙の大規模構造形成 〜研究の歩みと将来の展望〜 / Large-Scale Structure Formation in the Universe: Past Developments and Future Prospects (KEK-Cosmo 2026)](https://sites.google.com/view/keklss2026/home), KEK Tsukuba Campus, 参加
@@ -40,8 +41,8 @@
 {: #seminars }
 
 - `2026.01.14` arXiv Club: AI for cosmology?
-- `2026.11.12` GM Talk: Recent progress on critical-point statistics: working with ChatGPT (NLO should be work out, 21cm same)
-- `2026.09.25` Theory Center Journal Club: Cosmological shell-crossing problem
+- `2026.11.12` GM Talk: Abundance prediction of critical point & Betti numbers [Slide]({{ '/assets/documents/slides/202611_CosmoMeeting.pdf' | relative_url }})
+- `2026.09.25` Theory Center Journal Club: Cosmological shell-crossing using post-collapse perturbation theory [Slide]({{ '/assets/documents/slides/keynote_kek_0925.pdf' | relative_url }})
 - `2026.06.19` GM Talk: Master Pre-defense
 - `2026.06.19` arXiv Club: [Reviving primordial black hole formation in slow first-order phase transitions](https://arxiv.org/abs/2605.11332)
 - `2026.02.05` arXiv Club: [Euclid preparation. Galaxy power spectrum modelling in redshift space](https://arxiv.org/abs/2601.20826)
