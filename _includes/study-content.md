@@ -31,7 +31,7 @@
 - `2026.03.02~05` [Frontiers of Precision Cosmology: From the Early Universe to Observational Tensions (KEK Cosmo 2025)](https://www-conf.kek.jp/KEKCosmo-AY2025/), KEK Tsukuba Campus, 参加
 - `2025.11.25` SOKENDAI / KEK Student Day 2025, Poster: “Counting Critical Points in Gaussian Fields”
 - `2025.09.16~19` [Beyond-two-point Statistics Meet Survey Systematics](https://indico.ipmu.jp/event/460/overview), Kavli IPMU, 参加
-- `2025.07.28~31` [2025年度 第55回 天文・天体物理若手夏の学校](https://astro-wakate.sakura.ne.jp/ss2025/), Poster: “Cosmic Topology: Is the Universe Finite?”
+- `2025.07.28~31` [2025年度 第55回 天文・天体物理若手夏の学校](https://astro-wakate.sakura.ne.jp/ss2025/), Poster: “Cosmic Topology: Is the Universe Finite?” [Poster]({{ '/assets/documents/slides/cosmic_topology_poster.pdf' | relative_url }})
 - `2025.06.24~25` [iTHEMS-KEK Joint Workshop 2025: Scientific Writing and Diversity-Equity-Inclusion](https://ithems.riken.jp/en/events/ithems-theorycenterkek-scientific-writing-and-dei-workshop), RIKEN Wako, 参加
 - `2025.03.10~12` [The 5th SOKENDAI KEK-NAOJ Joint Seminar at Ishigaki / 第5回 総研大 高エネ研–国立天文台連携セミナー](https://sci.nao.ac.jp/MEMBER/kohri/05-KEK-NAOJ-JointSeminar.html), 参加
 - `2024.11.06~08` [Evolution of the Inhomogeneous Universe: From Inflation to Structure Formation (KEK-Cosmo AY2024)](https://www-conf.kek.jp/KEKCosmoAY2024/index.html), KEK Tsukuba Campus, 参加
