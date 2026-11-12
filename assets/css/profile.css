@@ -138,7 +138,7 @@ nav a { padding: 8px 0; }
 .study-content ul { margin: 0; padding-left: 20px; }
 .study-content li { margin-bottom: 13px; padding-left: 4px; }
 .study-content a { border-bottom: 1px solid #d7d5cb; }
-.study-content a[href$=".pdf"] {
+.study-content a[href$=".pdf"], .document-link {
   display: inline-block;
   margin: 2px 0 2px 5px;
   padding: 1px 8px;
@@ -153,11 +153,11 @@ nav a { padding: 8px 0; }
   white-space: nowrap;
   transition: background .15s, border-color .15s;
 }
-.study-content a[href$=".pdf"]:hover {
+.study-content a[href$=".pdf"]:hover, .document-link:hover {
   background: #dceaf5;
   border-color: #6286a4;
 }
-.study-content a[href$=".pdf"]:focus-visible {
+.study-content a[href$=".pdf"]:focus-visible, .document-link:focus-visible {
   outline: 2px solid #285579;
   outline-offset: 3px;
 }
